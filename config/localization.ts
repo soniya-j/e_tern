@@ -14,4 +14,5 @@ export const responseMessages = {
   jwt_token_required: 'JWT token are required.',
   fields_cannot_modify: 'Fields cannot be modify',
   otp_verify_success: 'OTP verified successfully',
+  registration_success: 'Registered user successfully',
 };

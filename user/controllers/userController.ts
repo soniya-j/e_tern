@@ -13,7 +13,7 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
   await registerUserUseCase(data);
   res.status(201).json({
     success: true,
-    message: responseMessages.response_success_post,
+    message: responseMessages.registration_success,
     result: '',
   });
 });

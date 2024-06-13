@@ -4,6 +4,7 @@ import logger from './config/logger';
 import connectToDatabase from './config/connectToDatabase';
 import errorHandleMiddleware from './middleware/errorHandleMiddleware';
 import configKeys from './configKeys';
+import setupSwagger from './swaggerdocs/swaggerConfig';
 
 const app = express();
 
@@ -20,4 +21,5 @@ const port = configKeys.PORT;
 
 app.listen(port, () => {
   logger.info(`application is running at port ${port}`);
+  setupSwagger(app, port);
 });

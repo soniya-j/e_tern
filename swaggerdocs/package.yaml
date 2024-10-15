@@ -1,0 +1,69 @@
+swagger: '3.0.0'
+info:
+  title: Package Model API
+  description: API related to Package models
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/package/all:
+    get:
+      summary: Fetch All Packages
+      description: Endpoint to fetch all packages
+      tags:
+        - Package Model
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Fetch all packages successfully
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        packageName:
+                          type: string
+                          example: "Package 3 - 6"
+                        description:
+                          type: string
+                          example: "Package 3 - 6"
+                        
+                        ageFrom:
+                          type: number
+                          example: 3
+                        ageTo:
+                          type: number
+                          example: 6  
+                        isActive:
+                          type: boolean
+                          example: true
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred
+
+components:
+  securitySchemes:
+    JWT:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: JWT Bearer token

@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
-import { Ipackage } from '../../types/package/packageModel';
+import { IPackage } from '../../types/package/packageModel';
 
-const packageSchema = new Schema<Ipackage>(
+const packageSchema = new Schema<IPackage>(
   {
     packageName: { type: String, required: true },
     ageFrom: { type: Number, required: true },
@@ -13,5 +13,5 @@ const packageSchema = new Schema<Ipackage>(
   { timestamps: true },
 );
 
-const packageModel = model<Ipackage>('package', packageSchema);
+const packageModel = model<IPackage>('package', packageSchema);
 export default packageModel;

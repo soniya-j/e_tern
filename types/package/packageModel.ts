@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-export interface Ipackage extends Document {
+export interface IPackage extends Document {
   packageName: string;
   ageFrom: number;
   ageTo: number;

@@ -7,6 +7,7 @@ const categorySchema = new Schema<ICategory>(
     packageId: { type: String, required: true },
     imageUrl: { type: String, default: '' },
     description: { type: String, default: '' },
+    sorting: { type: Number, default: 1 },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
   },

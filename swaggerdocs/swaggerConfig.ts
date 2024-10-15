@@ -7,9 +7,9 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'content_module API',
+      title: 'E Tern API',
       version: '1.0.0',
-      description: 'Dollar backend API for content_module',
+      description: 'backend API for E Tern',
     },
   },
   apis: ['./swaggerdocs/*.yaml'],

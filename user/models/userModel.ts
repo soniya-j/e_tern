@@ -12,6 +12,7 @@ const usersSchema = new Schema<IUsers>(
     parentDob: { type: String },
     avatar: { type: String, default: '' },
     otp: { type: String },
+    interest: { type: String, default: '' },
     mobileNumberVerified: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
   },

@@ -12,6 +12,7 @@ export interface IUsers extends Document {
   otp?: string;
   mobileNumberVerified?: boolean;
   isDeleted?: boolean;
+  interest?: string;
 }
 
 export interface IUserBody {
@@ -22,6 +23,7 @@ export interface IUserBody {
   email?: string;
   parentName?: string;
   parentDob?: string;
+  interest?: string;
 }
 
 export interface IOtpBody {

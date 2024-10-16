@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const categoryController_1 = require("../controllers/categoryController");
+//import { authenticateUser } from '../../middleware/authentication';
+const router = (0, express_1.Router)();
+//router.get('/all', authenticateUser, getCategories);
+router.get('/all', categoryController_1.getCategories);
+router.get('/by-package/:packageId', categoryController_1.getCategoriesByPackageId);
+exports.default = router;

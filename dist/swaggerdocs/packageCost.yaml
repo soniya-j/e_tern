@@ -1,0 +1,146 @@
+swagger: '3.0.0'
+info:
+  title: Package Cost Model API
+  description: API related to Package Cost models
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/packagecost/all:
+    get:
+      summary: Fetch All Package Costs
+      description: Endpoint to fetch all Package Costs
+      tags:
+        - PackageCost Model
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Fetch all Package Costs successfully
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:                       
+                        packageId:
+                          type: string
+                          example: "670d2fd920824883c3100257"
+                        price:
+                          type: number
+                          example: 5000.00
+                        validity:
+                          type: number
+                          example: 365
+                        from:
+                          type: date
+                          example: 2000-01-01
+                        to:
+                          type: date
+                          example: 2000-01-01  
+                        isActive:
+                          type: boolean
+                          example: true
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred
+
+  /api/packagecost/by-package/{packageId}:
+    get:
+      summary: Fetch package price by Package ID
+      description: Endpoint to fetch package prices by a given Package ID
+      tags:
+        - PackageCost Model
+      parameters:
+        - name: packageId
+          in: path
+          required: true
+          description: The ID of the package
+          schema:
+            type: string
+            example: "670d2fd920824883c3100257"
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Fetch package prices by Package ID successfully
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:                        
+                        packageId:
+                          type: string
+                          example: "670d2fd920824883c3100257"
+                        price:
+                          type: number
+                          example: 5000.00
+                        validity:
+                          type: number
+                          example: 365
+                        from:
+                          type: date
+                          example: 2000-01-01
+                        to:
+                          type: date
+                          example: 2000-01-01  
+                        isActive:
+                          type: boolean
+                          example: true
+        404:
+          description: Package cost not found for the given package
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No package cost found for this package
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred
+
+
+components:
+  securitySchemes:
+    JWT:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: JWT Bearer token

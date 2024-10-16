@@ -1,0 +1,197 @@
+swagger: '3.0.0'
+info:
+  title: Users Model API
+  description: API related to Users models
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/user/register/:
+    post:
+      summary: Register Users
+      description: Endpoint for registering users
+      tags:
+        - Users Model
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  example: JohnDoe
+                mobileNumber:
+                  type: integer
+                  example: 1234567890
+                dob:
+                  type: string
+                  format: date
+                  example: 2000-01-01
+                userType:
+                  type: string
+                  enum:
+                    - child
+                    - teenager
+                    - adult
+                  example: adult
+                email:
+                  type: string
+                  format: email
+                  example: johndoe@example.com
+                  nullable: true
+                parentName:
+                  type: string
+                  example: JaneDoe
+                  nullable: true
+                parentDob:
+                  type: string
+                  format: date
+                  example: 1980-01-01
+                  nullable: true
+                interest:
+                  type: string
+                  example: Arts
+                  nullable: true
+
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Registered user successfully
+                  result:
+                    type: string
+                    example: ''
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
+  /api/user/verify-otp:
+    post:
+      summary: Verify OTP
+      description: Endpoint to verify OTP
+      tags:
+        - Users Model
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mobileNumber:
+                  type: integer
+                  example: 1234567890
+                otp:
+                  type: string
+                  example: 123456
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: OTP verified successfully
+                  result:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
+  /api/user/upload-avatar:
+    post:
+      summary: Upload Avatar
+      description: Endpoint to upload user avatar
+      tags:
+        - Users Model
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: The image file to upload (jpg or png)
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Avatar uploaded successfully
+                  imageUrl:
+                    type: string
+                    example: '/upload/avatar/filename.png'
+        400:
+          description: Bad Request response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad request
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
+
+components:
+  securitySchemes:
+    JWT:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: JWT Bearer token

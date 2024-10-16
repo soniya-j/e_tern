@@ -3,6 +3,7 @@ import userRoutes from './user/routes/userRoutes';
 import packageRoutes from './package/routes/packageRoutes';
 import categoryRoutes from './category/routes/categoryRoutes';
 import subCategoryRoutes from './subcategory/routes/subCategoryRoutes';
+import packageCostRoutes from './packagecost/routes/packageCostRoutes';
 
 import logger from './config/logger';
 import connectToDatabase from './config/connectToDatabase';
@@ -21,6 +22,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/package', packageRoutes);
 app.use('/api/category', categoryRoutes);
 app.use('/api/subcategory', subCategoryRoutes);
+app.use('/api/packagecost', packageCostRoutes);
 
 app.use(errorHandleMiddleware);
 

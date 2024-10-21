@@ -9,7 +9,7 @@ const express_async_handler_1 = __importDefault(require("express-async-handler")
 const localization_1 = require("../../config/localization");
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
-//import { ICategoryBody } from '../../types/category/categoryModel';
+const express_validator_1 = require("express-validator");
 exports.getSubCategories = (0, express_async_handler_1.default)(async (req, res) => {
     const result = await (0, subCategoryUseCase_1.getAllSubCategoryUseCase)();
     res.status(201).json({
@@ -19,6 +19,14 @@ exports.getSubCategories = (0, express_async_handler_1.default)(async (req, res)
     });
 });
 const getSubCategoriesByCategoryId = async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({
+            success: false,
+            errors: errors.array(),
+        });
+        return;
+    }
     try {
         const { categoryId } = req.params;
         const result = await (0, subCategoryUseCase_1.getSubCategoriesByCategoryIdUseCase)(categoryId);

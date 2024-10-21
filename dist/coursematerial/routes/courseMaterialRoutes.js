@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const courseMaterialController_1 = require("../controllers/courseMaterialController");
+//import { authenticateUser } from '../../middleware/authentication';
+const courseMaterialRequest_1 = require("../requests/courseMaterialRequest");
+const router = (0, express_1.Router)();
+//router.get('/all', authenticateUser, getCategories);
+router.get('/all', courseMaterialController_1.getCourseMaterials);
+router.get('/by-subcategory/:subCategoryId', courseMaterialRequest_1.getCourseMaterialBySubCategoryIdValidation, courseMaterialController_1.getCourseMaterialsBySubCategoryId);
+exports.default = router;

@@ -7,7 +7,7 @@ import asyncHandler from 'express-async-handler';
 import { responseMessages } from '../../config/localization';
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
-//import { ICategoryBody } from '../../types/category/categoryModel';
+import { validationResult } from 'express-validator';
 
 export const getPackageCosts = asyncHandler(async (req: Request, res: Response) => {
   const result = await getAllPackageCostsUseCase();
@@ -19,6 +19,15 @@ export const getPackageCosts = asyncHandler(async (req: Request, res: Response) 
 });
 
 export const getPackageCostsByPackageId = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+
   try {
     const { packageId } = req.params;
     const result = await getPackageCostsByPackageIdUseCase(packageId);

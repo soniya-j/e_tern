@@ -61,8 +61,8 @@ paths:
 
   /api/subcategory/by-category/{categoryId}:
     get:
-      summary: Fetch Categories by Package ID
-      description: Endpoint to fetch sub categories by a given Package ID
+      summary: Fetch Sub Categories by category ID
+      description: Endpoint to fetch sub categories by a given category ID
       tags:
         - Sub Category Model
       parameters:
@@ -97,7 +97,7 @@ paths:
                         subCategoryName:
                           type: string
                           example: "Self Help"
-                        packageId:
+                        categoryId:
                           type: string
                           example: "670d2fd920824883c3100257"
                         description:

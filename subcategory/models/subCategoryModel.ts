@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { ISubCategory } from '../../types/subcategory/subCategoryModel';
 
-const categorySchema = new Schema<ISubCategory>(
+const subCategorySchema = new Schema<ISubCategory>(
   {
     subCategoryName: { type: String, required: true },
     categoryId: { type: String, required: true },
@@ -14,5 +14,5 @@ const categorySchema = new Schema<ISubCategory>(
   { timestamps: true },
 );
 
-const subCategoryModel = model<ISubCategory>('subcategory', categorySchema);
+const subCategoryModel = model<ISubCategory>('subcategory', subCategorySchema);
 export default subCategoryModel;

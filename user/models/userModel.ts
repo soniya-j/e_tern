@@ -15,6 +15,7 @@ const usersSchema = new Schema<IUsers>(
     interest: { type: String, default: '' },
     mobileNumberVerified: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
+    status: { type: Number, default: 1 },
   },
   { timestamps: true },
 );

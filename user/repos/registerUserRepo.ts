@@ -1,6 +1,7 @@
-import { IUserBody } from '../../types/user/userTypes';
+import { IUserAuth, IUserBody } from '../../types/user/userTypes';
 import { ObjectID } from '../../utils/objectIdParser';
 import usersModel from '../models/userModel';
+import userAuthModel from '../models/userAuthModel';
 
 export const checkUserExist = async (
   userName: string,
@@ -36,6 +37,28 @@ export const setUserVerified = async (id: string): Promise<{ _id: string } | nul
   );
 };
 
+export const saveUserToken = async (
+  userId: string,
+  deviceId: string,
+  deviceType: string,
+  authToken: string,
+): Promise<IUserAuth | null> => {
+  const existingSession = await userAuthModel.findOne({
+    userId,
+    deviceType,
+    isActive: true,
+  });
+  if (!existingSession) {
+    return await userAuthModel.create({ userId, deviceId, deviceType, authToken, isActive: true });
+  } else {
+    return await userAuthModel.findOneAndUpdate(
+      { userId, deviceType, isActive: true },
+      { authToken, deviceId },
+      { new: true },
+    );
+  }
+};
+
 export const uploadAvatar = async (
   id: string,
   imageUrl: string,
@@ -45,5 +68,24 @@ export const uploadAvatar = async (
     { _id, isDeleted: false },
     { avatar: imageUrl },
     { new: true },
+  );
+};
+
+export const checkUserNumberExist = async (
+  mobileNumber: number,
+): Promise<{ _id: string } | null> => {
+  return await usersModel
+    .findOne({ mobileNumber, isDeleted: false, status: 1 })
+    .select({ _id: 1 })
+    .lean();
+};
+
+export const updateUserOtp = async (
+  mobileNumber: number,
+  otp: string,
+): Promise<{ _id: string } | null> => {
+  return await usersModel.findOneAndUpdate(
+    { mobileNumber, isDeleted: false, status: 1 },
+    { otp: otp },
   );
 };

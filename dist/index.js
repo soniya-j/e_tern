@@ -5,10 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const userRoutes_1 = __importDefault(require("./user/routes/userRoutes"));
+const activityRoute_1 = __importDefault(require("./activities/routes/activityRoute"));
 const packageRoutes_1 = __importDefault(require("./package/routes/packageRoutes"));
 const categoryRoutes_1 = __importDefault(require("./category/routes/categoryRoutes"));
 const subCategoryRoutes_1 = __importDefault(require("./subcategory/routes/subCategoryRoutes"));
 const packageCostRoutes_1 = __importDefault(require("./packagecost/routes/packageCostRoutes"));
+const courseMaterialRoutes_1 = __importDefault(require("./coursematerial/routes/courseMaterialRoutes"));
 const logger_1 = __importDefault(require("./config/logger"));
 const connectToDatabase_1 = __importDefault(require("./config/connectToDatabase"));
 const errorHandleMiddleware_1 = __importDefault(require("./middleware/errorHandleMiddleware"));
@@ -19,10 +21,12 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/api/user', userRoutes_1.default);
+app.use('/api/activity', activityRoute_1.default);
 app.use('/api/package', packageRoutes_1.default);
 app.use('/api/category', categoryRoutes_1.default);
 app.use('/api/subcategory', subCategoryRoutes_1.default);
 app.use('/api/packagecost', packageCostRoutes_1.default);
+app.use('/api/coursematerial', courseMaterialRoutes_1.default);
 app.use(errorHandleMiddleware_1.default);
 const port = configKeys_1.default.PORT;
 app.listen(port, () => {

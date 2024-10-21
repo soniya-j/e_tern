@@ -1,0 +1,140 @@
+swagger: '3.0.0'
+info:
+  title: Course Material Model API
+  description: API related to course material models
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/coursematerial/all:
+    get:
+      summary: Fetch All Course Materials
+      description: Endpoint to fetch all Course Materials
+      tags:
+        - Course Material Model
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Fetch all Course Materials successfully
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        courseMaterialName:
+                          type: string
+                          example: "Self Help Video"
+                        subCategoryId:
+                          type: string
+                          example: "670d2fd920824883c3100257"
+                        description:
+                          type: string
+                          example: "Self Help video"
+                        courseMaterialUrl:
+                          type: string
+                          example: "upload/coursematerial/sample.jpg"
+                        isActive:
+                          type: boolean
+                          example: true
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred
+
+  /api/coursematerial/by-subcategory/{subCategoryId}:
+    get:
+      summary: Fetch coursematerials by sub category ID
+      description: Endpoint to fetch course materials by a given sub category ID
+      tags:
+        - Course Material Model
+      parameters:
+        - name: subCategoryId
+          in: path
+          required: true
+          description: The ID of the sub category
+          schema:
+            type: string
+            example: "670d2fd920824883c3100257"
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Fetch course materials by sub category ID successfully
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        courseMaterialName:
+                          type: string
+                          example: "Self Help video"
+                        subCategoryId:
+                          type: string
+                          example: "670d2fd920824883c3100257"
+                        description:
+                          type: string
+                          example: "Self Help video"
+                        courseMaterialUrl:
+                          type: string
+                          example: "upload/coursematerial/sample.jpg"
+                        isActive:
+                          type: boolean
+                          example: true
+        404:
+          description: course material not found for the given sub category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No course material found for this sub category
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred
+
+
+components:
+  securitySchemes:
+    JWT:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: JWT Bearer token

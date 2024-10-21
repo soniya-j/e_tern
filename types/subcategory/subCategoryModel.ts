@@ -10,7 +10,7 @@ export interface ISubCategory extends Document {
   isDeleted?: boolean;
 }
 
-export interface ICategoryBody {
+export interface ISubCategoryBody {
   subCategoryName: string;
   categoryId: string;
   imageUrl: string;

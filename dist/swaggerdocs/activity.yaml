@@ -1,0 +1,57 @@
+swagger: '3.0.0'
+info:
+  title: Activities Model API
+  description: API related to Activities models
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local server
+  - url: https://e-learn-k6lb.onrender.com
+    description: Live server
+paths:
+  /api/activity/all:
+    get:
+      summary: get all activities
+      description: Endpoint to get all activities
+      tags:
+        - Activities Model
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Fetch Data Successfully
+                  result:
+                    type: string
+                    example: []
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: JWT token is required.
+
+components:
+  securitySchemes:
+    JWT:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: JWT Bearer token

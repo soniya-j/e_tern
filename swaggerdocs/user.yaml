@@ -40,20 +40,7 @@ paths:
                   type: string
                   format: email
                   example: johndoe@example.com
-                  nullable: true
-                parentName:
-                  type: string
-                  example: JaneDoe
-                  nullable: true
-                parentDob:
-                  type: string
-                  format: date
-                  example: 1980-01-01
-                  nullable: true
-                interest:
-                  type: string
-                  example: Arts
-                  nullable: true
+                  nullable: true                 
 
       responses:
         200:
@@ -101,6 +88,12 @@ paths:
                 otp:
                   type: string
                   example: 123456
+                deviceId:
+                  type: string
+                  example: 123456
+                deviceType:
+                  type: string
+                  example: web
       responses:
         200:
           description: Success response
@@ -177,6 +170,53 @@ paths:
                   error:
                     type: string
                     example: Bad request
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
+
+/api/user/send-otp:
+    post:
+      summary: Send OTP
+      description: Endpoint to Send OTP
+      tags:
+        - Users Model
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mobileNumber:
+                  type: integer
+                  example: 1234567890               
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: OTP Sent successfully
+                  result:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         401:
           description: Unauthorized response
           content:

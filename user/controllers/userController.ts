@@ -3,12 +3,24 @@ import {
   registerUserUseCase,
   uploadAvatarUseCase,
   verifyOtpUseCase,
+  sendOtpUseCase,
 } from '../useCases/userUseCase';
 import asyncHandler from 'express-async-handler';
 import { responseMessages } from '../../config/localization';
 import { IOtpBody, IUserBody } from '../../types/user/userTypes';
+import { HttpStatus } from '../../common/httpStatus';
+import { validationResult } from 'express-validator';
 
 export const registerUser = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+
   const data = req.body as IUserBody;
   await registerUserUseCase(data);
   res.status(201).json({
@@ -19,6 +31,15 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
 });
 
 export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+
   const data = req.body as IOtpBody;
   const result = await verifyOtpUseCase(data);
   res.status(201).json({
@@ -49,3 +70,22 @@ export const uploadAvatar = async (req: Request, res: Response) => {
     result: imageUrl,
   });
 };
+
+export const sendOtp = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+
+  const data = req.body as IOtpBody;
+  const result = await sendOtpUseCase(data);
+  res.status(201).json({
+    success: true,
+    message: responseMessages.otp_send_success,
+    result,
+  });
+});

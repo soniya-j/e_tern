@@ -3,13 +3,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserOtp = exports.checkUserNumberExist = exports.uploadAvatar = exports.saveUserToken = exports.setUserVerified = exports.verifyOtp = exports.createUser = exports.checkUserExist = void 0;
+exports.getProfile = exports.updateUserOtp = exports.checkUserNumberExist = exports.uploadAvatar = exports.saveUserToken = exports.setUserVerified = exports.verifyOtp = exports.createUser = exports.checkUserExist = void 0;
 const objectIdParser_1 = require("../../utils/objectIdParser");
 const userModel_1 = __importDefault(require("../models/userModel"));
 const userAuthModel_1 = __importDefault(require("../models/userAuthModel"));
-const checkUserExist = async (userName, mobileNumber) => {
+const checkUserExist = async (
+//fullName: string,
+mobileNumber) => {
     return await userModel_1.default
-        .findOne({ $or: [{ userName }, { mobileNumber }] })
+        //.findOne({ $or: [{ userName }, { mobileNumber }] })
+        .findOne({ mobileNumber })
         .select({ _id: 1 })
         .lean();
 };
@@ -61,3 +64,7 @@ const updateUserOtp = async (mobileNumber, otp) => {
     return await userModel_1.default.findOneAndUpdate({ mobileNumber, isDeleted: false, status: 1 }, { otp: otp });
 };
 exports.updateUserOtp = updateUserOtp;
+const getProfile = async (userId) => {
+    return await userModel_1.default.findOne({ _id: userId }).lean();
+};
+exports.getProfile = getProfile;

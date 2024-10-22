@@ -45,7 +45,7 @@ const getPackageCostsByPackageId = async (req, res) => {
         }
         return res.status(httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: 'An unexpected error occurred',
+            message: localization_1.responseMessages.unexpected_error,
         });
     }
 };

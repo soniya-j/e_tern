@@ -13,4 +13,5 @@ router.post('/register', userRequest_1.userRegisterValidation, userController_1.
 router.post('/verify-otp', userRequest_1.verifyOtpValidation, userController_1.verifyOtp);
 router.post('/upload-avatar', authentication_1.authenticateUser, multer_1.default, userController_1.uploadAvatar);
 router.post('/send-otp', userRequest_1.sendOtpValidation, userController_1.sendOtp);
+router.get('/profile/:userId', userRequest_1.getProfileValidation, userController_1.getProfile);
 exports.default = router;

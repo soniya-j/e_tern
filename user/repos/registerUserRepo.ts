@@ -1,14 +1,15 @@
-import { IUserAuth, IUserBody } from '../../types/user/userTypes';
+import { IUserAuth, IUserBody, IUsers } from '../../types/user/userTypes';
 import { ObjectID } from '../../utils/objectIdParser';
 import usersModel from '../models/userModel';
 import userAuthModel from '../models/userAuthModel';
 
 export const checkUserExist = async (
-  userName: string,
+  //fullName: string,
   mobileNumber: number,
 ): Promise<{ _id: string } | null> => {
   return await usersModel
-    .findOne({ $or: [{ userName }, { mobileNumber }] })
+    //.findOne({ $or: [{ userName }, { mobileNumber }] })
+    .findOne({ mobileNumber })
     .select({ _id: 1 })
     .lean();
 };
@@ -88,4 +89,8 @@ export const updateUserOtp = async (
     { mobileNumber, isDeleted: false, status: 1 },
     { otp: otp },
   );
+};
+
+export const getProfile = async (userId: string): Promise<IUsers[] | null> => {
+  return await usersModel.findOne({ _id: userId }).lean();
 };

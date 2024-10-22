@@ -38,16 +38,14 @@ const getSubCategoriesByCategoryId = async (req, res) => {
     }
     catch (error) {
         if (error instanceof appError_1.default) {
-            // Custom application error
             return res.status(error.statusCode).json({
                 success: false,
                 message: error.message,
             });
         }
-        // Unexpected errors (could log the error for debugging)
         return res.status(httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: 'An unexpected error occurred',
+            message: localization_1.responseMessages.unexpected_error,
         });
     }
 };

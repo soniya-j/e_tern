@@ -1,11 +1,11 @@
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 
 export const userRegisterValidation = [
-  body('userName')
+  body('fullName')
     .notEmpty()
-    .withMessage('userName is required')
+    .withMessage('fullName is required')
     .isString()
-    .withMessage('userName must be a string'),
+    .withMessage('fullName must be a string'),
 
   body('mobileNumber')
     .notEmpty()
@@ -67,4 +67,12 @@ export const sendOtpValidation = [
     .withMessage('mobileNumber is required')
     .isNumeric()
     .withMessage('mobileNumber must be a number'),
+];
+
+export const getProfileValidation = [
+  param('userId')
+    .notEmpty()
+    .withMessage('userId is required')
+    .isMongoId()
+    .withMessage('Invalid userId format'),
 ];

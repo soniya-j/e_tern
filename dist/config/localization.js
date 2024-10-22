@@ -19,4 +19,5 @@ exports.responseMessages = {
     otp_verify_success: 'OTP verified successfully',
     registration_success: 'Registered user successfully',
     otp_send_success: 'OTP sent successfully',
+    unexpected_error: 'An unexpected error occurred',
 };

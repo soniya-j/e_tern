@@ -37,17 +37,15 @@ export const getCourseMaterialsBySubCategoryId = async (req: Request, res: Respo
     });
   } catch (error) {
     if (error instanceof AppError) {
-      // Custom application error
       return res.status(error.statusCode).json({
         success: false,
         message: error.message,
       });
     }
 
-    // Unexpected errors (could log the error for debugging)
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: 'An unexpected error occurred',
+      message: responseMessages.unexpected_error,
     });
   }
 };

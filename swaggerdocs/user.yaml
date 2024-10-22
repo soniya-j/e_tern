@@ -19,7 +19,7 @@ paths:
             schema:
               type: object
               properties:
-                userName:
+                fullName:
                   type: string
                   example: JohnDoe
                 mobileNumber:
@@ -227,6 +227,62 @@ paths:
                   error:
                     type: string
                     example: Unauthorized user
+
+/api/user/profile/{userId}:
+    get:
+      summary: Fetch profile by user ID
+      description: Endpoint to fetch profile by user ID
+      tags:
+        - Users Model
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user
+          schema:
+            type: string
+            example: "670d2fd920824883c3100257"
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Fetch users by user ID successfully
+                  result:
+                    type: array
+                    items:
+                      type: object                     
+        404:
+          description: User not found for the given UserId
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No profile found for this userId
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred
+
 
 components:
   securitySchemes:

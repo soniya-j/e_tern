@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
+exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
 const authentication_1 = require("../../authentication/authentication");
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
@@ -12,12 +12,13 @@ const registerUserRepo_1 = require("../repos/registerUserRepo");
 const imageUploader_1 = require("../../utils/imageUploader");
 const registerUserUseCase = async (data) => {
     //check userAlready exist
-    const userExist = await (0, registerUserRepo_1.checkUserExist)(data.userName, data.mobileNumber);
+    const userExist = await (0, registerUserRepo_1.checkUserExist)(data.mobileNumber);
+    //const userExist = await checkUserExist(data.fullName, data.mobileNumber);
     if (userExist)
         throw new appError_1.default('User Already Exist', httpStatus_1.HttpStatus.BAD_REQUEST);
     //send an otp to the mobileNumber provided
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    await (0, twilioService_1.sendOtp)(data.mobileNumber, otp);
+    //await sendOtp(data.mobileNumber, otp);
     //if not insert the data in database
     data.status = 1;
     await (0, registerUserRepo_1.createUser)(data, otp);
@@ -55,3 +56,11 @@ const sendOtpUseCase = async (data) => {
     return otp;
 };
 exports.sendOtpUseCase = sendOtpUseCase;
+const getProfileUseCase = async (userId) => {
+    const result = await (0, registerUserRepo_1.getProfile)(userId);
+    if (!result || result.length === 0) {
+        throw new appError_1.default('No User found for the given user ID', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    return result;
+};
+exports.getProfileUseCase = getProfileUseCase;

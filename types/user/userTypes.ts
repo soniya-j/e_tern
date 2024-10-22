@@ -1,7 +1,7 @@
 import { Document } from 'mongoose';
 
 export interface IUsers extends Document {
-  userName: string;
+  fullName: string;
   mobileNumber: number;
   dob: string;
   userType: 'child' | 'teenager' | 'adult';
@@ -26,7 +26,7 @@ export interface IUserAuth extends Document {
 }
 
 export interface IUserBody {
-  userName: string;
+  fullName: string;
   mobileNumber: number;
   dob: string;
   userType: 'child' | 'teenager' | 'adult';

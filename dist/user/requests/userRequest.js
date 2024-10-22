@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendOtpValidation = exports.verifyOtpValidation = exports.userRegisterValidation = void 0;
+exports.getProfileValidation = exports.sendOtpValidation = exports.verifyOtpValidation = exports.userRegisterValidation = void 0;
 const express_validator_1 = require("express-validator");
 exports.userRegisterValidation = [
-    (0, express_validator_1.body)('userName')
+    (0, express_validator_1.body)('fullName')
         .notEmpty()
-        .withMessage('userName is required')
+        .withMessage('fullName is required')
         .isString()
-        .withMessage('userName must be a string'),
+        .withMessage('fullName must be a string'),
     (0, express_validator_1.body)('mobileNumber')
         .notEmpty()
         .withMessage('mobileNumber is required')
@@ -60,4 +60,11 @@ exports.sendOtpValidation = [
         .withMessage('mobileNumber is required')
         .isNumeric()
         .withMessage('mobileNumber must be a number'),
+];
+exports.getProfileValidation = [
+    (0, express_validator_1.param)('userId')
+        .notEmpty()
+        .withMessage('userId is required')
+        .isMongoId()
+        .withMessage('Invalid userId format'),
 ];

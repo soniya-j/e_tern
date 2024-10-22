@@ -4,7 +4,10 @@ import {
   getCourseMaterialsBySubCategoryId,
 } from '../controllers/courseMaterialController';
 //import { authenticateUser } from '../../middleware/authentication';
-import { getCourseMaterialBySubCategoryIdValidation } from '../requests/courseMaterialRequest';
+import {
+  getCourseMaterialBySubCategoryIdValidation,
+  // trackCourseMaterialValidation,
+} from '../requests/courseMaterialRequest';
 
 const router = Router();
 
@@ -15,5 +18,7 @@ router.get(
   getCourseMaterialBySubCategoryIdValidation,
   getCourseMaterialsBySubCategoryId,
 );
+
+//router.post('/track-view', trackCourseMaterialValidation, trackCourseMaterialView);
 
 export default router;

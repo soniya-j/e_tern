@@ -3,7 +3,7 @@ import { IUsers } from '../../types/user/userTypes';
 
 const usersSchema = new Schema<IUsers>(
   {
-    userName: { type: String, required: true },
+    fullName: { type: String, required: true },
     mobileNumber: { type: Number, required: true },
     dob: { type: String, required: true },
     userType: { type: String, enum: ['child', 'teenager', 'adult'], required: true },

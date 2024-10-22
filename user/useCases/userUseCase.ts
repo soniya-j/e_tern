@@ -12,16 +12,18 @@ import {
   verifyOtp,
   checkUserNumberExist,
   updateUserOtp,
+  getProfile,
 } from '../repos/registerUserRepo';
 import { processAndUploadImage } from '../../utils/imageUploader';
 
 export const registerUserUseCase = async (data: IUserBody): Promise<boolean> => {
   //check userAlready exist
-  const userExist = await checkUserExist(data.userName, data.mobileNumber);
+  const userExist = await checkUserExist(data.mobileNumber);
+  //const userExist = await checkUserExist(data.fullName, data.mobileNumber);
   if (userExist) throw new AppError('User Already Exist', HttpStatus.BAD_REQUEST);
   //send an otp to the mobileNumber provided
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  await sendOtp(data.mobileNumber, otp);
+  //await sendOtp(data.mobileNumber, otp);
   //if not insert the data in database
   data.status = 1;
   await createUser(data, otp);
@@ -57,4 +59,12 @@ export const sendOtpUseCase = async (data: IOtpBody): Promise<string> => {
   await sendOtp(data.mobileNumber, otp);
   await updateUserOtp(data.mobileNumber, otp);
   return otp;
+};
+
+export const getProfileUseCase = async (userId: string): Promise<IUserBody[]> => {
+  const result = await getProfile(userId);
+  if (!result || result.length === 0) {
+    throw new AppError('No User found for the given user ID', HttpStatus.NOT_FOUND);
+  }
+  return result;
 };

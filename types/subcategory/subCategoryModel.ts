@@ -1,6 +1,7 @@
 import { Document } from 'mongoose';
 
 export interface ISubCategory extends Document {
+  _id: string;
   subCategoryName: string;
   categoryId: string;
   imageUrl: string;
@@ -16,4 +17,10 @@ export interface ISubCategoryBody {
   imageUrl: string;
   description?: string;
   sorting: number;
+}
+
+export interface ISubCategoryWithTracking extends ISubCategory {
+  totalMaterials: number;
+  viewedMaterials: number;
+  percentageViewed: number;
 }

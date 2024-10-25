@@ -8,5 +8,5 @@ const router = (0, express_1.Router)();
 //router.get('/all', authenticateUser, getCategories);
 router.get('/all', courseMaterialController_1.getCourseMaterials);
 router.get('/by-subcategory/:subCategoryId', courseMaterialRequest_1.getCourseMaterialBySubCategoryIdValidation, courseMaterialController_1.getCourseMaterialsBySubCategoryId);
-//router.post('/track-view', trackCourseMaterialValidation, trackCourseMaterialView);
+router.post('/track-view', courseMaterialRequest_1.trackCourseMaterialValidation, courseMaterialController_1.trackCourseMaterialView);
 exports.default = router;

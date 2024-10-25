@@ -2,7 +2,7 @@ import { generateToken } from '../../authentication/authentication';
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
 import { sendOtp } from '../../services/twilioService';
-import { IOtpBody, IUserBody } from '../../types/user/userTypes';
+import { IOtpBody, IUserBody, IUsers } from '../../types/user/userTypes';
 import {
   checkUserExist,
   createUser,
@@ -13,10 +13,15 @@ import {
   checkUserNumberExist,
   updateUserOtp,
   getProfile,
+  updateUser,
+  checkMobileExist,
 } from '../repos/registerUserRepo';
+
+import { getCourseMaterialTrack } from '../../coursematerial/repos/courseMaterialRepo';
+
 import { processAndUploadImage } from '../../utils/imageUploader';
 
-export const registerUserUseCase = async (data: IUserBody): Promise<boolean> => {
+export const registerUserUseCase = async (data: IUserBody): Promise<IUsers> => {
   //check userAlready exist
   const userExist = await checkUserExist(data.mobileNumber);
   //const userExist = await checkUserExist(data.fullName, data.mobileNumber);
@@ -26,8 +31,8 @@ export const registerUserUseCase = async (data: IUserBody): Promise<boolean> => 
   //await sendOtp(data.mobileNumber, otp);
   //if not insert the data in database
   data.status = 1;
-  await createUser(data, otp);
-  return true;
+  const result = await createUser(data, otp);
+  return result;
 };
 
 export const verifyOtpUseCase = async (data: IOtpBody): Promise<{ token: string }> => {
@@ -66,5 +71,23 @@ export const getProfileUseCase = async (userId: string): Promise<IUserBody[]> =>
   if (!result || result.length === 0) {
     throw new AppError('No User found for the given user ID', HttpStatus.NOT_FOUND);
   }
+  return result;
+};
+
+export const getCourseMaterialTrackUseCase = async (
+  userId: string,
+): Promise<{ totalMaterials: number; viewedMaterials: number; percentageViewed: number }> => {
+  const result = await getCourseMaterialTrack(userId);
+  return result;
+};
+
+export const updateUserUseCase = async (userId: string, data: IUserBody): Promise<IUserBody> => {
+  const chkUser = await getProfile(userId);
+  if (!chkUser || chkUser.length === 0) {
+    throw new AppError('No User found for the given user ID', HttpStatus.NOT_FOUND);
+  }
+  const mobileExist = await checkMobileExist(data.mobileNumber, userId);
+  if (mobileExist) throw new AppError('User Already Exist', HttpStatus.BAD_REQUEST);
+  const result = await updateUser(userId, data);
   return result;
 };

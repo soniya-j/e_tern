@@ -1,4 +1,5 @@
 import { body, param } from 'express-validator';
+import mongoose from 'mongoose';
 
 export const userRegisterValidation = [
   body('fullName')
@@ -30,12 +31,6 @@ export const userRegisterValidation = [
     .withMessage('email is required')
     .isEmail()
     .withMessage('Invalid email format'),
-
-  //body('parentName').optional().isString().withMessage('parentName must be a string'),
-
-  //body('parentDob').optional().isDate().withMessage('Invalid date format for parentDob'),
-
-  //body('interest').optional().isString().withMessage('interest must be a string'),
 ];
 
 export const verifyOtpValidation = [
@@ -74,5 +69,55 @@ export const getProfileValidation = [
     .notEmpty()
     .withMessage('userId is required')
     .isMongoId()
-    .withMessage('Invalid userId format'),
+    .withMessage('Invalid userId format')
+    .custom((value) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid userId format');
+      }
+      return true;
+    }),
+];
+
+export const courseMaterialTrackValidation = [
+  param('userId')
+    .notEmpty()
+    .withMessage('userId is required')
+    .isMongoId()
+    .withMessage('Invalid userId format')
+    .custom((value) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid userId format');
+      }
+      return true;
+    }),
+];
+
+export const userUpdateValidation = [
+  param('userId')
+    .notEmpty()
+    .withMessage('userId is required')
+    .isMongoId()
+    .withMessage('Invalid userId format')
+    .custom((value) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid userId format');
+      }
+      return true;
+    }),
+
+  body('fullName').optional().isString().withMessage('fullName must be a string'),
+
+  body('mobileNumber').optional().isNumeric().withMessage('mobileNumber must be a number'),
+
+  body('dob').optional().isDate().withMessage('Invalid date format'),
+
+  body('userType').optional().isIn(['child', 'teenager', 'adult']).withMessage('Invalid userType'),
+
+  body('email').optional().isEmail().withMessage('Invalid email format'),
+
+  body('parentName').optional().isString().withMessage('parentName must be a string'),
+
+  body('parentDob').optional().isDate().withMessage('Invalid date format for parentDob'),
+
+  body('interest').optional().isString().withMessage('interest must be a string'),
 ];

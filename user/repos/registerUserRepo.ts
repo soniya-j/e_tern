@@ -2,6 +2,8 @@ import { IUserAuth, IUserBody, IUsers } from '../../types/user/userTypes';
 import { ObjectID } from '../../utils/objectIdParser';
 import usersModel from '../models/userModel';
 import userAuthModel from '../models/userAuthModel';
+import { HttpStatus } from '../../common/httpStatus';
+import AppError from '../../common/appError';
 
 export const checkUserExist = async (
   //fullName: string,
@@ -14,9 +16,9 @@ export const checkUserExist = async (
     .lean();
 };
 
-export const createUser = async (data: IUserBody, otp: string): Promise<boolean> => {
-  await usersModel.create({ ...data, otp });
-  return true;
+export const createUser = async (data: IUserBody, otp: string): Promise<IUsers> => {
+  const user = await usersModel.create({ ...data, otp });
+  return user;
 };
 
 export const verifyOtp = async (
@@ -93,4 +95,33 @@ export const updateUserOtp = async (
 
 export const getProfile = async (userId: string): Promise<IUsers[] | null> => {
   return await usersModel.findOne({ _id: userId }).lean();
+};
+
+export const checkUserIdExist = async (userId: string): Promise<{ _id: string } | null> => {
+  return await usersModel.findOne({ _id: userId }).select({ _id: 1 }).lean();
+};
+
+export const updateUser = async (id: string, data: IUserBody): Promise<IUserBody> => {
+  const _id = ObjectID(id);
+  const obj = { modifiedOn: new Date().toISOString(), ...data };
+  const updatedData = await usersModel.findOneAndUpdate({ _id }, obj, {
+    new: true,
+  });
+  if (!updatedData) {
+    throw new AppError('Something went wrong', HttpStatus.BAD_REQUEST);
+  }
+  return updatedData;
+};
+
+export const checkMobileExist = async (
+  mobileNumber: number,
+  userId: string,
+): Promise<{ _id: string } | null> => {
+  return await usersModel
+    .findOne({
+      mobileNumber,
+      _id: { $ne: userId },
+    })
+    .select({ _id: 1 })
+    .lean();
 };

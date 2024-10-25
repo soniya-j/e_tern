@@ -130,7 +130,56 @@ paths:
                     type: string
                     example: An error occurred
 
+/api/coursematerial/track-view:
+    post:
+      summary: Track video view
+      description: Track video view
+      tags:
+        - Course Material Model
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  example: 32423423424              
+                courseMaterialId:
+                  type: string
+                  format: string
+                  example: 4123123
+                  nullable: true                 
 
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: data saved successfully
+                  result:
+                    type: string
+                    example: ''
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
+  
 components:
   securitySchemes:
     JWT:

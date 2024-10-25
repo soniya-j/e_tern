@@ -27,10 +27,10 @@ export const getSubCategoriesByCategoryId = async (req: Request, res: Response) 
     });
     return;
   }
-
   try {
     const { categoryId } = req.params;
-    const result = await getSubCategoriesByCategoryIdUseCase(categoryId);
+    const userId = res.locals.userId as string; // get userId from locals ( using JWT middleware )
+    const result = await getSubCategoriesByCategoryIdUseCase(categoryId, userId);
     return res.status(200).json({
       success: true,
       message: responseMessages.response_success_get,
@@ -43,7 +43,6 @@ export const getSubCategoriesByCategoryId = async (req: Request, res: Response) 
         message: error.message,
       });
     }
-
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: responseMessages.unexpected_error,

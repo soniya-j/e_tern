@@ -5,6 +5,8 @@ import {
   verifyOtpUseCase,
   sendOtpUseCase,
   getProfileUseCase,
+  getCourseMaterialTrackUseCase,
+  updateUserUseCase,
 } from '../useCases/userUseCase';
 import asyncHandler from 'express-async-handler';
 import { responseMessages } from '../../config/localization';
@@ -22,13 +24,12 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
     });
     return;
   }
-
   const data = req.body as IUserBody;
-  await registerUserUseCase(data);
+  const result = await registerUserUseCase(data);
   res.status(201).json({
     success: true,
     message: responseMessages.registration_success,
-    result: '',
+    result: result,
   });
 });
 
@@ -124,3 +125,55 @@ export const getProfile = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const courseMaterialTrack = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+
+  try {
+    const { userId } = req.params;
+    const result = await getCourseMaterialTrackUseCase(userId);
+    return res.status(200).json({
+      success: true,
+      message: responseMessages.response_success_get,
+      result: result,
+    });
+  } catch (error) {
+    if (error instanceof AppError) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: responseMessages.unexpected_error,
+    });
+  }
+};
+
+export const updateProfile = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const { userId } = req.params as { userId: string };
+  const data = req.body as IUserBody;
+  const result = await updateUserUseCase(userId, data);
+  res.status(201).json({
+    success: true,
+    message: responseMessages.response_success_put,
+    result: result,
+  });
+});

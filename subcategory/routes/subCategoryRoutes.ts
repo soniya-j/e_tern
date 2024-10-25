@@ -3,7 +3,7 @@ import {
   getSubCategories,
   getSubCategoriesByCategoryId,
 } from '../controllers/subCategoryController';
-//import { authenticateUser } from '../../middleware/authentication';
+import { authenticateUser } from '../../middleware/authentication';
 import { getSubCategoryByCategoryIdValidation } from '../requests/subCategoryRequest';
 
 const router = Router();
@@ -12,6 +12,7 @@ const router = Router();
 router.get('/all', getSubCategories);
 router.get(
   '/by-category/:categoryId',
+  authenticateUser,
   getSubCategoryByCategoryIdValidation,
   getSubCategoriesByCategoryId,
 );

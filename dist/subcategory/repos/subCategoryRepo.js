@@ -10,9 +10,7 @@ class SubCategoryRepo {
         return await subCategoryModel_1.default.find({ isActive: true, isDeleted: false }).sort({ sorting: 1 });
     }
     async findSubCategoriesByCategoryId(categoryId) {
-        return await subCategoryModel_1.default
-            .find({ categoryId, isActive: true, isDeleted: false })
-            .sort({ sorting: 1 });
+        return await subCategoryModel_1.default.find({ categoryId, isActive: true, isDeleted: false }).lean();
     }
 }
 exports.SubCategoryRepo = SubCategoryRepo;

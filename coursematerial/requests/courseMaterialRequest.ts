@@ -1,4 +1,5 @@
 import { param, body } from 'express-validator';
+import mongoose from 'mongoose';
 
 export const getCourseMaterialBySubCategoryIdValidation = [
   param('subCategoryId')
@@ -13,12 +14,25 @@ export const trackCourseMaterialValidation = [
     .notEmpty()
     .withMessage('mobileNumber is required')
     .isString()
-    .withMessage('courseMaterialId must be a number'),
+    .withMessage('courseMaterialId must be a number')
+    .custom((value) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid courseMaterialId format');
+      }
+      return true;
+    }),
   body('userId')
     .notEmpty()
     .withMessage('userId is required')
     .isString()
-    .withMessage('userId must be a string'),
+    .withMessage('userId must be a string')
+    .custom((value) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid userId format');
+      }
+      return true;
+    }),
+
   /*
   body('viewedPercentage')
     .notEmpty()

@@ -14,4 +14,6 @@ router.post('/verify-otp', userRequest_1.verifyOtpValidation, userController_1.v
 router.post('/upload-avatar', authentication_1.authenticateUser, multer_1.default, userController_1.uploadAvatar);
 router.post('/send-otp', userRequest_1.sendOtpValidation, userController_1.sendOtp);
 router.get('/profile/:userId', userRequest_1.getProfileValidation, userController_1.getProfile);
+router.get('/courseMaterialTrack/:userId', userRequest_1.courseMaterialTrackValidation, userController_1.courseMaterialTrack);
+router.put('/profileUpdate/:userId', userRequest_1.userUpdateValidation, userController_1.updateProfile);
 exports.default = router;

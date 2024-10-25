@@ -2,11 +2,12 @@ import { Router } from 'express';
 import {
   getCourseMaterials,
   getCourseMaterialsBySubCategoryId,
+  trackCourseMaterialView,
 } from '../controllers/courseMaterialController';
 //import { authenticateUser } from '../../middleware/authentication';
 import {
   getCourseMaterialBySubCategoryIdValidation,
-  // trackCourseMaterialValidation,
+  trackCourseMaterialValidation,
 } from '../requests/courseMaterialRequest';
 
 const router = Router();
@@ -19,6 +20,6 @@ router.get(
   getCourseMaterialsBySubCategoryId,
 );
 
-//router.post('/track-view', trackCourseMaterialValidation, trackCourseMaterialView);
+router.post('/track-view', trackCourseMaterialValidation, trackCourseMaterialView);
 
 export default router;

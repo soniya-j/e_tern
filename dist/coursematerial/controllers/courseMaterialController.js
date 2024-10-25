@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCourseMaterialsBySubCategoryId = exports.getCourseMaterials = void 0;
+exports.trackCourseMaterialView = exports.getCourseMaterialsBySubCategoryId = exports.getCourseMaterials = void 0;
 const courseMaterialUseCase_1 = require("../useCases/courseMaterialUseCase");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const localization_1 = require("../../config/localization");
@@ -49,3 +49,20 @@ const getCourseMaterialsBySubCategoryId = async (req, res) => {
     }
 };
 exports.getCourseMaterialsBySubCategoryId = getCourseMaterialsBySubCategoryId;
+exports.trackCourseMaterialView = (0, express_async_handler_1.default)(async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({
+            success: false,
+            errors: errors.array(),
+        });
+        return;
+    }
+    const data = req.body;
+    await (0, courseMaterialUseCase_1.trackCourseMaterialUserUseCase)(data);
+    res.status(201).json({
+        success: true,
+        message: localization_1.responseMessages.response_success_post,
+        result: '',
+    });
+});

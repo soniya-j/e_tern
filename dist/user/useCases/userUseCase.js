@@ -3,12 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
+exports.updateUserUseCase = exports.getCourseMaterialTrackUseCase = exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
 const authentication_1 = require("../../authentication/authentication");
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
 const twilioService_1 = require("../../services/twilioService");
 const registerUserRepo_1 = require("../repos/registerUserRepo");
+const courseMaterialRepo_1 = require("../../coursematerial/repos/courseMaterialRepo");
 const imageUploader_1 = require("../../utils/imageUploader");
 const registerUserUseCase = async (data) => {
     //check userAlready exist
@@ -21,8 +22,8 @@ const registerUserUseCase = async (data) => {
     //await sendOtp(data.mobileNumber, otp);
     //if not insert the data in database
     data.status = 1;
-    await (0, registerUserRepo_1.createUser)(data, otp);
-    return true;
+    const result = await (0, registerUserRepo_1.createUser)(data, otp);
+    return result;
 };
 exports.registerUserUseCase = registerUserUseCase;
 const verifyOtpUseCase = async (data) => {
@@ -64,3 +65,20 @@ const getProfileUseCase = async (userId) => {
     return result;
 };
 exports.getProfileUseCase = getProfileUseCase;
+const getCourseMaterialTrackUseCase = async (userId) => {
+    const result = await (0, courseMaterialRepo_1.getCourseMaterialTrack)(userId);
+    return result;
+};
+exports.getCourseMaterialTrackUseCase = getCourseMaterialTrackUseCase;
+const updateUserUseCase = async (userId, data) => {
+    const chkUser = await (0, registerUserRepo_1.getProfile)(userId);
+    if (!chkUser || chkUser.length === 0) {
+        throw new appError_1.default('No User found for the given user ID', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    const mobileExist = await (0, registerUserRepo_1.checkMobileExist)(data.mobileNumber, userId);
+    if (mobileExist)
+        throw new appError_1.default('User Already Exist', httpStatus_1.HttpStatus.BAD_REQUEST);
+    const result = await (0, registerUserRepo_1.updateUser)(userId, data);
+    return result;
+};
+exports.updateUserUseCase = updateUserUseCase;

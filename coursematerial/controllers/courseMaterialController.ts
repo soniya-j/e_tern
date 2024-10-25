@@ -2,12 +2,14 @@ import { Request, Response } from 'express';
 import {
   getAllCourseMaterialUseCase,
   getCourseMaterialBySubCategoryIdUseCase,
+  trackCourseMaterialUserUseCase,
 } from '../useCases/courseMaterialUseCase';
 import asyncHandler from 'express-async-handler';
 import { responseMessages } from '../../config/localization';
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
 import { validationResult } from 'express-validator';
+import { ITrackCourseMaterialView } from '../../types/coursematerial/courseMaterialModel';
 
 export const getCourseMaterials = asyncHandler(async (req: Request, res: Response) => {
   const result = await getAllCourseMaterialUseCase();
@@ -49,3 +51,21 @@ export const getCourseMaterialsBySubCategoryId = async (req: Request, res: Respo
     });
   }
 };
+
+export const trackCourseMaterialView = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const data = req.body as ITrackCourseMaterialView;
+  await trackCourseMaterialUserUseCase(data);
+  res.status(201).json({
+    success: true,
+    message: responseMessages.response_success_post,
+    result: '',
+  });
+});

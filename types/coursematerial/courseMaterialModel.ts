@@ -17,3 +17,10 @@ export interface ICourseMaterialBody {
   description?: string;
   sorting: number;
 }
+
+export interface ITrackCourseMaterialView extends Document {
+  userId: string;
+  courseMaterialId: string;
+  viewedPercentage?: number;
+  isActive: boolean;
+}

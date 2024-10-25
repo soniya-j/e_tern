@@ -16,9 +16,9 @@ export const checkUserExist = async (
     .lean();
 };
 
-export const createUser = async (data: IUserBody, otp: string): Promise<IUsers> => {
+export const createUser = async (data: IUserBody, otp: string): Promise<Pick<IUsers, '_id'>> => {
   const user = await usersModel.create({ ...data, otp });
-  return user;
+  return { _id: user._id };
 };
 
 export const verifyOtp = async (
@@ -124,4 +124,26 @@ export const checkMobileExist = async (
     })
     .select({ _id: 1 })
     .lean();
+};
+
+/*
+
+export const getProfileById = async (
+  userId: string
+): Promise<Partial<IUsers> & { _id: string; fullName: string; mobileNumber: number; email: string; status: number }> => {
+  const profile = await usersModel
+    .findOne({ _id: userId })
+    .select({ _id: 1, fullName: 1, mobileNumber: 1, email: 1, status: 1 })
+    .lean();
+  return profile as Partial<IUsers> & { _id: string; fullName: string; mobileNumber: number; email: string; status: number };
+};
+
+export const getProfileById = async (userId: string): Promise<Partial<IUsers> & { _id: string }> => {
+  const profile = await usersModel.findOne({ _id: userId }, '_id fullName mobileNumber dob userType email mobileNumberVerified status').lean();
+  return profile as Partial<IUsers> & { _id: string };
+};
+*/
+
+export const getProfileById = async (userId: string): Promise<IUserBody | null> => {
+  return await usersModel.findOne({ _id: userId }).lean();
 };

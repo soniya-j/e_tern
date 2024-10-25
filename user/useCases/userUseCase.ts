@@ -15,13 +15,14 @@ import {
   getProfile,
   updateUser,
   checkMobileExist,
+  getProfileById,
 } from '../repos/registerUserRepo';
 
 import { getCourseMaterialTrack } from '../../coursematerial/repos/courseMaterialRepo';
 
 import { processAndUploadImage } from '../../utils/imageUploader';
 
-export const registerUserUseCase = async (data: IUserBody): Promise<IUsers> => {
+export const registerUserUseCase = async (data: IUserBody): Promise<Pick<IUsers, '_id'>> => {
   //check userAlready exist
   const userExist = await checkUserExist(data.mobileNumber);
   //const userExist = await checkUserExist(data.fullName, data.mobileNumber);
@@ -35,14 +36,18 @@ export const registerUserUseCase = async (data: IUserBody): Promise<IUsers> => {
   return result;
 };
 
-export const verifyOtpUseCase = async (data: IOtpBody): Promise<{ token: string }> => {
+export const verifyOtpUseCase = async (
+  data: IOtpBody,
+): Promise<{ token: string } & Omit<IUserBody, keyof Document>> => {
   const { mobileNumber, otp, deviceId, deviceType } = data;
   const otpCheck = await verifyOtp(mobileNumber, otp);
   if (!otpCheck) throw new AppError('Invalid OTP', HttpStatus.BAD_REQUEST);
   await setUserVerified(otpCheck._id);
   const token = generateToken({ role: 'user', userId: otpCheck._id });
   await saveUserToken(otpCheck._id, deviceId, deviceType, token);
-  return { token };
+  const result = await getProfileById(otpCheck._id);
+  if (!result) throw new AppError('User profile not found', HttpStatus.NOT_FOUND);
+  return { token, ...result };
 };
 
 export const uploadAvatarUseCase = async (

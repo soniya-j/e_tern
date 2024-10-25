@@ -34,7 +34,11 @@ const verifyOtpUseCase = async (data) => {
     await (0, registerUserRepo_1.setUserVerified)(otpCheck._id);
     const token = (0, authentication_1.generateToken)({ role: 'user', userId: otpCheck._id });
     await (0, registerUserRepo_1.saveUserToken)(otpCheck._id, deviceId, deviceType, token);
-    return { token };
+    const result = await (0, registerUserRepo_1.getProfileById)(otpCheck._id);
+    if (!result)
+        throw new appError_1.default('User profile not found', httpStatus_1.HttpStatus.NOT_FOUND);
+    // Flatten token and user data into a single object
+    return { token, ...result };
 };
 exports.verifyOtpUseCase = verifyOtpUseCase;
 const uploadAvatarUseCase = async (file, userId) => {

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkMobileExist = exports.updateUser = exports.checkUserIdExist = exports.getProfile = exports.updateUserOtp = exports.checkUserNumberExist = exports.uploadAvatar = exports.saveUserToken = exports.setUserVerified = exports.verifyOtp = exports.createUser = exports.checkUserExist = void 0;
+exports.getProfileById = exports.checkMobileExist = exports.updateUser = exports.checkUserIdExist = exports.getProfile = exports.updateUserOtp = exports.checkUserNumberExist = exports.uploadAvatar = exports.saveUserToken = exports.setUserVerified = exports.verifyOtp = exports.createUser = exports.checkUserExist = void 0;
 const objectIdParser_1 = require("../../utils/objectIdParser");
 const userModel_1 = __importDefault(require("../models/userModel"));
 const userAuthModel_1 = __importDefault(require("../models/userAuthModel"));
@@ -21,7 +21,7 @@ mobileNumber) => {
 exports.checkUserExist = checkUserExist;
 const createUser = async (data, otp) => {
     const user = await userModel_1.default.create({ ...data, otp });
-    return user;
+    return { _id: user._id };
 };
 exports.createUser = createUser;
 const verifyOtp = async (mobileNumber, otp) => {
@@ -96,3 +96,24 @@ const checkMobileExist = async (mobileNumber, userId) => {
         .lean();
 };
 exports.checkMobileExist = checkMobileExist;
+/*
+
+export const getProfileById = async (
+  userId: string
+): Promise<Partial<IUsers> & { _id: string; fullName: string; mobileNumber: number; email: string; status: number }> => {
+  const profile = await usersModel
+    .findOne({ _id: userId })
+    .select({ _id: 1, fullName: 1, mobileNumber: 1, email: 1, status: 1 })
+    .lean();
+  return profile as Partial<IUsers> & { _id: string; fullName: string; mobileNumber: number; email: string; status: number };
+};
+
+export const getProfileById = async (userId: string): Promise<Partial<IUsers> & { _id: string }> => {
+  const profile = await usersModel.findOne({ _id: userId }, '_id fullName mobileNumber dob userType email mobileNumberVerified status').lean();
+  return profile as Partial<IUsers> & { _id: string };
+};
+*/
+const getProfileById = async (userId) => {
+    return await userModel_1.default.findOne({ _id: userId }).lean();
+};
+exports.getProfileById = getProfileById;

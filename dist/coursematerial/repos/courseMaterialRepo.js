@@ -7,15 +7,28 @@ exports.getCourseMaterialTrackBySubCategory = exports.getCourseMaterialTrack = e
 const courseMaterialModel_1 = __importDefault(require("../models/courseMaterialModel"));
 const courseMaterialViewModel_1 = __importDefault(require("../models/courseMaterialViewModel"));
 class CourseMaterialRepo {
-    async findAllSubCategories() {
+    async findAllCourseMaterials() {
         return await courseMaterialModel_1.default
             .find({ isActive: true, isDeleted: false })
             .sort({ sorting: 1 });
     }
-    async findSubCategoriesByCategoryId(subCategoryId) {
-        return await courseMaterialModel_1.default
+    async findCourseMaterialBySubCategoryId(subCategoryId, userId) {
+        const courseMaterials = await courseMaterialModel_1.default
             .find({ subCategoryId, isActive: true, isDeleted: false })
-            .sort({ sorting: 1 });
+            .sort({ sorting: 1 })
+            .lean();
+        if (userId) {
+            // Fetch viewed materials for the user
+            const viewedMaterials = await courseMaterialViewModel_1.default.find({ userId, isActive: true }).lean();
+            const viewedMaterialIds = new Set(viewedMaterials.map((view) => view.courseMaterialId.toString()));
+            return courseMaterials.map((material) => ({
+                ...material,
+                viewedStatus: viewedMaterialIds.has(material._id.toString()), // Add viewed status
+            }));
+        }
+        else {
+            return courseMaterials;
+        }
     }
 }
 exports.CourseMaterialRepo = CourseMaterialRepo;

@@ -1,7 +1,7 @@
 import { generateToken } from '../../authentication/authentication';
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
-import { sendOtp } from '../../services/twilioService';
+//import { sendOtp } from '../../services/twilioService';
 import { IOtpBody, IUserBody, IUsers } from '../../types/user/userTypes';
 import {
   checkUserExist,
@@ -66,7 +66,9 @@ export const sendOtpUseCase = async (data: IOtpBody): Promise<string> => {
   const userExist = await checkUserNumberExist(data.mobileNumber);
   if (!userExist) throw new AppError('User Not Found', HttpStatus.BAD_REQUEST);
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  await sendOtp(data.mobileNumber, otp);
+
+  //await sendOtp(data.mobileNumber, otp);
+
   await updateUserOtp(data.mobileNumber, otp);
   return otp;
 };

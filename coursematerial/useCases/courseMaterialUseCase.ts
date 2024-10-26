@@ -14,21 +14,37 @@ import { checkUserIdExist } from '../../user/repos/registerUserRepo';
 
 export const getAllCourseMaterialUseCase = async (): Promise<ICourseMaterial[]> => {
   const courseMaterialRepo = new CourseMaterialRepo();
-  const result = await courseMaterialRepo.findAllSubCategories();
+  const result = await courseMaterialRepo.findAllCourseMaterials();
   if (!result) throw new AppError('No data found', HttpStatus.NOT_FOUND);
   return result;
 };
 
+/*
 export const getCourseMaterialBySubCategoryIdUseCase = async (
   categoryId: string,
 ): Promise<ICourseMaterial[]> => {
   const courseMaterialRepo = new CourseMaterialRepo();
-  const result = await courseMaterialRepo.findSubCategoriesByCategoryId(categoryId);
-
+  const result = await courseMaterialRepo.findCourseMaterialBySubCategoryId(categoryId);
   if (!result || result.length === 0) {
     throw new AppError('No data found', HttpStatus.NOT_FOUND);
   }
   return result;
+};
+*/
+
+export const getCourseMaterialBySubCategoryIdUseCase = async (
+  categoryId: string,
+  userId: string,
+): Promise<ICourseMaterial[]> => {
+  const courseMaterialRepo = new CourseMaterialRepo();
+  const courseMaterials = await courseMaterialRepo.findCourseMaterialBySubCategoryId(
+    categoryId,
+    userId,
+  );
+  if (!courseMaterials || courseMaterials.length === 0) {
+    throw new AppError('No data found', HttpStatus.NOT_FOUND);
+  }
+  return courseMaterials;
 };
 
 export const trackCourseMaterialUserUseCase = async (

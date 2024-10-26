@@ -10,19 +10,31 @@ const courseMaterialRepo_1 = require("../repos/courseMaterialRepo");
 const registerUserRepo_1 = require("../../user/repos/registerUserRepo");
 const getAllCourseMaterialUseCase = async () => {
     const courseMaterialRepo = new courseMaterialRepo_1.CourseMaterialRepo();
-    const result = await courseMaterialRepo.findAllSubCategories();
+    const result = await courseMaterialRepo.findAllCourseMaterials();
     if (!result)
         throw new appError_1.default('No data found', httpStatus_1.HttpStatus.NOT_FOUND);
     return result;
 };
 exports.getAllCourseMaterialUseCase = getAllCourseMaterialUseCase;
-const getCourseMaterialBySubCategoryIdUseCase = async (categoryId) => {
+/*
+export const getCourseMaterialBySubCategoryIdUseCase = async (
+  categoryId: string,
+): Promise<ICourseMaterial[]> => {
+  const courseMaterialRepo = new CourseMaterialRepo();
+  const result = await courseMaterialRepo.findCourseMaterialBySubCategoryId(categoryId);
+  if (!result || result.length === 0) {
+    throw new AppError('No data found', HttpStatus.NOT_FOUND);
+  }
+  return result;
+};
+*/
+const getCourseMaterialBySubCategoryIdUseCase = async (categoryId, userId) => {
     const courseMaterialRepo = new courseMaterialRepo_1.CourseMaterialRepo();
-    const result = await courseMaterialRepo.findSubCategoriesByCategoryId(categoryId);
-    if (!result || result.length === 0) {
+    const courseMaterials = await courseMaterialRepo.findCourseMaterialBySubCategoryId(categoryId, userId);
+    if (!courseMaterials || courseMaterials.length === 0) {
         throw new appError_1.default('No data found', httpStatus_1.HttpStatus.NOT_FOUND);
     }
-    return result;
+    return courseMaterials;
 };
 exports.getCourseMaterialBySubCategoryIdUseCase = getCourseMaterialBySubCategoryIdUseCase;
 const trackCourseMaterialUserUseCase = async (data) => {

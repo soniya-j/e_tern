@@ -6,16 +6,33 @@ import {
 } from '../../types/coursematerial/courseMaterialModel';
 
 export class CourseMaterialRepo {
-  async findAllSubCategories(): Promise<ICourseMaterial[]> {
+  async findAllCourseMaterials(): Promise<ICourseMaterial[]> {
     return await courseMaterialModel
       .find({ isActive: true, isDeleted: false })
       .sort({ sorting: 1 });
   }
 
-  async findSubCategoriesByCategoryId(subCategoryId: string): Promise<ICourseMaterial[]> {
-    return await courseMaterialModel
+  async findCourseMaterialBySubCategoryId(
+    subCategoryId: string,
+    userId: string,
+  ): Promise<ICourseMaterial[]> {
+    const courseMaterials = await courseMaterialModel
       .find({ subCategoryId, isActive: true, isDeleted: false })
-      .sort({ sorting: 1 });
+      .sort({ sorting: 1 })
+      .lean();
+    if (userId) {
+      // Fetch viewed materials for the user
+      const viewedMaterials = await courseMaterialViewModel.find({ userId, isActive: true }).lean();
+      const viewedMaterialIds = new Set(
+        viewedMaterials.map((view) => view.courseMaterialId.toString()),
+      );
+      return courseMaterials.map((material) => ({
+        ...material,
+        viewedStatus: viewedMaterialIds.has(material._id.toString()), // Add viewed status
+      }));
+    } else {
+      return courseMaterials;
+    }
   }
 }
 

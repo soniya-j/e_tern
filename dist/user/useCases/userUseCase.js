@@ -7,7 +7,6 @@ exports.updateUserUseCase = exports.getCourseMaterialTrackUseCase = exports.getP
 const authentication_1 = require("../../authentication/authentication");
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
-const twilioService_1 = require("../../services/twilioService");
 const registerUserRepo_1 = require("../repos/registerUserRepo");
 const courseMaterialRepo_1 = require("../../coursematerial/repos/courseMaterialRepo");
 const imageUploader_1 = require("../../utils/imageUploader");
@@ -37,7 +36,6 @@ const verifyOtpUseCase = async (data) => {
     const result = await (0, registerUserRepo_1.getProfileById)(otpCheck._id);
     if (!result)
         throw new appError_1.default('User profile not found', httpStatus_1.HttpStatus.NOT_FOUND);
-    // Flatten token and user data into a single object
     return { token, ...result };
 };
 exports.verifyOtpUseCase = verifyOtpUseCase;
@@ -56,7 +54,7 @@ const sendOtpUseCase = async (data) => {
     if (!userExist)
         throw new appError_1.default('User Not Found', httpStatus_1.HttpStatus.BAD_REQUEST);
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    await (0, twilioService_1.sendOtp)(data.mobileNumber, otp);
+    //await sendOtp(data.mobileNumber, otp);
     await (0, registerUserRepo_1.updateUserOtp)(data.mobileNumber, otp);
     return otp;
 };

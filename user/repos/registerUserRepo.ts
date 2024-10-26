@@ -16,9 +16,19 @@ export const checkUserExist = async (
     .lean();
 };
 
+/*
 export const createUser = async (data: IUserBody, otp: string): Promise<Pick<IUsers, '_id'>> => {
   const user = await usersModel.create({ ...data, otp });
   return { _id: user._id };
+};
+*/
+
+export const createUser = async (
+  data: IUserBody,
+  otp: string,
+): Promise<{ _id: string; otp: string }> => {
+  const user = await usersModel.create({ ...data, otp });
+  return { _id: user._id as string, otp };
 };
 
 export const verifyOtp = async (

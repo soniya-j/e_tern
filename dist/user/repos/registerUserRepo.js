@@ -19,9 +19,15 @@ mobileNumber) => {
         .lean();
 };
 exports.checkUserExist = checkUserExist;
+/*
+export const createUser = async (data: IUserBody, otp: string): Promise<Pick<IUsers, '_id'>> => {
+  const user = await usersModel.create({ ...data, otp });
+  return { _id: user._id };
+};
+*/
 const createUser = async (data, otp) => {
     const user = await userModel_1.default.create({ ...data, otp });
-    return { _id: user._id };
+    return { _id: user._id, otp };
 };
 exports.createUser = createUser;
 const verifyOtp = async (mobileNumber, otp) => {

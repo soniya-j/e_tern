@@ -3,18 +3,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCourseMaterialTrackBySubCategory = exports.getCourseMaterialTrack = exports.checkCourseMaterialExist = exports.trackCourseMaterial = exports.checkUserCourseIdExist = exports.CourseMaterialRepo = void 0;
+exports.getCourseMaterialTrackByCategory = exports.getCourseMaterialTrackBySubCategory = exports.getCourseMaterialTrack = exports.checkCourseMaterialExist = exports.trackCourseMaterial = exports.checkUserCourseIdExist = exports.CourseMaterialRepo = void 0;
 const courseMaterialModel_1 = __importDefault(require("../models/courseMaterialModel"));
 const courseMaterialViewModel_1 = __importDefault(require("../models/courseMaterialViewModel"));
+const subCategoryModel_1 = __importDefault(require("../../subcategory/models/subCategoryModel"));
 class CourseMaterialRepo {
     async findAllCourseMaterials() {
         return await courseMaterialModel_1.default
             .find({ isActive: true, isDeleted: false })
             .sort({ sorting: 1 });
     }
-    async findCourseMaterialBySubCategoryId(subCategoryId, userId) {
+    async findCourseMaterialBySubCategoryId(subCategoryId, userId, type) {
         const courseMaterials = await courseMaterialModel_1.default
-            .find({ subCategoryId, isActive: true, isDeleted: false })
+            .find({ subCategoryId, type, isActive: true, isDeleted: false })
             .sort({ sorting: 1 })
             .lean();
         if (userId) {
@@ -23,7 +24,7 @@ class CourseMaterialRepo {
             const viewedMaterialIds = new Set(viewedMaterials.map((view) => view.courseMaterialId.toString()));
             return courseMaterials.map((material) => ({
                 ...material,
-                viewedStatus: viewedMaterialIds.has(material._id.toString()), // Add viewed status
+                viewedStatus: viewedMaterialIds.has(material._id.toString()),
             }));
         }
         else {
@@ -79,3 +80,23 @@ const getCourseMaterialTrackBySubCategory = async (userId, subCategoryId) => {
     return { totalMaterials, viewedMaterials, percentageViewed };
 };
 exports.getCourseMaterialTrackBySubCategory = getCourseMaterialTrackBySubCategory;
+const getCourseMaterialTrackByCategory = async (userId, categoryId) => {
+    const subCategories = await subCategoryModel_1.default.find({ categoryId, isActive: true }).select('_id');
+    const subCategoryIds = subCategories.map((subCategory) => subCategory._id);
+    const courseMaterials = await courseMaterialModel_1.default
+        .find({
+        subCategoryId: { $in: subCategoryIds },
+        isActive: true,
+        isDeleted: false,
+    })
+        .select('_id');
+    const courseMaterialIds = courseMaterials.map((material) => material._id);
+    const viewedMaterials = await courseMaterialViewModel_1.default.countDocuments({
+        userId,
+        courseMaterialId: { $in: courseMaterialIds },
+    });
+    const totalMaterials = courseMaterials.length;
+    const percentageViewed = totalMaterials > 0 ? (viewedMaterials / totalMaterials) * 100 : 0;
+    return { totalMaterials, viewedMaterials, percentageViewed };
+};
+exports.getCourseMaterialTrackByCategory = getCourseMaterialTrackByCategory;

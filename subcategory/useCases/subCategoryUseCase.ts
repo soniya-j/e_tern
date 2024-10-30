@@ -28,11 +28,14 @@ export const getSubCategoriesByCategoryIdUseCase = async (
 
 export const getSubCategoriesByCategoryIdUseCase = async (
   categoryId: string,
+  type: string,
   userId?: string,
 ): Promise<ISubCategoryWithTracking[]> => {
   const subCategoryRepo = new SubCategoryRepo();
-  const subCategories: ISubCategory[] =
-    await subCategoryRepo.findSubCategoriesByCategoryId(categoryId);
+  const subCategories: ISubCategory[] = await subCategoryRepo.findSubCategoriesByCategoryId(
+    categoryId,
+    type,
+  );
   if (!subCategories || subCategories.length === 0) {
     throw new AppError('No subcategories found for the given category', HttpStatus.NOT_FOUND);
   }

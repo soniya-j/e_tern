@@ -31,8 +31,9 @@ export const getCourseMaterialsBySubCategoryId = async (req: Request, res: Respo
 
   try {
     const { subCategoryId } = req.params;
+    const { type } = req.params;
     const userId = res.locals.userId as string; // get userId from locals ( using JWT middleware )
-    const result = await getCourseMaterialBySubCategoryIdUseCase(subCategoryId, userId);
+    const result = await getCourseMaterialBySubCategoryIdUseCase(subCategoryId, userId, type);
     return res.status(200).json({
       success: true,
       message: responseMessages.response_success_get,

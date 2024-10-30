@@ -8,6 +8,7 @@ export interface ICategory extends Document {
   description?: string;
   isActive?: boolean;
   isDeleted?: boolean;
+  type: string;
 }
 
 export interface ICategoryBody {
@@ -16,4 +17,11 @@ export interface ICategoryBody {
   imageUrl: string;
   description?: string;
   sorting: number;
+  type: string;
+}
+
+export interface ICategoryWithTracking extends ICategory {
+  totalMaterials: number;
+  viewedMaterials: number;
+  percentageViewed: number;
 }

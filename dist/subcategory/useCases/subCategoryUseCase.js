@@ -30,9 +30,9 @@ export const getSubCategoriesByCategoryIdUseCase = async (
   return result;
 };
 */
-const getSubCategoriesByCategoryIdUseCase = async (categoryId, userId) => {
+const getSubCategoriesByCategoryIdUseCase = async (categoryId, type, userId) => {
     const subCategoryRepo = new subCategoryRepo_1.SubCategoryRepo();
-    const subCategories = await subCategoryRepo.findSubCategoriesByCategoryId(categoryId);
+    const subCategories = await subCategoryRepo.findSubCategoriesByCategoryId(categoryId, type);
     if (!subCategories || subCategories.length === 0) {
         throw new appError_1.default('No subcategories found for the given category', httpStatus_1.HttpStatus.NOT_FOUND);
     }

@@ -9,10 +9,11 @@ class CategoryRepo {
     async findAllCategories() {
         return await categoryModel_1.default.find({ isActive: true, isDeleted: false }).sort({ sorting: 1 });
     }
-    async findCategoriesByPackageId(packageId) {
+    async findCategoriesByPackageId(packageId, type) {
         return await categoryModel_1.default
-            .find({ packageId, isActive: true, isDeleted: false })
-            .sort({ sorting: 1 });
+            .find({ packageId, type, isActive: true, isDeleted: false })
+            .sort({ sorting: 1 })
+            .lean();
     }
 }
 exports.CategoryRepo = CategoryRepo;

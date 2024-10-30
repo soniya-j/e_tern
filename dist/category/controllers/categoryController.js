@@ -28,8 +28,10 @@ const getCategoriesByPackageId = async (req, res) => {
         return;
     }
     try {
-        const { packageId } = req.params;
-        const result = await (0, categoryUseCase_1.getCategoriesByPackageIdUseCase)(packageId);
+        const { studentId } = req.params;
+        const { type } = req.params;
+        const userId = res.locals.userId; // get userId from locals ( using JWT middleware )
+        const result = await (0, categoryUseCase_1.getCategoriesByPackageIdUseCase)(studentId, type, userId);
         return res.status(200).json({
             success: true,
             message: localization_1.responseMessages.response_success_get,

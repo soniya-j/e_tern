@@ -6,7 +6,10 @@ export class SubCategoryRepo {
     return await subCategoryModel.find({ isActive: true, isDeleted: false }).sort({ sorting: 1 });
   }
 
-  async findSubCategoriesByCategoryId(categoryId: string): Promise<ISubCategory[]> {
-    return await subCategoryModel.find({ categoryId, isActive: true, isDeleted: false }).lean();
+  async findSubCategoriesByCategoryId(categoryId: string, type: string): Promise<ISubCategory[]> {
+    return await subCategoryModel
+      .find({ categoryId, type, isActive: true, isDeleted: false })
+      .sort({ sorting: 1 })
+      .lean();
   }
 }

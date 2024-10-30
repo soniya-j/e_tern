@@ -12,6 +12,11 @@ exports.getCourseMaterialBySubCategoryIdValidation = [
         .withMessage('subCategoryId is required')
         .isMongoId()
         .withMessage('Invalid subCategoryId format'),
+    (0, express_validator_1.param)('type')
+        .notEmpty()
+        .withMessage('type is required')
+        .isIn(['kid', 'parent'])
+        .withMessage('type must be either "kid" or "parent"'),
 ];
 exports.trackCourseMaterialValidation = [
     (0, express_validator_1.body)('courseMaterialId')

@@ -8,6 +8,7 @@ const courseMaterialSchema = new Schema<ICourseMaterial>(
     courseMaterialUrl: { type: String, default: '' },
     description: { type: String, default: '' },
     sorting: { type: Number, default: 1 },
+    type: { type: String, required: true },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
   },

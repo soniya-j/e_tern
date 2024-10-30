@@ -8,4 +8,9 @@ exports.getSubCategoryByCategoryIdValidation = [
         .withMessage('categoryId is required')
         .isMongoId()
         .withMessage('Invalid categoryId format'),
+    (0, express_validator_1.param)('type')
+        .notEmpty()
+        .withMessage('type is required')
+        .isIn(['kid', 'parent'])
+        .withMessage('type must be either "kid" or "parent"'),
 ];

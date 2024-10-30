@@ -28,8 +28,10 @@ export const getCategoriesByPackageId = async (req: Request, res: Response) => {
     return;
   }
   try {
-    const { packageId } = req.params;
-    const result = await getCategoriesByPackageIdUseCase(packageId);
+    const { studentId } = req.params;
+    const { type } = req.params;
+    const userId = res.locals.userId as string; // get userId from locals ( using JWT middleware )
+    const result = await getCategoriesByPackageIdUseCase(studentId, type, userId);
     return res.status(200).json({
       success: true,
       message: responseMessages.response_success_get,

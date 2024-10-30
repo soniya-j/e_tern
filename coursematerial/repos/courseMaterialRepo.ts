@@ -4,6 +4,7 @@ import {
   ICourseMaterial,
   ITrackCourseMaterialView,
 } from '../../types/coursematerial/courseMaterialModel';
+import subCategoryModel from '../../subcategory/models/subCategoryModel';
 
 export class CourseMaterialRepo {
   async findAllCourseMaterials(): Promise<ICourseMaterial[]> {
@@ -15,9 +16,10 @@ export class CourseMaterialRepo {
   async findCourseMaterialBySubCategoryId(
     subCategoryId: string,
     userId: string,
+    type: string,
   ): Promise<ICourseMaterial[]> {
     const courseMaterials = await courseMaterialModel
-      .find({ subCategoryId, isActive: true, isDeleted: false })
+      .find({ subCategoryId, type, isActive: true, isDeleted: false })
       .sort({ sorting: 1 })
       .lean();
     if (userId) {
@@ -28,7 +30,7 @@ export class CourseMaterialRepo {
       );
       return courseMaterials.map((material) => ({
         ...material,
-        viewedStatus: viewedMaterialIds.has(material._id.toString()), // Add viewed status
+        viewedStatus: viewedMaterialIds.has(material._id.toString()),
       }));
     } else {
       return courseMaterials;
@@ -91,5 +93,32 @@ export const getCourseMaterialTrackBySubCategory = async (
   });
   const totalMaterials = courseMaterials.length;
   const percentageViewed = totalMaterials > 0 ? (viewedMaterials / totalMaterials) * 100 : 0;
+  return { totalMaterials, viewedMaterials, percentageViewed };
+};
+
+export const getCourseMaterialTrackByCategory = async (
+  userId: string,
+  categoryId: string,
+): Promise<{ totalMaterials: number; viewedMaterials: number; percentageViewed: number }> => {
+  const subCategories = await subCategoryModel.find({ categoryId, isActive: true }).select('_id');
+  const subCategoryIds = subCategories.map((subCategory) => subCategory._id);
+
+  const courseMaterials = await courseMaterialModel
+    .find({
+      subCategoryId: { $in: subCategoryIds },
+      isActive: true,
+      isDeleted: false,
+    })
+    .select('_id');
+
+  const courseMaterialIds = courseMaterials.map((material) => material._id);
+  const viewedMaterials = await courseMaterialViewModel.countDocuments({
+    userId,
+    courseMaterialId: { $in: courseMaterialIds },
+  });
+
+  const totalMaterials = courseMaterials.length;
+  const percentageViewed = totalMaterials > 0 ? (viewedMaterials / totalMaterials) * 100 : 0;
+
   return { totalMaterials, viewedMaterials, percentageViewed };
 };

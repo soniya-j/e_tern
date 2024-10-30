@@ -11,7 +11,7 @@ const router = Router();
 //router.get('/all', authenticateUser, getCategories);
 router.get('/all', getSubCategories);
 router.get(
-  '/by-category/:categoryId',
+  '/by-category/:categoryId/:type',
   authenticateUser,
   getSubCategoryByCategoryIdValidation,
   getSubCategoriesByCategoryId,

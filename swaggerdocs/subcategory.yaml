@@ -59,7 +59,7 @@ paths:
                     type: string
                     example: An error occurred
 
-  /api/subcategory/by-category/{categoryId}:
+  /api/subcategory/by-category/{categoryId}/{type}:
     get:
       summary: Fetch Sub Categories by category ID
       description: Endpoint to fetch sub categories by a given category ID
@@ -73,6 +73,14 @@ paths:
           schema:
             type: string
             example: "670d2fd920824883c3100257"
+        - name: type
+          in: path
+          required: true
+          description: Type of the category
+          schema:
+            type: string
+            enum: ["kid", "parent"]
+            example: "kid"
       security:
         - JWT: []
       responses:

@@ -29,8 +29,9 @@ export const getSubCategoriesByCategoryId = async (req: Request, res: Response) 
   }
   try {
     const { categoryId } = req.params;
+    const { type } = req.params;
     const userId = res.locals.userId as string; // get userId from locals ( using JWT middleware )
-    const result = await getSubCategoriesByCategoryIdUseCase(categoryId, userId);
+    const result = await getSubCategoriesByCategoryIdUseCase(categoryId, type, userId);
     return res.status(200).json({
       success: true,
       message: responseMessages.response_success_get,

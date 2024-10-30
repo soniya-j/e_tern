@@ -8,6 +8,7 @@ export interface ICourseMaterial extends Document {
   description?: string;
   isActive?: boolean;
   isDeleted?: boolean;
+  type: string;
 }
 
 export interface ICourseMaterialBody {
@@ -16,6 +17,7 @@ export interface ICourseMaterialBody {
   courseMaterialUrl: string;
   description?: string;
   sorting: number;
+  type: string;
 }
 
 export interface ITrackCourseMaterialView extends Document {

@@ -7,6 +7,11 @@ export const getCourseMaterialBySubCategoryIdValidation = [
     .withMessage('subCategoryId is required')
     .isMongoId()
     .withMessage('Invalid subCategoryId format'),
+  param('type')
+    .notEmpty()
+    .withMessage('type is required')
+    .isIn(['kid', 'parent'])
+    .withMessage('type must be either "kid" or "parent"'),
 ];
 
 export const trackCourseMaterialValidation = [

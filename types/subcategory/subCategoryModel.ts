@@ -9,6 +9,7 @@ export interface ISubCategory extends Document {
   description?: string;
   isActive?: boolean;
   isDeleted?: boolean;
+  type: string;
 }
 
 export interface ISubCategoryBody {
@@ -17,6 +18,7 @@ export interface ISubCategoryBody {
   imageUrl: string;
   description?: string;
   sorting: number;
+  type: string;
 }
 
 export interface ISubCategoryWithTracking extends ISubCategory {

@@ -6,9 +6,10 @@ export class CategoryRepo {
     return await categoryModel.find({ isActive: true, isDeleted: false }).sort({ sorting: 1 });
   }
 
-  async findCategoriesByPackageId(packageId: string): Promise<ICategory[]> {
+  async findCategoriesByPackageId(packageId: string, type: string): Promise<ICategory[]> {
     return await categoryModel
-      .find({ packageId, isActive: true, isDeleted: false })
-      .sort({ sorting: 1 });
+      .find({ packageId, type, isActive: true, isDeleted: false })
+      .sort({ sorting: 1 })
+      .lean();
   }
 }

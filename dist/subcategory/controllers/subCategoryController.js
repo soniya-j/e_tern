@@ -29,8 +29,9 @@ const getSubCategoriesByCategoryId = async (req, res) => {
     }
     try {
         const { categoryId } = req.params;
+        const { type } = req.params;
         const userId = res.locals.userId; // get userId from locals ( using JWT middleware )
-        const result = await (0, subCategoryUseCase_1.getSubCategoriesByCategoryIdUseCase)(categoryId, userId);
+        const result = await (0, subCategoryUseCase_1.getSubCategoriesByCategoryIdUseCase)(categoryId, type, userId);
         return res.status(200).json({
             success: true,
             message: localization_1.responseMessages.response_success_get,

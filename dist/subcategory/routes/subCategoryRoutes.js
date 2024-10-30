@@ -7,5 +7,5 @@ const subCategoryRequest_1 = require("../requests/subCategoryRequest");
 const router = (0, express_1.Router)();
 //router.get('/all', authenticateUser, getCategories);
 router.get('/all', subCategoryController_1.getSubCategories);
-router.get('/by-category/:categoryId', authentication_1.authenticateUser, subCategoryRequest_1.getSubCategoryByCategoryIdValidation, subCategoryController_1.getSubCategoriesByCategoryId);
+router.get('/by-category/:categoryId/:type', authentication_1.authenticateUser, subCategoryRequest_1.getSubCategoryByCategoryIdValidation, subCategoryController_1.getSubCategoriesByCategoryId);
 exports.default = router;

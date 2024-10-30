@@ -59,20 +59,28 @@ paths:
                     type: string
                     example: An error occurred
 
-  /api/category/by-package/{packageId}:
+  /api/category/by-package/{studentId}/{type}:
     get:
       summary: Fetch Categories by Package ID
       description: Endpoint to fetch categories by a given Package ID
       tags:
         - Category Model
       parameters:
-        - name: packageId
+        - name: studentId
           in: path
           required: true
-          description: The ID of the package
+          description: The ID of the student
           schema:
             type: string
             example: "670d2fd920824883c3100257"
+        - name: type
+          in: path
+          required: true
+          description: Type of the category
+          schema:
+            type: string
+            enum: ["kid", "parent"]
+            example: "kid"
       security:
         - JWT: []
       responses:
@@ -129,7 +137,6 @@ paths:
                   error:
                     type: string
                     example: An error occurred
-
 
 components:
   securitySchemes:

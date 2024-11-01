@@ -10,7 +10,7 @@ const localization_1 = require("../../config/localization");
 //import { IPackageBody } from '../../types/package/packageModel';
 exports.getAllPackages = (0, express_async_handler_1.default)(async (req, res) => {
     const result = await (0, packageUseCase_1.getAllPackagesUseCase)();
-    res.status(201).json({
+    res.status(200).json({
         success: true,
         message: localization_1.responseMessages.response_success_get,
         result: result,

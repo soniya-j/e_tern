@@ -7,7 +7,7 @@ import { responseMessages } from '../../config/localization';
 export const getAllPackages = asyncHandler(async (req: Request, res: Response) => {
   const result = await getAllPackagesUseCase();
 
-  res.status(201).json({
+  res.status(200).json({
     success: true,
     message: responseMessages.response_success_get,
     result: result,

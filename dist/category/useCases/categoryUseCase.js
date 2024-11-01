@@ -41,15 +41,14 @@ const getCategoriesByPackageIdUseCase = async (studentId, type, userId) => {
     const packageResult = await (0, studentRepo_1.findPackage)(studentId);
     const packageId = packageResult?.packageId;
     if (!packageId) {
-        throw new appError_1.default('No categories found for the given package', httpStatus_1.HttpStatus.NOT_FOUND);
+        throw new appError_1.default('No categories found for the given studentId', httpStatus_1.HttpStatus.NOT_FOUND);
     }
     const categories = await categoryRepo.findCategoriesByPackageId(packageId, type);
     if (!categories || categories.length === 0) {
-        throw new appError_1.default('No categories found for the given package', httpStatus_1.HttpStatus.NOT_FOUND);
+        throw new appError_1.default('No categories found for the given studentId', httpStatus_1.HttpStatus.NOT_FOUND);
     }
     if (userId) {
         const categoriesWithTracking = await Promise.all(categories.map(async (category) => {
-            //   const categoryId = category._id.toString();
             const categoryId = (0, objectIdParser_1.objectIdToString)(category._id);
             const categoryPlain = 'toObject' in category
                 ? category.toObject()

@@ -7,29 +7,73 @@ exports.getCourseMaterialTrackByCategory = exports.getCourseMaterialTrackBySubCa
 const courseMaterialModel_1 = __importDefault(require("../models/courseMaterialModel"));
 const courseMaterialViewModel_1 = __importDefault(require("../models/courseMaterialViewModel"));
 const subCategoryModel_1 = __importDefault(require("../../subcategory/models/subCategoryModel"));
+const objectIdParser_1 = require("../../utils/objectIdParser");
 class CourseMaterialRepo {
     async findAllCourseMaterials() {
         return await courseMaterialModel_1.default
             .find({ isActive: true, isDeleted: false })
             .sort({ sorting: 1 });
     }
+    /*
+    async findCourseMaterialBySubCategoryId(
+      subCategoryId: string,
+      userId: string,
+      type: string,
+    ): Promise<ICourseMaterial[]> {
+      const courseMaterials = await courseMaterialModel
+        .find({ subCategoryId, type, isActive: true, isDeleted: false })
+        .sort({ sorting: 1 })
+        .lean();
+      if (userId) {
+        // Fetch viewed materials for the user
+        const viewedMaterials = await courseMaterialViewModel.find({ userId, isActive: true }).lean();
+        const viewedMaterialIds = new Set(
+          viewedMaterials.map((view) => view.courseMaterialId.toString()),
+        );
+        return courseMaterials.map((material) => ({
+          ...material,
+          viewedStatus: viewedMaterialIds.has(material._id.toString()),
+        }));
+      } else {
+        return courseMaterials;
+      }
+    }
+  */
     async findCourseMaterialBySubCategoryId(subCategoryId, userId, type) {
-        const courseMaterials = await courseMaterialModel_1.default
+        // Cast with unknown to eliminate additional Mongoose properties
+        const courseMaterials = (await courseMaterialModel_1.default
             .find({ subCategoryId, type, isActive: true, isDeleted: false })
             .sort({ sorting: 1 })
-            .lean();
+            .lean());
+        let openStatusIndex = 0;
+        const viewedMaterialIds = new Set();
         if (userId) {
-            // Fetch viewed materials for the user
             const viewedMaterials = await courseMaterialViewModel_1.default.find({ userId, isActive: true }).lean();
-            const viewedMaterialIds = new Set(viewedMaterials.map((view) => view.courseMaterialId.toString()));
-            return courseMaterials.map((material) => ({
-                ...material,
-                viewedStatus: viewedMaterialIds.has(material._id.toString()),
-            }));
+            viewedMaterials.forEach((view) => {
+                viewedMaterialIds.add(view.courseMaterialId.toString());
+            });
+            courseMaterials.forEach((material, index) => {
+                const materialId = (0, objectIdParser_1.objectIdToString)(material._id);
+                if (viewedMaterialIds.has(materialId)) {
+                    openStatusIndex = index + 1; // Set next item as open
+                }
+            });
         }
-        else {
-            return courseMaterials;
-        }
+        // Map courseMaterials to include only required properties
+        const courseMaterialsWithStatus = courseMaterials.map((material, index) => ({
+            _id: (0, objectIdParser_1.objectIdToString)(material._id),
+            courseMaterialName: material.courseMaterialName,
+            subCategoryId: material.subCategoryId,
+            courseMaterialUrl: material.courseMaterialUrl,
+            sorting: material.sorting,
+            description: material.description,
+            isActive: material.isActive,
+            isDeleted: material.isDeleted,
+            type: material.type,
+            viewedStatus: viewedMaterialIds.has((0, objectIdParser_1.objectIdToString)(material._id)),
+            openStatus: index === openStatusIndex,
+        }));
+        return courseMaterialsWithStatus;
     }
 }
 exports.CourseMaterialRepo = CourseMaterialRepo;

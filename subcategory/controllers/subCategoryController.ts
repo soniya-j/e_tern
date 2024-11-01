@@ -11,7 +11,7 @@ import { validationResult } from 'express-validator';
 
 export const getSubCategories = asyncHandler(async (req: Request, res: Response) => {
   const result = await getAllSubCategoryUseCase();
-  res.status(201).json({
+  res.status(200).json({
     success: true,
     message: responseMessages.response_success_get,
     result: result,

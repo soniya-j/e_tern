@@ -26,3 +26,9 @@ export interface ITrackCourseMaterialView extends Document {
   viewedPercentage?: number;
   isActive: boolean;
 }
+
+export interface ICourseMaterialWithStatus extends ICourseMaterialBody {
+  _id: string;
+  viewedStatus: boolean;
+  openStatus: boolean;
+}

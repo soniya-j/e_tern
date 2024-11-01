@@ -12,7 +12,7 @@ const httpStatus_1 = require("../../common/httpStatus");
 const express_validator_1 = require("express-validator");
 exports.getPackageCosts = (0, express_async_handler_1.default)(async (req, res) => {
     const result = await (0, packageCostUseCase_1.getAllPackageCostsUseCase)();
-    res.status(201).json({
+    res.status(200).json({
         success: true,
         message: localization_1.responseMessages.response_success_get,
         result: result,

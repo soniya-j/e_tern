@@ -13,7 +13,7 @@ import { ITrackCourseMaterialView } from '../../types/coursematerial/courseMater
 
 export const getCourseMaterials = asyncHandler(async (req: Request, res: Response) => {
   const result = await getAllCourseMaterialUseCase();
-  res.status(201).json({
+  res.status(200).json({
     success: true,
     message: responseMessages.response_success_get,
     result: result,
@@ -65,7 +65,7 @@ export const trackCourseMaterialView = asyncHandler(async (req: Request, res: Re
   }
   const data = req.body as ITrackCourseMaterialView;
   await trackCourseMaterialUserUseCase(data);
-  res.status(201).json({
+  res.status(200).json({
     success: true,
     message: responseMessages.response_success_post,
     result: '',

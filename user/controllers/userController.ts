@@ -26,7 +26,7 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
   }
   const data = req.body as IUserBody;
   const result = await registerUserUseCase(data);
-  res.status(201).json({
+  res.status(200).json({
     success: true,
     message: responseMessages.registration_success,
     result: result,
@@ -45,7 +45,7 @@ export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
 
   const data = req.body as IOtpBody;
   const result = await verifyOtpUseCase(data);
-  res.status(201).json({
+  res.status(200).json({
     success: true,
     message: responseMessages.otp_verify_success,
     result,
@@ -67,7 +67,7 @@ export const uploadAvatar = async (req: Request, res: Response) => {
     return res.status(401).send('Unauthorized');
   }
   const imageUrl = await uploadAvatarUseCase(req.file, userId);
-  res.status(201).json({
+  res.status(200).json({
     status: 'success',
     message: 'image uploaded successfully',
     result: imageUrl,
@@ -86,7 +86,7 @@ export const sendOtp = asyncHandler(async (req: Request, res: Response) => {
 
   const data = req.body as IOtpBody;
   const result = await sendOtpUseCase(data);
-  res.status(201).json({
+  res.status(200).json({
     success: true,
     message: responseMessages.otp_send_success,
     result,
@@ -171,7 +171,7 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
   const { userId } = req.params as { userId: string };
   const data = req.body as IUserBody;
   const result = await updateUserUseCase(userId, data);
-  res.status(201).json({
+  res.status(200).json({
     success: true,
     message: responseMessages.response_success_put,
     result: result,

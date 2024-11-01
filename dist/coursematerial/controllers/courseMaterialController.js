@@ -12,7 +12,7 @@ const httpStatus_1 = require("../../common/httpStatus");
 const express_validator_1 = require("express-validator");
 exports.getCourseMaterials = (0, express_async_handler_1.default)(async (req, res) => {
     const result = await (0, courseMaterialUseCase_1.getAllCourseMaterialUseCase)();
-    res.status(201).json({
+    res.status(200).json({
         success: true,
         message: localization_1.responseMessages.response_success_get,
         result: result,
@@ -62,7 +62,7 @@ exports.trackCourseMaterialView = (0, express_async_handler_1.default)(async (re
     }
     const data = req.body;
     await (0, courseMaterialUseCase_1.trackCourseMaterialUserUseCase)(data);
-    res.status(201).json({
+    res.status(200).json({
         success: true,
         message: localization_1.responseMessages.response_success_post,
         result: '',

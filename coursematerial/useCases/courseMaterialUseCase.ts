@@ -9,6 +9,7 @@ import {
 import {
   ICourseMaterial,
   ITrackCourseMaterialView,
+  ICourseMaterialWithStatus,
 } from '../../types/coursematerial/courseMaterialModel';
 import { checkUserIdExist } from '../../user/repos/registerUserRepo';
 
@@ -36,7 +37,7 @@ export const getCourseMaterialBySubCategoryIdUseCase = async (
   categoryId: string,
   userId: string,
   type: string,
-): Promise<ICourseMaterial[]> => {
+): Promise<ICourseMaterialWithStatus[]> => {
   const courseMaterialRepo = new CourseMaterialRepo();
   const courseMaterials = await courseMaterialRepo.findCourseMaterialBySubCategoryId(
     categoryId,

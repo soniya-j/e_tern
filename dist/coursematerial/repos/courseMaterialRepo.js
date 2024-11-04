@@ -8,6 +8,7 @@ const courseMaterialModel_1 = __importDefault(require("../models/courseMaterialM
 const courseMaterialViewModel_1 = __importDefault(require("../models/courseMaterialViewModel"));
 const subCategoryModel_1 = __importDefault(require("../../subcategory/models/subCategoryModel"));
 const objectIdParser_1 = require("../../utils/objectIdParser");
+const studentModel_1 = __importDefault(require("../../student/models/studentModel"));
 class CourseMaterialRepo {
     async findAllCourseMaterials() {
         return await courseMaterialModel_1.default
@@ -39,12 +40,32 @@ class CourseMaterialRepo {
       }
     }
   */
-    async findCourseMaterialBySubCategoryId(subCategoryId, userId, type) {
-        // Cast with unknown to eliminate additional Mongoose properties
-        const courseMaterials = (await courseMaterialModel_1.default
-            .find({ subCategoryId, type, isActive: true, isDeleted: false })
-            .sort({ sorting: 1 })
-            .lean());
+    async findCourseMaterialBySubCategoryId(subCategoryId, userId, type, studentId) {
+        /*
+        const courseMaterials = (await courseMaterialModel
+          .find({ subCategoryId, type, isActive: true, isDeleted: false })
+          .sort({ sorting: 1 })
+          .lean()) as unknown as ICourseMaterial[];
+    */
+        const student = await studentModel_1.default.findOne({ _id: studentId, isDeleted: false }).lean();
+        const hasValidSubscription = student &&
+            student.subscribed &&
+            student.subscriptionEndDate &&
+            student.subscriptionEndDate > new Date();
+        let courseMaterials;
+        // If the student has a valid subscription, get all materials; otherwise, get only the first one
+        if (hasValidSubscription) {
+            courseMaterials = (await courseMaterialModel_1.default
+                .find({ subCategoryId, type, isActive: true, isDeleted: false })
+                .sort({ sorting: 1 })
+                .lean());
+        }
+        else {
+            courseMaterials = (await courseMaterialModel_1.default
+                .find({ subCategoryId, type, isActive: true, isDeleted: false, sorting: 1 })
+                .limit(1)
+                .lean());
+        }
         let openStatusIndex = 0;
         const viewedMaterialIds = new Set();
         if (userId) {
@@ -55,11 +76,10 @@ class CourseMaterialRepo {
             courseMaterials.forEach((material, index) => {
                 const materialId = (0, objectIdParser_1.objectIdToString)(material._id);
                 if (viewedMaterialIds.has(materialId)) {
-                    openStatusIndex = index + 1; // Set next item as open
+                    openStatusIndex = index + 1;
                 }
             });
         }
-        // Map courseMaterials to include only required properties
         const courseMaterialsWithStatus = courseMaterials.map((material, index) => ({
             _id: (0, objectIdParser_1.objectIdToString)(material._id),
             courseMaterialName: material.courseMaterialName,

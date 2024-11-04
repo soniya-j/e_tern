@@ -15,7 +15,7 @@ const router = Router();
 //router.get('/all', authenticateUser, getCategories);
 router.get('/all', getCourseMaterials);
 router.get(
-  '/by-subcategory/:subCategoryId/:type',
+  '/by-subcategory/:subCategoryId/:type/:studentId',
   authenticateUser,
   getCourseMaterialBySubCategoryIdValidation,
   getCourseMaterialsBySubCategoryId,

@@ -7,6 +7,11 @@ export const getCourseMaterialBySubCategoryIdValidation = [
     .withMessage('subCategoryId is required')
     .isMongoId()
     .withMessage('Invalid subCategoryId format'),
+  param('studentId')
+    .notEmpty()
+    .withMessage('studentId is required')
+    .isMongoId()
+    .withMessage('Invalid studentId format'),
   param('type')
     .notEmpty()
     .withMessage('type is required')

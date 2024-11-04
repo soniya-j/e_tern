@@ -8,6 +8,9 @@ import {
 import subCategoryModel from '../../subcategory/models/subCategoryModel';
 import { objectIdToString } from '../../utils/objectIdParser';
 import { ObjectId } from 'mongodb';
+import studentModel from '../../student/models/studentModel';
+import AppError from '../../common/appError';
+import { HttpStatus } from '../../common/httpStatus';
 
 export class CourseMaterialRepo {
   async findAllCourseMaterials(): Promise<ICourseMaterial[]> {
@@ -46,32 +49,46 @@ export class CourseMaterialRepo {
     subCategoryId: string,
     userId: string,
     type: string,
-  ): Promise<ICourseMaterialWithStatus[]> {
-    // Cast with unknown to eliminate additional Mongoose properties
-    const courseMaterials = (await courseMaterialModel
-      .find({ subCategoryId, type, isActive: true, isDeleted: false })
-      .sort({ sorting: 1 })
-      .lean()) as unknown as ICourseMaterial[];
-
+    studentId: string,
+  ): Promise<ICourseMaterialWithStatus[]> {  
+    const student = await studentModel.findOne({ _id: studentId, isDeleted: false }).lean();
+    if (!student) throw new AppError('Student Not Found', HttpStatus.BAD_REQUEST);      
+    const hasValidSubscription =
+      student &&
+      student.subscribed &&
+      student.subscriptionEndDate &&
+      student.subscriptionEndDate > new Date();
+  
+      let courseMaterials: ICourseMaterial[];
+    
+    // If the student has a valid subscription, get all materials; otherwise, get only the first one
+    if (hasValidSubscription) {
+      courseMaterials = (await courseMaterialModel
+        .find({ subCategoryId, type, isActive: true, isDeleted: false })
+        .sort({ sorting: 1 })
+        .lean()) as unknown as ICourseMaterial[];
+    } 
+    else {
+      courseMaterials = (await courseMaterialModel
+        .find({ subCategoryId, type, isActive: true, isDeleted: false, sorting: 1 })
+        .limit(1)
+        .lean()) as unknown as ICourseMaterial[];
+    }
     let openStatusIndex = 0;
     const viewedMaterialIds = new Set<string>();
-
     if (userId) {
       const viewedMaterials = await courseMaterialViewModel.find({ userId, isActive: true }).lean();
       viewedMaterials.forEach((view) => {
         viewedMaterialIds.add(view.courseMaterialId.toString());
       });
-
       courseMaterials.forEach((material, index) => {
         const materialId = objectIdToString(material._id as ObjectId);
-
         if (viewedMaterialIds.has(materialId)) {
-          openStatusIndex = index + 1; // Set next item as open
+          openStatusIndex = index + 1;
         }
       });
     }
 
-    // Map courseMaterials to include only required properties
     const courseMaterialsWithStatus: ICourseMaterialWithStatus[] = courseMaterials.map(
       (material, index) => ({
         _id: objectIdToString(material._id as ObjectId),

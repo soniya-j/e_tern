@@ -18,7 +18,7 @@ export const findPackage = async (
   try {
     const student = await studentModel
       .findOne({ _id: new Types.ObjectId(studentId), isDeleted: false })
-      .select({ packageId: 1, dob: 1 })
+      .select({ packageId: 1, dob: 1, subscriptionEndDate:1, subscribed:1 })
       .lean();
     if (!student) return null;
 
@@ -30,7 +30,10 @@ export const findPackage = async (
     if (monthDiff < 0 || (monthDiff === 0 && currentDate.getDate() < birthDate.getDate())) {
       age--;
     }
-    if (student.packageId) {
+    
+    if (student.packageId && student.subscribed &&
+      student.subscriptionEndDate &&
+      student.subscriptionEndDate > new Date()) {
       return { packageId: student.packageId };
     }
     const matchingPackage = await packageModel

@@ -59,7 +59,7 @@ paths:
                     type: string
                     example: An error occurred
 
-  /api/coursematerial/by-subcategory/{subCategoryId}/{type}:
+  /api/coursematerial/by-subcategory/{subCategoryId}/{type}/{studentId}:
     get:
       summary: Fetch coursematerials by sub category ID
       description: Endpoint to fetch course materials by a given sub category ID
@@ -73,6 +73,13 @@ paths:
           schema:
             type: string
             example: "670d2fd920824883c3100257"
+        - name: studentId
+          in: path
+          required: true
+          description: The ID of the student
+          schema:
+            type: string
+            example: "670d2fd920824883c3100259"
         - name: type
           in: path
           required: true
@@ -80,7 +87,7 @@ paths:
           schema:
             type: string
             enum: ["kid", "parent"]
-            example: "kid"
+            example: "kid"        
       security:
         - JWT: []
       responses:

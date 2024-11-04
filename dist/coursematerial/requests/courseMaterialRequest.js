@@ -12,6 +12,11 @@ exports.getCourseMaterialBySubCategoryIdValidation = [
         .withMessage('subCategoryId is required')
         .isMongoId()
         .withMessage('Invalid subCategoryId format'),
+    (0, express_validator_1.param)('studentId')
+        .notEmpty()
+        .withMessage('studentId is required')
+        .isMongoId()
+        .withMessage('Invalid studentId format'),
     (0, express_validator_1.param)('type')
         .notEmpty()
         .withMessage('type is required')

@@ -37,12 +37,14 @@ export const getCourseMaterialBySubCategoryIdUseCase = async (
   categoryId: string,
   userId: string,
   type: string,
+  studentId: string,
 ): Promise<ICourseMaterialWithStatus[]> => {
   const courseMaterialRepo = new CourseMaterialRepo();
   const courseMaterials = await courseMaterialRepo.findCourseMaterialBySubCategoryId(
     categoryId,
     userId,
     type,
+    studentId,
   );
   if (!courseMaterials || courseMaterials.length === 0) {
     throw new AppError('No data found', HttpStatus.NOT_FOUND);

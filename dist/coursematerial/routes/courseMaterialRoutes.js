@@ -7,6 +7,6 @@ const courseMaterialRequest_1 = require("../requests/courseMaterialRequest");
 const router = (0, express_1.Router)();
 //router.get('/all', authenticateUser, getCategories);
 router.get('/all', courseMaterialController_1.getCourseMaterials);
-router.get('/by-subcategory/:subCategoryId/:type', authentication_1.authenticateUser, courseMaterialRequest_1.getCourseMaterialBySubCategoryIdValidation, courseMaterialController_1.getCourseMaterialsBySubCategoryId);
+router.get('/by-subcategory/:subCategoryId/:type/studentId', authentication_1.authenticateUser, courseMaterialRequest_1.getCourseMaterialBySubCategoryIdValidation, courseMaterialController_1.getCourseMaterialsBySubCategoryId);
 router.post('/track-view', courseMaterialRequest_1.trackCourseMaterialValidation, courseMaterialController_1.trackCourseMaterialView);
 exports.default = router;

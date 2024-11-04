@@ -28,9 +28,9 @@ export const getCourseMaterialBySubCategoryIdUseCase = async (
   return result;
 };
 */
-const getCourseMaterialBySubCategoryIdUseCase = async (categoryId, userId, type) => {
+const getCourseMaterialBySubCategoryIdUseCase = async (categoryId, userId, type, studentId) => {
     const courseMaterialRepo = new courseMaterialRepo_1.CourseMaterialRepo();
-    const courseMaterials = await courseMaterialRepo.findCourseMaterialBySubCategoryId(categoryId, userId, type);
+    const courseMaterials = await courseMaterialRepo.findCourseMaterialBySubCategoryId(categoryId, userId, type, studentId);
     if (!courseMaterials || courseMaterials.length === 0) {
         throw new appError_1.default('No data found', httpStatus_1.HttpStatus.NOT_FOUND);
     }

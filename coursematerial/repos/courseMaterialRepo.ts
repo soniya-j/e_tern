@@ -50,25 +50,24 @@ export class CourseMaterialRepo {
     userId: string,
     type: string,
     studentId: string,
-  ): Promise<ICourseMaterialWithStatus[]> {  
+  ): Promise<ICourseMaterialWithStatus[]> {
     const student = await studentModel.findOne({ _id: studentId, isDeleted: false }).lean();
-    if (!student) throw new AppError('Student Not Found', HttpStatus.BAD_REQUEST);      
+    if (!student) throw new AppError('Student Not Found', HttpStatus.BAD_REQUEST);
     const hasValidSubscription =
       student &&
       student.subscribed &&
       student.subscriptionEndDate &&
       student.subscriptionEndDate > new Date();
-  
-      let courseMaterials: ICourseMaterial[];
-    
+
+    let courseMaterials: ICourseMaterial[];
+
     // If the student has a valid subscription, get all materials; otherwise, get only the first one
     if (hasValidSubscription) {
       courseMaterials = (await courseMaterialModel
         .find({ subCategoryId, type, isActive: true, isDeleted: false })
         .sort({ sorting: 1 })
         .lean()) as unknown as ICourseMaterial[];
-    } 
-    else {
+    } else {
       courseMaterials = (await courseMaterialModel
         .find({ subCategoryId, type, isActive: true, isDeleted: false, sorting: 1 })
         .limit(1)

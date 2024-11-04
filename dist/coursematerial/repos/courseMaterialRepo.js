@@ -9,6 +9,8 @@ const courseMaterialViewModel_1 = __importDefault(require("../models/courseMater
 const subCategoryModel_1 = __importDefault(require("../../subcategory/models/subCategoryModel"));
 const objectIdParser_1 = require("../../utils/objectIdParser");
 const studentModel_1 = __importDefault(require("../../student/models/studentModel"));
+const appError_1 = __importDefault(require("../../common/appError"));
+const httpStatus_1 = require("../../common/httpStatus");
 class CourseMaterialRepo {
     async findAllCourseMaterials() {
         return await courseMaterialModel_1.default
@@ -41,13 +43,9 @@ class CourseMaterialRepo {
     }
   */
     async findCourseMaterialBySubCategoryId(subCategoryId, userId, type, studentId) {
-        /*
-        const courseMaterials = (await courseMaterialModel
-          .find({ subCategoryId, type, isActive: true, isDeleted: false })
-          .sort({ sorting: 1 })
-          .lean()) as unknown as ICourseMaterial[];
-    */
         const student = await studentModel_1.default.findOne({ _id: studentId, isDeleted: false }).lean();
+        if (!student)
+            throw new appError_1.default('Student Not Found', httpStatus_1.HttpStatus.BAD_REQUEST);
         const hasValidSubscription = student &&
             student.subscribed &&
             student.subscriptionEndDate &&

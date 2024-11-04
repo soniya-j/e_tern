@@ -6,6 +6,7 @@ import categoryRoutes from './category/routes/categoryRoutes';
 import subCategoryRoutes from './subcategory/routes/subCategoryRoutes';
 import packageCostRoutes from './packagecost/routes/packageCostRoutes';
 import courseMaterialRoutes from './coursematerial/routes/courseMaterialRoutes';
+import studentRoutes from './student/routes/studentRoutes';
 
 import logger from './config/logger';
 import connectToDatabase from './config/connectToDatabase';
@@ -27,6 +28,7 @@ app.use('/api/category', categoryRoutes);
 app.use('/api/subcategory', subCategoryRoutes);
 app.use('/api/packagecost', packageCostRoutes);
 app.use('/api/coursematerial', courseMaterialRoutes);
+app.use('/api/student', studentRoutes);
 
 app.use(errorHandleMiddleware);
 

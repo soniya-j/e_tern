@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findPackage = exports.findStudentExists = void 0;
+exports.findStudentsByUserId = exports.findPackage = exports.findStudentExists = void 0;
 const studentModel_1 = __importDefault(require("../models/studentModel"));
 const packageModel_1 = __importDefault(require("../../package/models/packageModel"));
 const mongoose_1 = require("mongoose");
@@ -18,7 +18,7 @@ const findPackage = async (studentId) => {
     try {
         const student = await studentModel_1.default
             .findOne({ _id: new mongoose_1.Types.ObjectId(studentId), isDeleted: false })
-            .select({ packageId: 1, dob: 1 })
+            .select({ packageId: 1, dob: 1, subscriptionEndDate: 1, subscribed: 1 })
             .lean();
         if (!student)
             return null;
@@ -29,7 +29,10 @@ const findPackage = async (studentId) => {
         if (monthDiff < 0 || (monthDiff === 0 && currentDate.getDate() < birthDate.getDate())) {
             age--;
         }
-        if (student.packageId) {
+        if (student.packageId &&
+            student.subscribed &&
+            student.subscriptionEndDate &&
+            student.subscriptionEndDate > new Date()) {
             return { packageId: student.packageId };
         }
         const matchingPackage = await packageModel_1.default
@@ -49,3 +52,7 @@ const findPackage = async (studentId) => {
     }
 };
 exports.findPackage = findPackage;
+const findStudentsByUserId = async (userId) => {
+    return await studentModel_1.default.findOne({ userId, isDeleted: false }).sort({ _id: 1 }).lean();
+};
+exports.findStudentsByUserId = findStudentsByUserId;

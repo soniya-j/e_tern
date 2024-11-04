@@ -1,14 +1,9 @@
 import { param } from 'express-validator';
 
-export const getCategoryByPackageIdValidation = [
-  param('studentId')
+export const getStudentsByUserIdValidation = [
+  param('userId')
     .notEmpty()
-    .withMessage('studentId is required')
+    .withMessage('userId is required')
     .isMongoId()
-    .withMessage('Invalid studentId format'),
-  param('type')
-    .notEmpty()
-    .withMessage('type is required')
-    .isIn(['kid', 'parent'])
-    .withMessage('type must be either "kid" or "parent"'),
+    .withMessage('Invalid userId format'),
 ];

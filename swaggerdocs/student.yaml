@@ -1,0 +1,59 @@
+swagger: '3.0.0'
+info:
+  title: Student Model API
+  description: API related to Student models
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/student/all:
+    get:
+      summary: Fetch All students
+      description: Endpoint to fetch all students
+      tags:
+        - Student Model
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Fetch all Students successfully
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        studentName:
+                          type: string
+                          example: "Hamia"                      
+                        isActive:
+                          type: boolean
+                          example: true
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred
+
+components:
+  securitySchemes:
+    JWT:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: JWT Bearer token

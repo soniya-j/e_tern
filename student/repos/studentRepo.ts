@@ -1,6 +1,7 @@
 import studentModel from '../models/studentModel';
 import packageModel from '../../package/models/packageModel';
 import { Types } from 'mongoose';
+import { IStudent } from '../../types/student/studentType';
 
 export const findStudentExists = async (
   studentId: string,
@@ -18,7 +19,7 @@ export const findPackage = async (
   try {
     const student = await studentModel
       .findOne({ _id: new Types.ObjectId(studentId), isDeleted: false })
-      .select({ packageId: 1, dob: 1, subscriptionEndDate:1, subscribed:1 })
+      .select({ packageId: 1, dob: 1, subscriptionEndDate: 1, subscribed: 1 })
       .lean();
     if (!student) return null;
 
@@ -30,10 +31,13 @@ export const findPackage = async (
     if (monthDiff < 0 || (monthDiff === 0 && currentDate.getDate() < birthDate.getDate())) {
       age--;
     }
-    
-    if (student.packageId && student.subscribed &&
+
+    if (
+      student.packageId &&
+      student.subscribed &&
       student.subscriptionEndDate &&
-      student.subscriptionEndDate > new Date()) {
+      student.subscriptionEndDate > new Date()
+    ) {
       return { packageId: student.packageId };
     }
     const matchingPackage = await packageModel
@@ -51,4 +55,8 @@ export const findPackage = async (
     console.error('Error in findPackage:', error);
     throw error;
   }
+};
+
+export const findStudentsByUserId = async (userId: string): Promise<IStudent[] | null> => {
+  return await studentModel.findOne({ userId, isDeleted: false }).sort({ _id: 1 }).lean();
 };

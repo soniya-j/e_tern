@@ -9,12 +9,9 @@ const userModel_1 = __importDefault(require("../models/userModel"));
 const userAuthModel_1 = __importDefault(require("../models/userAuthModel"));
 const httpStatus_1 = require("../../common/httpStatus");
 const appError_1 = __importDefault(require("../../common/appError"));
-const checkUserExist = async (
-//fullName: string,
-mobileNumber) => {
+const checkUserExist = async (email, mobileNumber) => {
     return await userModel_1.default
-        //.findOne({ $or: [{ userName }, { mobileNumber }] })
-        .findOne({ mobileNumber })
+        .findOne({ $or: [{ email }, { mobileNumber }] })
         .select({ _id: 1 })
         .lean();
 };

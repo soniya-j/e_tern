@@ -11,6 +11,7 @@ const categoryRoutes_1 = __importDefault(require("./category/routes/categoryRout
 const subCategoryRoutes_1 = __importDefault(require("./subcategory/routes/subCategoryRoutes"));
 const packageCostRoutes_1 = __importDefault(require("./packagecost/routes/packageCostRoutes"));
 const courseMaterialRoutes_1 = __importDefault(require("./coursematerial/routes/courseMaterialRoutes"));
+const studentRoutes_1 = __importDefault(require("./student/routes/studentRoutes"));
 const logger_1 = __importDefault(require("./config/logger"));
 const connectToDatabase_1 = __importDefault(require("./config/connectToDatabase"));
 const errorHandleMiddleware_1 = __importDefault(require("./middleware/errorHandleMiddleware"));
@@ -27,6 +28,7 @@ app.use('/api/category', categoryRoutes_1.default);
 app.use('/api/subcategory', subCategoryRoutes_1.default);
 app.use('/api/packagecost', packageCostRoutes_1.default);
 app.use('/api/coursematerial', courseMaterialRoutes_1.default);
+app.use('/api/student', studentRoutes_1.default);
 app.use(errorHandleMiddleware_1.default);
 const port = configKeys_1.default.PORT;
 app.listen(port, () => {

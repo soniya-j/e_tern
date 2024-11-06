@@ -5,5 +5,7 @@ const studentController_1 = require("../controllers/studentController");
 const authentication_1 = require("../../middleware/authentication");
 const studentRequest_1 = require("../requests/studentRequest");
 const router = (0, express_1.Router)();
-router.get('all/:userId', authentication_1.authenticateUser, studentRequest_1.getStudentsByUserIdValidation, studentController_1.getStudentsByUserId);
+router.get('/all', authentication_1.authenticateUser, studentController_1.getStudentsByUserId);
+router.post('/addStudent', authentication_1.authenticateUser, studentRequest_1.studentAddValidation, studentController_1.addStudent);
+router.put('/updateStudent/:studentId', authentication_1.authenticateUser, studentRequest_1.studentUpdateValidation, studentController_1.updateStudent);
 exports.default = router;

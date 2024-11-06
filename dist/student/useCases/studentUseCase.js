@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getStudentsByUserIdUseCase = void 0;
+exports.updateStudentUseCase = exports.addStudentUseCase = exports.getStudentsByUserIdUseCase = void 0;
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
 const studentRepo_1 = require("../repos/studentRepo");
@@ -15,3 +15,13 @@ const getStudentsByUserIdUseCase = async (userId) => {
     return result;
 };
 exports.getStudentsByUserIdUseCase = getStudentsByUserIdUseCase;
+const addStudentUseCase = async (data) => {
+    const result = await (0, studentRepo_1.createStudent)(data);
+    return result;
+};
+exports.addStudentUseCase = addStudentUseCase;
+const updateStudentUseCase = async (studentId, data) => {
+    const result = await (0, studentRepo_1.updateStudent)(studentId, data);
+    return result;
+};
+exports.updateStudentUseCase = updateStudentUseCase;

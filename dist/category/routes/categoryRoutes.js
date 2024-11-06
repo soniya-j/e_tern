@@ -5,7 +5,6 @@ const categoryController_1 = require("../controllers/categoryController");
 const authentication_1 = require("../../middleware/authentication");
 const categoryRequest_1 = require("../requests/categoryRequest");
 const router = (0, express_1.Router)();
-//router.get('/all', authenticateUser, getCategories);
-router.get('/all', categoryController_1.getCategories);
+router.get('/all', authentication_1.authenticateUser, categoryController_1.getCategories);
 router.get('/by-package/:studentId/:type', authentication_1.authenticateUser, categoryRequest_1.getCategoryByPackageIdValidation, categoryController_1.getCategoriesByPackageId);
 exports.default = router;

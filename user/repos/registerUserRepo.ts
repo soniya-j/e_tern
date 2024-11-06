@@ -6,12 +6,11 @@ import { HttpStatus } from '../../common/httpStatus';
 import AppError from '../../common/appError';
 
 export const checkUserExist = async (
-  //fullName: string,
+  email: string,
   mobileNumber: number,
 ): Promise<{ _id: string } | null> => {
   return await usersModel
-    //.findOne({ $or: [{ userName }, { mobileNumber }] })
-    .findOne({ mobileNumber })
+    .findOne({ $or: [{ email }, { mobileNumber }] })
     .select({ _id: 1 })
     .lean();
 };

@@ -21,18 +21,28 @@ import {
 import { getCourseMaterialTrack } from '../../coursematerial/repos/courseMaterialRepo';
 
 import { processAndUploadImage } from '../../utils/imageUploader';
+import { createStudent } from '../../student/repos/studentRepo';
+import { IStudentBody } from '../../types/student/studentType';
 
 export const registerUserUseCase = async (data: IUserBody): Promise<Pick<IUsers, '_id'>> => {
   //check userAlready exist
-  const userExist = await checkUserExist(data.mobileNumber);
-  //const userExist = await checkUserExist(data.fullName, data.mobileNumber);
-  if (userExist) throw new AppError('User Already Exist', HttpStatus.BAD_REQUEST);
+  //const userExist = await checkUserExist(data.mobileNumber);
+  const userExist = await checkUserExist(data.email ?? '', data.mobileNumber);
+  if (userExist)
+    throw new AppError('User Mobile Number/Email Already Exist', HttpStatus.BAD_REQUEST);
   //send an otp to the mobileNumber provided
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   //await sendOtp(data.mobileNumber, otp);
-  //if not insert the data in database
   data.status = 1;
   const result = await createUser(data, otp);
+
+  const studentData: IStudentBody = {
+    ...data,
+    userId: result._id,
+  };
+  // Add the student data to the student collection
+  await createStudent(studentData);
+
   return result;
 };
 

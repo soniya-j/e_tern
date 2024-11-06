@@ -1,7 +1,9 @@
 import studentModel from '../models/studentModel';
 import packageModel from '../../package/models/packageModel';
 import { Types } from 'mongoose';
-import { IStudent } from '../../types/student/studentType';
+import { IStudent, IStudentBody } from '../../types/student/studentType';
+import AppError from '../../common/appError';
+import { HttpStatus } from '../../common/httpStatus';
 
 export const findStudentExists = async (
   studentId: string,
@@ -58,5 +60,20 @@ export const findPackage = async (
 };
 
 export const findStudentsByUserId = async (userId: string): Promise<IStudent[] | null> => {
-  return await studentModel.findOne({ userId, isDeleted: false }).sort({ _id: 1 }).lean();
+  return await studentModel.find({ userId, isDeleted: false }).sort({ _id: 1 }).lean();
+};
+
+export const createStudent = async (data: IStudentBody): Promise<{ _id: string }> => {
+  const student = await studentModel.create(data);
+  return { _id: student._id as string };
+};
+
+export const updateStudent = async (id: string, data: IStudentBody): Promise<IStudentBody> => {
+  const _id = new Types.ObjectId(id);
+  const obj = { modifiedOn: new Date().toISOString(), ...data };
+  const updatedData = await studentModel.findOneAndUpdate({ _id }, obj, { new: true }).lean();
+  if (!updatedData) {
+    throw new AppError('Something went wrong', HttpStatus.BAD_REQUEST);
+  }
+  return updatedData;
 };

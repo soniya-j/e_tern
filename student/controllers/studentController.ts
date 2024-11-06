@@ -1,9 +1,15 @@
 import { Request, Response } from 'express';
-import { getStudentsByUserIdUseCase } from '../useCases/studentUseCase';
+import {
+  getStudentsByUserIdUseCase,
+  addStudentUseCase,
+  updateStudentUseCase,
+} from '../useCases/studentUseCase';
 import { responseMessages } from '../../config/localization';
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
 import { validationResult } from 'express-validator';
+import asyncHandler from 'express-async-handler';
+import { IStudentBody } from '../../types/student/studentType';
 
 export const getStudentsByUserId = async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -36,3 +42,41 @@ export const getStudentsByUserId = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const addStudent = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const data = req.body as IStudentBody;
+
+  const result = await addStudentUseCase(data);
+  res.status(200).json({
+    success: true,
+    message: responseMessages.response_success_post,
+    result: result,
+  });
+});
+
+export const updateStudent = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const { studentId } = req.params as { studentId: string };
+  const data = req.body as IStudentBody;
+  const result = await updateStudentUseCase(studentId, data);
+  res.status(200).json({
+    success: true,
+    message: responseMessages.response_success_put,
+    result: result,
+  });
+});

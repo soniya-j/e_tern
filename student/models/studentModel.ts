@@ -4,7 +4,7 @@ import { IStudent } from '../../types/student/studentType';
 const studentSchema = new Schema<IStudent>(
   {
     fullName: { type: String, required: true },
-    dob: { type: String, required: true },
+    dob: { type: Date, required: true },
     avatar: { type: String, default: '' },
     gender: { type: String, required: true },
     userId: { type: String, required: true },

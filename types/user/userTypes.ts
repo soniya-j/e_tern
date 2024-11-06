@@ -3,11 +3,11 @@ import { Document } from 'mongoose';
 export interface IUsers extends Document {
   fullName: string;
   mobileNumber: number;
-  dob: string;
+  dob: Date;
   userType: 'child' | 'teenager' | 'adult';
   email?: string;
   parentName?: string;
-  parentDob?: string;
+  parentDob?: Date;
   avatar?: string;
   otp?: string;
   mobileNumberVerified?: boolean;
@@ -28,11 +28,11 @@ export interface IUserAuth extends Document {
 export interface IUserBody {
   fullName: string;
   mobileNumber: number;
-  dob: string;
+  dob: Date;
   userType: 'child' | 'teenager' | 'adult';
   email?: string;
   parentName?: string;
-  parentDob?: string;
+  parentDob?: Date;
   gender: string;
   status?: number;
 }

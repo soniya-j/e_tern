@@ -10,18 +10,24 @@ const httpStatus_1 = require("../../common/httpStatus");
 const registerUserRepo_1 = require("../repos/registerUserRepo");
 const courseMaterialRepo_1 = require("../../coursematerial/repos/courseMaterialRepo");
 const imageUploader_1 = require("../../utils/imageUploader");
+const studentRepo_1 = require("../../student/repos/studentRepo");
 const registerUserUseCase = async (data) => {
     //check userAlready exist
-    const userExist = await (0, registerUserRepo_1.checkUserExist)(data.mobileNumber);
-    //const userExist = await checkUserExist(data.fullName, data.mobileNumber);
+    //const userExist = await checkUserExist(data.mobileNumber);
+    const userExist = await (0, registerUserRepo_1.checkUserExist)(data.email ?? '', data.mobileNumber);
     if (userExist)
-        throw new appError_1.default('User Already Exist', httpStatus_1.HttpStatus.BAD_REQUEST);
+        throw new appError_1.default('User Mobile Number/Email Already Exist', httpStatus_1.HttpStatus.BAD_REQUEST);
     //send an otp to the mobileNumber provided
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     //await sendOtp(data.mobileNumber, otp);
-    //if not insert the data in database
     data.status = 1;
     const result = await (0, registerUserRepo_1.createUser)(data, otp);
+    const studentData = {
+        ...data,
+        userId: result._id,
+    };
+    // Add the student data to the student collection
+    await (0, studentRepo_1.createStudent)(studentData);
     return result;
 };
 exports.registerUserUseCase = registerUserUseCase;

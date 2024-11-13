@@ -3,11 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.trackCourseMaterialUserUseCase = exports.getCourseMaterialBySubCategoryIdUseCase = exports.getAllCourseMaterialUseCase = void 0;
+exports.updateCourseMaterialUseCase = exports.createCourseMaterialUseCase = exports.trackCourseMaterialUserUseCase = exports.getCourseMaterialBySubCategoryIdUseCase = exports.getAllCourseMaterialUseCase = void 0;
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
 const courseMaterialRepo_1 = require("../repos/courseMaterialRepo");
-const registerUserRepo_1 = require("../../user/repos/registerUserRepo");
+const studentRepo_1 = require("../../student/repos/studentRepo");
+const subCategoryRepo_1 = require("../../subcategory/repos/subCategoryRepo");
 const getAllCourseMaterialUseCase = async () => {
     const courseMaterialRepo = new courseMaterialRepo_1.CourseMaterialRepo();
     const result = await courseMaterialRepo.findAllCourseMaterials();
@@ -38,16 +39,34 @@ const getCourseMaterialBySubCategoryIdUseCase = async (categoryId, userId, type,
 };
 exports.getCourseMaterialBySubCategoryIdUseCase = getCourseMaterialBySubCategoryIdUseCase;
 const trackCourseMaterialUserUseCase = async (data) => {
-    const userExist = await (0, registerUserRepo_1.checkUserIdExist)(data.userId);
-    if (!userExist)
-        throw new appError_1.default('User Not Found', httpStatus_1.HttpStatus.BAD_REQUEST);
+    const studentExist = await (0, studentRepo_1.checkStudentIdExist)(data.studentId);
+    if (!studentExist)
+        throw new appError_1.default('student Not Found', httpStatus_1.HttpStatus.BAD_REQUEST);
     const courseMaterialExist = await (0, courseMaterialRepo_1.checkCourseMaterialExist)(data.courseMaterialId);
     if (!courseMaterialExist)
         throw new appError_1.default('courseMaterialId Not Found', httpStatus_1.HttpStatus.BAD_REQUEST);
     //check already viewed
-    const trackExist = await (0, courseMaterialRepo_1.checkUserCourseIdExist)(data.userId, data.courseMaterialId);
+    const trackExist = await (0, courseMaterialRepo_1.checkUserCourseIdExist)(data.studentId, data.courseMaterialId);
     if (!trackExist)
         await (0, courseMaterialRepo_1.trackCourseMaterial)(data);
     return true;
 };
 exports.trackCourseMaterialUserUseCase = trackCourseMaterialUserUseCase;
+const createCourseMaterialUseCase = async (data) => {
+    const exists = await (0, subCategoryRepo_1.checkSubCategoryExists)(data.subCategoryId);
+    if (!exists) {
+        throw new appError_1.default('No sub categories found for the given subCategoryId', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    const result = await (0, courseMaterialRepo_1.saveCourseMaterial)(data);
+    return result;
+};
+exports.createCourseMaterialUseCase = createCourseMaterialUseCase;
+const updateCourseMaterialUseCase = async (id, data) => {
+    const exists = await (0, subCategoryRepo_1.checkSubCategoryExists)(data.subCategoryId);
+    if (!exists) {
+        throw new appError_1.default('No sub categories found for the given subCategoryId', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    const result = await (0, courseMaterialRepo_1.updateCourseMaterial)(id, data);
+    return result;
+};
+exports.updateCourseMaterialUseCase = updateCourseMaterialUseCase;

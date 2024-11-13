@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const courseMaterialViewSchema = new mongoose_1.Schema({
-    userId: { type: String, required: true },
+    studentId: { type: String, required: true },
     courseMaterialId: { type: String, required: true },
     viewedPercentage: { type: Number },
     isActive: { type: Boolean, default: true },

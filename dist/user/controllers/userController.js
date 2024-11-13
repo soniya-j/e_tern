@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateProfile = exports.courseMaterialTrack = exports.getProfile = exports.sendOtp = exports.uploadAvatar = exports.verifyOtp = exports.registerUser = void 0;
+exports.verifyParentDob = exports.updateParentDob = exports.registerAdmin = exports.login = exports.getUsers = exports.updateProfile = exports.courseMaterialTrack = exports.getProfile = exports.sendOtp = exports.uploadAvatar = exports.verifyOtp = exports.registerUser = void 0;
 const userUseCase_1 = require("../useCases/userUseCase");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const localization_1 = require("../../config/localization");
@@ -163,5 +163,114 @@ exports.updateProfile = (0, express_async_handler_1.default)(async (req, res) =>
         success: true,
         message: localization_1.responseMessages.response_success_put,
         result: result,
+    });
+});
+const getUsers = async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({
+            success: false,
+            errors: errors.array(),
+        });
+    }
+    try {
+        const filters = {
+            fullName: req.query.fullName,
+            mobileNumber: req.query.mobileNumber
+                ? parseInt(req.query.mobileNumber, 10)
+                : undefined,
+            status: req.query.status ? parseInt(req.query.status) : undefined,
+        };
+        const limit = parseInt(req.query.limit) || 10;
+        const page = parseInt(req.query.page) || 1;
+        const result = await (0, userUseCase_1.getUsersUseCase)(filters, limit, page);
+        return res.status(200).json({
+            success: true,
+            message: 'Fetch users successfully',
+            result,
+        });
+    }
+    catch (error) {
+        if (error instanceof appError_1.default) {
+            return res.status(error.statusCode).json({
+                success: false,
+                message: error.message,
+            });
+        }
+        return res.status(500).json({
+            success: false,
+            message: 'An error occurred',
+        });
+    }
+};
+exports.getUsers = getUsers;
+exports.login = (0, express_async_handler_1.default)(async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({
+            success: false,
+            errors: errors.array(),
+        });
+        return;
+    }
+    const data = req.body;
+    const result = await (0, userUseCase_1.loginUseCase)(data);
+    res.status(200).json({
+        success: true,
+        message: localization_1.responseMessages.login_success,
+        result,
+    });
+});
+exports.registerAdmin = (0, express_async_handler_1.default)(async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({
+            success: false,
+            errors: errors.array(),
+        });
+        return;
+    }
+    const data = req.body;
+    const result = await (0, userUseCase_1.registerAdminUseCase)(data);
+    res.status(200).json({
+        success: true,
+        message: localization_1.responseMessages.registration_success,
+        result: result,
+    });
+});
+exports.updateParentDob = (0, express_async_handler_1.default)(async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({
+            success: false,
+            errors: errors.array(),
+        });
+        return;
+    }
+    const { userId } = req.params;
+    const { parentDob } = req.body;
+    const result = await (0, userUseCase_1.updateParentDobUseCase)(userId, parentDob);
+    res.status(200).json({
+        success: true,
+        message: localization_1.responseMessages.response_success_put,
+        result: result,
+    });
+});
+exports.verifyParentDob = (0, express_async_handler_1.default)(async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({
+            success: false,
+            errors: errors.array(),
+        });
+        return;
+    }
+    //const { userId } = req.body as { userId: string };
+    const { userId, parentDobYear } = req.body;
+    const result = await (0, userUseCase_1.verifyParentDobUseCase)(userId, parentDobYear);
+    res.status(200).json({
+        success: true,
+        message: localization_1.responseMessages.verify_success,
+        result,
     });
 });

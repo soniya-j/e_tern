@@ -121,3 +121,95 @@ export const userUpdateValidation = [
 
   body('interest').optional().isString().withMessage('interest must be a string'),
 ];
+
+export const loginValidation = [
+  body('email')
+    .notEmpty()
+    .withMessage('Email is required')
+    .isEmail()
+    .withMessage('Please enter a valid Email ID'),
+  body('password')
+    .notEmpty()
+    .withMessage('Password is required')
+    .isString()
+    .withMessage('Password must be a string'),
+];
+
+export const adminRegisterValidation = [
+  body('fullName')
+    .notEmpty()
+    .withMessage('fullName is required')
+    .isString()
+    .withMessage('fullName must be a string'),
+  body('mobileNumber')
+    .notEmpty()
+    .withMessage('mobileNumber is required')
+    .isNumeric()
+    .withMessage('mobileNumber must be a number'),
+  body('dob')
+    .notEmpty()
+    .withMessage('Date of birth is required')
+    .isDate()
+    .withMessage('Invalid date format'),
+  body('userType')
+    .notEmpty()
+    .withMessage('userType is required')
+    .isIn(['child', 'teenager', 'adult'])
+    .withMessage('Invalid userType'),
+  body('email')
+    .notEmpty()
+    .withMessage('email is required')
+    .isEmail()
+    .withMessage('Invalid email format'),
+  body('password')
+    .notEmpty()
+    .withMessage('password is required')
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters long')
+    .matches(/[A-Z]/)
+    .withMessage('Password must contain at least one uppercase letter')
+    .matches(/[a-z]/)
+    .withMessage('Password must contain at least one lowercase letter')
+    .matches(/\d/)
+    .withMessage('Password must contain at least one number')
+    .matches(/[@$!%*?&]/)
+    .withMessage('Password must contain at least one special character'),
+];
+
+export const userDobValidation = [
+  param('userId')
+    .notEmpty()
+    .withMessage('userId is required')
+    .isMongoId()
+    .withMessage('Invalid userId format')
+    .custom((value) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid userId format');
+      }
+      return true;
+    }),
+  body('parentDob')
+    .notEmpty()
+    .withMessage('parentDob is required')
+    .isDate()
+    .withMessage('Invalid date format for parentDob'),
+];
+
+export const userDobVerifyValidation = [
+  body('userId')
+    .notEmpty()
+    .withMessage('userId is required')
+    .isMongoId()
+    .withMessage('Invalid userId format')
+    .custom((value) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid userId format');
+      }
+      return true;
+    }),
+  body('parentDobYear')
+    .notEmpty()
+    .withMessage('parentDobYear is required')
+    .isNumeric()
+    .withMessage('parentDobYear must be a number'),
+];

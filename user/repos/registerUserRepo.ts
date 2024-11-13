@@ -1,9 +1,12 @@
-import { IUserAuth, IUserBody, IUsers } from '../../types/user/userTypes';
+import { IUserAuth, IUserBody, IUsers, IAdminBody } from '../../types/user/userTypes';
 import { ObjectID } from '../../utils/objectIdParser';
 import usersModel from '../models/userModel';
 import userAuthModel from '../models/userAuthModel';
 import { HttpStatus } from '../../common/httpStatus';
 import AppError from '../../common/appError';
+import bcrypt from 'bcryptjs';
+import { objectIdToString } from '../../utils/objectIdParser';
+import { ObjectId } from 'mongodb';
 
 export const checkUserExist = async (
   email: string,
@@ -14,13 +17,6 @@ export const checkUserExist = async (
     .select({ _id: 1 })
     .lean();
 };
-
-/*
-export const createUser = async (data: IUserBody, otp: string): Promise<Pick<IUsers, '_id'>> => {
-  const user = await usersModel.create({ ...data, otp });
-  return { _id: user._id };
-};
-*/
 
 export const createUser = async (
   data: IUserBody,
@@ -103,11 +99,12 @@ export const updateUserOtp = async (
 };
 
 export const getProfile = async (userId: string): Promise<IUsers[] | null> => {
-  return await usersModel.findOne({ _id: userId }).lean();
+  return await usersModel.findOne({ _id: userId, isDeleted: false }).lean();
 };
 
 export const checkUserIdExist = async (userId: string): Promise<{ _id: string } | null> => {
-  return await usersModel.findOne({ _id: userId }).select({ _id: 1 }).lean();
+  const _id = ObjectID(userId);
+  return await usersModel.findOne({ _id, isDeleted: false }).select({ _id: 1 }).lean();
 };
 
 export const updateUser = async (id: string, data: IUserBody): Promise<IUserBody> => {
@@ -135,24 +132,68 @@ export const checkMobileExist = async (
     .lean();
 };
 
-/*
-
-export const getProfileById = async (
-  userId: string
-): Promise<Partial<IUsers> & { _id: string; fullName: string; mobileNumber: number; email: string; status: number }> => {
-  const profile = await usersModel
-    .findOne({ _id: userId })
-    .select({ _id: 1, fullName: 1, mobileNumber: 1, email: 1, status: 1 })
-    .lean();
-  return profile as Partial<IUsers> & { _id: string; fullName: string; mobileNumber: number; email: string; status: number };
-};
-
-export const getProfileById = async (userId: string): Promise<Partial<IUsers> & { _id: string }> => {
-  const profile = await usersModel.findOne({ _id: userId }, '_id fullName mobileNumber dob userType email mobileNumberVerified status').lean();
-  return profile as Partial<IUsers> & { _id: string };
-};
-*/
-
 export const getProfileById = async (userId: string): Promise<IUserBody | null> => {
-  return await usersModel.findOne({ _id: userId }).lean();
+  return await usersModel.findOne({ _id: userId, isDeleted: false }).lean();
+};
+
+export const getAllUsers = async (
+  filters: Partial<IUserBody>,
+  limit: number,
+  page: number,
+): Promise<IUsers[] | null> => {
+  const query: any = {};
+  if (filters.fullName) {
+    query.fullName = { $regex: filters.fullName, $options: 'i' }; // Case-insensitive search
+  }
+  if (filters.mobileNumber) {
+    query.mobileNumber = filters.mobileNumber;
+  }
+  if (filters.status !== undefined) {
+    query.status = filters.status;
+  }
+  // query.subscribed = true; // Example of a subscription filter if needed
+  const skip = (page - 1) * limit;
+  return await usersModel.find(query).limit(limit).skip(skip).lean();
+};
+
+export const verifyLogin = async (
+  email: string,
+  password: string,
+): Promise<{ _id: string } | null> => {
+  const user = await usersModel
+    .findOne({ email, isDeleted: false, status: 1 })
+    .select({ _id: 1, password: 1 })
+    .lean();
+  if (!user) return null;
+  const isMatch = await bcrypt.compare(password, user.password as string);
+  return isMatch ? { _id: objectIdToString(user._id as ObjectId) } : null;
+};
+
+//Password hashing for user reg
+export const hashPassword = async (password: string): Promise<string> => {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+};
+
+export const createAdmin = async (data: IAdminBody): Promise<{ _id: string }> => {
+  const user = await usersModel.create(data);
+  return { _id: user._id as string };
+};
+
+export const updateParentDob = async (
+  id: string,
+  parentDob: Date,
+): Promise<{ _id: string } | null> => {
+  const _id = ObjectID(id);
+  return await usersModel.findOneAndUpdate({ _id }, { parentDob: parentDob }, { new: true });
+};
+
+export const verifyParentDobYear = async (userId: string, year: number): Promise<boolean> => {
+  const _id = ObjectID(userId);
+  const user = await usersModel.findOne({ _id, isDeleted: false }, { parentDob: 1 });
+  if (!user || !user.parentDob) {
+    throw new AppError('User or parent DOB not found', HttpStatus.NOT_FOUND);
+  }
+  const parentDobYear = new Date(user.parentDob).getFullYear();
+  return parentDobYear === year;
 };

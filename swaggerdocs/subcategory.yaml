@@ -44,7 +44,7 @@ paths:
                           example: "Self Help"
                         imageUrl:
                           type: string
-                          example: "upload/category/sample.jpg"
+                          example: "upload/subcategory/sample.jpg"
                         isActive:
                           type: boolean
                           example: true
@@ -138,6 +138,153 @@ paths:
                     type: string
                     example: An error occurred
 
+/api/subcategory/:
+    post:
+      summary: Create sub category
+      description: Endpoint to Create sub category
+      tags:
+        - Sub Category Model
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subCategoryName:
+                  type: string
+                  example: Stories
+                categoryId:
+                  type: string
+                  example: "670d2fd920824883c3100257"  
+                description:
+                  type: string
+                  example: "Desc Stories"
+                imageUrl:
+                  type: string
+                  example: "upload/category/sample.jpg"
+                isActive:
+                  type: boolean
+                  example: true                  
+                sorting:
+                  type: number
+                  example: 1
+                type:
+                  type: string
+                  enum:
+                    - kid
+                    - parent                            
+                  example: kid
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Create Data Successfully
+                  result:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 670d2fd920824883c3100257
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
+
+/api/subcategory/{id}:
+    put:
+      summary: Update sub category
+      description: Endpoint to update sub category
+      tags:
+        - Sub Category Model
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the package
+          schema:
+            type: string
+            example: "670d2fd920824883c3100257"      
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subCategoryName:
+                  type: string
+                  example: Stories
+                categoryId:
+                  type: string
+                  example: "670d2fd920824883c3100257"  
+                description:
+                  type: string
+                  example: "Desc Stories"
+                imageUrl:
+                  type: string
+                  example: "upload/category/sample.jpg"
+                isActive:
+                  type: boolean
+                  example: true                  
+                sorting:
+                  type: number
+                  example: 1
+                type:
+                  type: string
+                  enum:
+                    - kid
+                    - parent                            
+                  example: kid
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: update Data Successfully
+                  result:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 670d2fd920824883c3100257
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
 
 components:
   securitySchemes:

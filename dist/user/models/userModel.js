@@ -15,6 +15,8 @@ const usersSchema = new mongoose_1.Schema({
     mobileNumberVerified: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
     status: { type: Number, default: 1 },
+    password: { type: String, default: '' },
+    role: { type: String },
 }, { timestamps: true });
 const usersModel = (0, mongoose_1.model)('Users', usersSchema);
 exports.default = usersModel;

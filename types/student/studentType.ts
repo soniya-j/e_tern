@@ -24,4 +24,5 @@ export interface IStudentBody {
   userId: string;
   subscriptionStartDate?: Date;
   subscriptionEndDate?: Date;
+  subscribed?: boolean;
 }

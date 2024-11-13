@@ -3,7 +3,7 @@ import { ITrackCourseMaterialView } from '../../types/coursematerial/courseMater
 
 const courseMaterialViewSchema = new Schema<ITrackCourseMaterialView>(
   {
-    userId: { type: String, required: true },
+    studentId: { type: String, required: true },
     courseMaterialId: { type: String, required: true },
     viewedPercentage: { type: Number },
     isActive: { type: Boolean, default: true },

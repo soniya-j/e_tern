@@ -16,6 +16,8 @@ const usersSchema = new Schema<IUsers>(
     mobileNumberVerified: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
     status: { type: Number, default: 1 },
+    password: { type: String, default: '' },
+    role: { type: String },
   },
   { timestamps: true },
 );

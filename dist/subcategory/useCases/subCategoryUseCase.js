@@ -3,11 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSubCategoriesByCategoryIdUseCase = exports.getAllSubCategoryUseCase = void 0;
+exports.updateSubCategoryUseCase = exports.createSubCategoryUseCase = exports.getSubCategoriesByCategoryIdUseCase = exports.getAllSubCategoryUseCase = void 0;
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
 const subCategoryRepo_1 = require("../repos/subCategoryRepo");
 const courseMaterialRepo_1 = require("../../coursematerial/repos/courseMaterialRepo");
+const categoryRepo_1 = require("../../category/repos/categoryRepo");
 const getAllSubCategoryUseCase = async () => {
     const subCategoryRepo = new subCategoryRepo_1.SubCategoryRepo();
     const result = await subCategoryRepo.findAllSubCategories();
@@ -56,3 +57,21 @@ const getSubCategoriesByCategoryIdUseCase = async (categoryId, type, userId) => 
     return subCategories;
 };
 exports.getSubCategoriesByCategoryIdUseCase = getSubCategoriesByCategoryIdUseCase;
+const createSubCategoryUseCase = async (data) => {
+    const exists = await (0, categoryRepo_1.checkCategoryExists)(data.categoryId);
+    if (!exists) {
+        throw new appError_1.default('No categories found for the given categoryId', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    const result = await (0, subCategoryRepo_1.saveSubCategory)(data);
+    return result;
+};
+exports.createSubCategoryUseCase = createSubCategoryUseCase;
+const updateSubCategoryUseCase = async (id, data) => {
+    const exists = await (0, categoryRepo_1.checkCategoryExists)(data.categoryId);
+    if (!exists) {
+        throw new appError_1.default('No categories found for the given categoryId', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    const result = await (0, subCategoryRepo_1.updateSubCategory)(id, data);
+    return result;
+};
+exports.updateSubCategoryUseCase = updateSubCategoryUseCase;

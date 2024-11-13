@@ -3,12 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateStudent = exports.createStudent = exports.findStudentsByUserId = exports.findPackage = exports.findStudentExists = void 0;
+exports.checkStudentIdExist = exports.updateStudent = exports.createStudent = exports.findStudentsByUserId = exports.findPackage = exports.findStudentExists = void 0;
 const studentModel_1 = __importDefault(require("../models/studentModel"));
 const packageModel_1 = __importDefault(require("../../package/models/packageModel"));
 const mongoose_1 = require("mongoose");
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
+const objectIdParser_1 = require("../../utils/objectIdParser");
 const findStudentExists = async (studentId, userId) => {
     return await studentModel_1.default
         .findOne({ _id: studentId, userId, isDeleted: false })
@@ -73,3 +74,8 @@ const updateStudent = async (id, data) => {
     return updatedData;
 };
 exports.updateStudent = updateStudent;
+const checkStudentIdExist = async (studentId) => {
+    const _id = (0, objectIdParser_1.ObjectID)(studentId);
+    return await studentModel_1.default.findOne({ _id, isDeleted: false }).select({ _id: 1 }).lean();
+};
+exports.checkStudentIdExist = checkStudentIdExist;

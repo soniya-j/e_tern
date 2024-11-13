@@ -2,8 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const packageController_1 = require("../controllers/packageController");
-//import { authenticateUser } from '../../middleware/authentication';
+const authentication_1 = require("../../middleware/authentication");
+const packageRequest_1 = require("../requests/packageRequest");
 const router = (0, express_1.Router)();
-//router.get('/all', authenticateUser, getAllPackages);
-router.get('/all', packageController_1.getAllPackages);
+router.get('/all', authentication_1.authenticateUser, packageController_1.getAllPackages);
+router.get('/allAdmin', authentication_1.authenticateAdmin, packageController_1.getAllPackages);
+router.post('/', authentication_1.authenticateAdmin, packageRequest_1.packageCreateValidation, packageController_1.createPackage);
+router.put('/:id', authentication_1.authenticateAdmin, packageRequest_1.packageUpdateValidation, packageRequest_1.packageCreateValidation, packageController_1.updatePackage);
 exports.default = router;

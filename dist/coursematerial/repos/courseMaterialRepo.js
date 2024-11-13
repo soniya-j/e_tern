@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCourseMaterialTrackByCategory = exports.getCourseMaterialTrackBySubCategory = exports.getCourseMaterialTrack = exports.checkCourseMaterialExist = exports.trackCourseMaterial = exports.checkUserCourseIdExist = exports.CourseMaterialRepo = void 0;
+exports.updateCourseMaterial = exports.saveCourseMaterial = exports.getCourseMaterialTrackByCategory = exports.getCourseMaterialTrackBySubCategory = exports.getCourseMaterialTrack = exports.checkCourseMaterialExist = exports.trackCourseMaterial = exports.checkUserCourseIdExist = exports.CourseMaterialRepo = void 0;
 const courseMaterialModel_1 = __importDefault(require("../models/courseMaterialModel"));
 const courseMaterialViewModel_1 = __importDefault(require("../models/courseMaterialViewModel"));
 const subCategoryModel_1 = __importDefault(require("../../subcategory/models/subCategoryModel"));
@@ -67,7 +67,9 @@ class CourseMaterialRepo {
         let openStatusIndex = 0;
         const viewedMaterialIds = new Set();
         if (userId) {
-            const viewedMaterials = await courseMaterialViewModel_1.default.find({ userId, isActive: true }).lean();
+            const viewedMaterials = await courseMaterialViewModel_1.default
+                .find({ studentId, isActive: true })
+                .lean();
             viewedMaterials.forEach((view) => {
                 viewedMaterialIds.add(view.courseMaterialId.toString());
             });
@@ -95,9 +97,9 @@ class CourseMaterialRepo {
     }
 }
 exports.CourseMaterialRepo = CourseMaterialRepo;
-const checkUserCourseIdExist = async (userId, courseMaterialId) => {
+const checkUserCourseIdExist = async (studentId, courseMaterialId) => {
     return await courseMaterialViewModel_1.default
-        .findOne({ userId, courseMaterialId })
+        .findOne({ studentId, courseMaterialId })
         .select({ _id: 1 })
         .lean();
 };
@@ -142,8 +144,10 @@ const getCourseMaterialTrackBySubCategory = async (userId, subCategoryId) => {
     return { totalMaterials, viewedMaterials, percentageViewed };
 };
 exports.getCourseMaterialTrackBySubCategory = getCourseMaterialTrackBySubCategory;
-const getCourseMaterialTrackByCategory = async (userId, categoryId) => {
-    const subCategories = await subCategoryModel_1.default.find({ categoryId, isActive: true }).select('_id');
+const getCourseMaterialTrackByCategory = async (studentId, categoryId) => {
+    const subCategories = await subCategoryModel_1.default
+        .find({ categoryId, isActive: true, isDeleted: false })
+        .select('_id');
     const subCategoryIds = subCategories.map((subCategory) => subCategory._id);
     const courseMaterials = await courseMaterialModel_1.default
         .find({
@@ -154,7 +158,7 @@ const getCourseMaterialTrackByCategory = async (userId, categoryId) => {
         .select('_id');
     const courseMaterialIds = courseMaterials.map((material) => material._id);
     const viewedMaterials = await courseMaterialViewModel_1.default.countDocuments({
-        userId,
+        studentId,
         courseMaterialId: { $in: courseMaterialIds },
     });
     const totalMaterials = courseMaterials.length;
@@ -162,3 +166,16 @@ const getCourseMaterialTrackByCategory = async (userId, categoryId) => {
     return { totalMaterials, viewedMaterials, percentageViewed };
 };
 exports.getCourseMaterialTrackByCategory = getCourseMaterialTrackByCategory;
+const saveCourseMaterial = async (data) => {
+    const result = await courseMaterialModel_1.default.create(data);
+    return { _id: result._id };
+};
+exports.saveCourseMaterial = saveCourseMaterial;
+const updateCourseMaterial = async (id, data) => {
+    const updatedRes = await courseMaterialModel_1.default.findByIdAndUpdate(id, data, { new: true });
+    if (!updatedRes) {
+        throw new appError_1.default('No data found', httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return { _id: updatedRes._id };
+};
+exports.updateCourseMaterial = updateCourseMaterial;

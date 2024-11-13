@@ -151,6 +151,8 @@ paths:
       description: Track video view
       tags:
         - Course Material Model
+      security:
+        - JWT: []
       requestBody:
         required: true
         content:
@@ -158,7 +160,7 @@ paths:
             schema:
               type: object
               properties:
-                userId:
+                studentId:
                   type: string
                   example: 32423423424              
                 courseMaterialId:
@@ -194,6 +196,155 @@ paths:
                   error:
                     type: string
                     example: Unauthorized user
+
+/api/coursematerial/:
+    post:
+      summary: Create Course Material
+      description: Endpoint to Create Course Material
+      tags:
+        - Course Material Model
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                courseMaterialName:
+                  type: string
+                  example: Stories video
+                subCategoryId:
+                  type: string
+                  example: "670d2fd920824883c3100257"  
+                description:
+                  type: string
+                  example: "Stories"
+                courseMaterialUrl:
+                  type: string
+                  example: "upload/coursematerial/sample.jpg"
+                isActive:
+                  type: boolean
+                  example: true                  
+                sorting:
+                  type: number
+                  example: 1
+                type:
+                  type: string
+                  enum:
+                    - kid
+                    - parent                            
+                  example: kid
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Create Data Successfully
+                  result:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 670d2fd920824883c3100257
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user   
+
+/api/coursematerial/{id}:
+    put:
+      summary: Update Course Material
+      description: Endpoint to Update Course Material
+      tags:
+        - Course Material Model
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the course material
+          schema:
+            type: string
+            example: "670d2fd920824883c3100257"
+      
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                courseMaterialName:
+                  type: string
+                  example: Stories video
+                subCategoryId:
+                  type: string
+                  example: "670d2fd920824883c3100257"  
+                description:
+                  type: string
+                  example: "Stories"
+                courseMaterialUrl:
+                  type: string
+                  example: "upload/coursematerial/sample.jpg"
+                isActive:
+                  type: boolean
+                  example: true                  
+                sorting:
+                  type: number
+                  example: 1
+                type:
+                  type: string
+                  enum:
+                    - kid
+                    - parent                            
+                  example: kid
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Update Data Successfully
+                  result:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 670d2fd920824883c3100257
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user   
   
 components:
   securitySchemes:

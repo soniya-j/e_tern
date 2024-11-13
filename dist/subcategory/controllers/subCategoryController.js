@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSubCategoriesByCategoryId = exports.getSubCategories = void 0;
+exports.updateSubCategory = exports.createSubCategory = exports.getSubCategoriesByCategoryId = exports.getSubCategories = void 0;
 const subCategoryUseCase_1 = require("../useCases/subCategoryUseCase");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const localization_1 = require("../../config/localization");
@@ -52,3 +52,38 @@ const getSubCategoriesByCategoryId = async (req, res) => {
     }
 };
 exports.getSubCategoriesByCategoryId = getSubCategoriesByCategoryId;
+exports.createSubCategory = (0, express_async_handler_1.default)(async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({
+            success: false,
+            errors: errors.array(),
+        });
+        return;
+    }
+    const data = req.body;
+    const result = await (0, subCategoryUseCase_1.createSubCategoryUseCase)(data);
+    res.status(200).json({
+        success: true,
+        message: localization_1.responseMessages.response_success_post,
+        result: result,
+    });
+});
+exports.updateSubCategory = (0, express_async_handler_1.default)(async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({
+            success: false,
+            errors: errors.array(),
+        });
+        return;
+    }
+    const id = req.params.id;
+    const data = req.body;
+    const result = await (0, subCategoryUseCase_1.updateSubCategoryUseCase)(id, data);
+    res.status(200).json({
+        success: true,
+        message: localization_1.responseMessages.response_success_put,
+        result: result,
+    });
+});

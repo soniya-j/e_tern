@@ -3,11 +3,15 @@ import {
   getCourseMaterials,
   getCourseMaterialsBySubCategoryId,
   trackCourseMaterialView,
+  createCourseMaterial,
+  updateCourseMaterial,
 } from '../controllers/courseMaterialController';
-import { authenticateUser } from '../../middleware/authentication';
+import { authenticateUser, authenticateAdmin } from '../../middleware/authentication';
 import {
   getCourseMaterialBySubCategoryIdValidation,
   trackCourseMaterialValidation,
+  courseMaterialCreateValidation,
+  courseMaterialUpdateValidation,
 } from '../requests/courseMaterialRequest';
 
 const router = Router();
@@ -21,6 +25,19 @@ router.get(
   getCourseMaterialsBySubCategoryId,
 );
 
-router.post('/track-view', trackCourseMaterialValidation, trackCourseMaterialView);
+router.post(
+  '/track-view',
+  authenticateUser,
+  trackCourseMaterialValidation,
+  trackCourseMaterialView,
+);
+router.post('/', authenticateAdmin, courseMaterialCreateValidation, createCourseMaterial);
+router.put(
+  '/:id',
+  authenticateAdmin,
+  courseMaterialUpdateValidation,
+  courseMaterialCreateValidation,
+  updateCourseMaterial,
+);
 
 export default router;

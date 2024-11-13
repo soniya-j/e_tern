@@ -5,13 +5,17 @@ import {
   checkUserCourseIdExist,
   trackCourseMaterial,
   checkCourseMaterialExist,
+  saveCourseMaterial,
+  updateCourseMaterial,
 } from '../repos/courseMaterialRepo';
 import {
   ICourseMaterial,
   ITrackCourseMaterialView,
   ICourseMaterialWithStatus,
+  ICourseMaterialBody,
 } from '../../types/coursematerial/courseMaterialModel';
-import { checkUserIdExist } from '../../user/repos/registerUserRepo';
+import { checkStudentIdExist } from '../../student/repos/studentRepo';
+import { checkSubCategoryExists } from '../../subcategory/repos/subCategoryRepo';
 
 export const getAllCourseMaterialUseCase = async (): Promise<ICourseMaterial[]> => {
   const courseMaterialRepo = new CourseMaterialRepo();
@@ -54,14 +58,38 @@ export const getCourseMaterialBySubCategoryIdUseCase = async (
 
 export const trackCourseMaterialUserUseCase = async (
   data: ITrackCourseMaterialView,
+  userId: string
 ): Promise<boolean> => {
-  const userExist = await checkUserIdExist(data.userId);
-  if (!userExist) throw new AppError('User Not Found', HttpStatus.BAD_REQUEST);
+  const studentExist = await checkStudentIdExist(data.studentId, userId);
+  if (!studentExist) throw new AppError('student Not Found', HttpStatus.BAD_REQUEST);
   const courseMaterialExist = await checkCourseMaterialExist(data.courseMaterialId);
   if (!courseMaterialExist)
     throw new AppError('courseMaterialId Not Found', HttpStatus.BAD_REQUEST);
   //check already viewed
-  const trackExist = await checkUserCourseIdExist(data.userId, data.courseMaterialId);
+  const trackExist = await checkUserCourseIdExist(data.studentId, data.courseMaterialId);
   if (!trackExist) await trackCourseMaterial(data);
   return true;
+};
+
+export const createCourseMaterialUseCase = async (
+  data: ICourseMaterialBody,
+): Promise<Pick<ICourseMaterial, '_id'>> => {
+  const exists = await checkSubCategoryExists(data.subCategoryId);
+  if (!exists) {
+    throw new AppError('No sub categories found for the given subCategoryId', HttpStatus.NOT_FOUND);
+  }
+  const result = await saveCourseMaterial(data);
+  return result;
+};
+
+export const updateCourseMaterialUseCase = async (
+  id: string,
+  data: ICourseMaterialBody,
+): Promise<Pick<ICourseMaterial, '_id'>> => {
+  const exists = await checkSubCategoryExists(data.subCategoryId);
+  if (!exists) {
+    throw new AppError('No sub categories found for the given subCategoryId', HttpStatus.NOT_FOUND);
+  }
+  const result = await updateCourseMaterial(id, data);
+  return result;
 };

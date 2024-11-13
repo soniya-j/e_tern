@@ -21,7 +21,7 @@ export interface ICourseMaterialBody {
 }
 
 export interface ITrackCourseMaterialView extends Document {
-  userId: string;
+  studentId: string;
   courseMaterialId: string;
   viewedPercentage?: number;
   isActive: boolean;

@@ -1,12 +1,13 @@
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
-//import { ICategoryBody } from '../../types/category/categoryModel';
-import { CategoryRepo } from '../repos/categoryRepo';
+import { ICategoryBody } from '../../types/category/categoryModel';
+import { CategoryRepo, saveCategory, updateCategory } from '../repos/categoryRepo';
 import { ICategory, ICategoryWithTracking } from '../../types/category/categoryModel';
 import { getCourseMaterialTrackByCategory } from '../../coursematerial/repos/courseMaterialRepo';
 import { objectIdToString } from '../../utils/objectIdParser';
 import { ObjectId } from 'mongodb';
 import { findPackage, findStudentExists } from '../../student/repos/studentRepo';
+import { checkPackageExists } from '../../package/repos/packageRepo';
 
 export const getAllCategoryUseCase = async (): Promise<ICategory[]> => {
   const categoryRepo = new CategoryRepo();
@@ -63,7 +64,7 @@ export const getCategoriesByPackageIdUseCase = async (
             ? (category as ICategory & { toObject: () => object }).toObject()
             : category;
         const { totalMaterials, viewedMaterials, percentageViewed } =
-          await getCourseMaterialTrackByCategory(userId, categoryId);
+          await getCourseMaterialTrackByCategory(studentId, categoryId);
         return {
           ...categoryPlain,
           totalMaterials,
@@ -75,4 +76,27 @@ export const getCategoriesByPackageIdUseCase = async (
     return categoriesWithTracking;
   }
   return categories as ICategoryWithTracking[];
+};
+
+export const createCategoryUseCase = async (
+  data: ICategoryBody,
+): Promise<Pick<ICategory, '_id'>> => {
+  const exists = await checkPackageExists(data.packageId);
+  if (!exists) {
+    throw new AppError('No packages found for the given packageId', HttpStatus.NOT_FOUND);
+  }
+  const result = await saveCategory(data);
+  return result;
+};
+
+export const updateCategoryUseCase = async (
+  id: string,
+  data: ICategoryBody,
+): Promise<Pick<ICategory, '_id'>> => {
+  const exists = await checkPackageExists(data.packageId);
+  if (!exists) {
+    throw new AppError('No packages found for the given packageId', HttpStatus.NOT_FOUND);
+  }
+  const result = await updateCategory(id, data);
+  return result;
 };

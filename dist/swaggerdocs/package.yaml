@@ -39,7 +39,6 @@ paths:
                         description:
                           type: string
                           example: "Package 3 - 6"
-                        
                         ageFrom:
                           type: number
                           example: 3
@@ -59,6 +58,183 @@ paths:
                   error:
                     type: string
                     example: An error occurred
+  /api/package/allAdmin:
+    get:
+      summary: Fetch All Packages for admin panel
+      description: Endpoint to fetch all packages for admin panel
+      tags:
+        - Package Model
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Fetch all packages successfully
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        packageName:
+                          type: string
+                          example: "Package 3 - 6"
+                        description:
+                          type: string
+                          example: "Package 3 - 6"
+                        ageFrom:
+                          type: number
+                          example: 3
+                        ageTo:
+                          type: number
+                          example: 6  
+                        isActive:
+                          type: boolean
+                          example: true
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred
+                    
+  /api/package/:
+    post:
+      summary: Create Package
+      description: Endpoint to Create Package
+      tags:
+        - Package Model
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                packageName:
+                  type: string
+                  example: package 1
+                ageFrom:
+                  type: number
+                  example: 3    
+                ageTo:
+                  type: number
+                  example: 6
+                description:
+                  type: string
+                  example: package description
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Create Data Successfully
+                  result:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 670d2fd920824883c3100257
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
+                    
+/api/package/{id}:
+    put:
+      summary: Update Package
+      description: Endpoint to update Package
+      tags:
+        - Package Model
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the package
+          schema:
+            type: string
+            example: "670d2fd920824883c3100257"
+      
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                packageName:
+                  type: string
+                  example: package 1
+                ageFrom:
+                  type: number
+                  example: 3    
+                ageTo:
+                  type: number
+                  example: 6
+                description:
+                  type: string
+                  example: package description
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Create Data Successfully
+                  result:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 670d2fd920824883c3100257
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
 
 components:
   securitySchemes:

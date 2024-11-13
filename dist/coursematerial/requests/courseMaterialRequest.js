@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.trackCourseMaterialValidation = exports.getCourseMaterialBySubCategoryIdValidation = void 0;
+exports.courseMaterialUpdateValidation = exports.courseMaterialCreateValidation = exports.trackCourseMaterialValidation = exports.getCourseMaterialBySubCategoryIdValidation = void 0;
 const express_validator_1 = require("express-validator");
 const mongoose_1 = __importDefault(require("mongoose"));
 exports.getCourseMaterialBySubCategoryIdValidation = [
@@ -35,14 +35,14 @@ exports.trackCourseMaterialValidation = [
         }
         return true;
     }),
-    (0, express_validator_1.body)('userId')
+    (0, express_validator_1.body)('studentId')
         .notEmpty()
-        .withMessage('userId is required')
+        .withMessage('studentId is required')
         .isString()
-        .withMessage('userId must be a string')
+        .withMessage('studentId must be a string')
         .custom((value) => {
         if (!mongoose_1.default.Types.ObjectId.isValid(value)) {
-            throw new Error('Invalid userId format');
+            throw new Error('Invalid studentId format');
         }
         return true;
     }),
@@ -53,4 +53,34 @@ exports.trackCourseMaterialValidation = [
       .isNumber()
       .withMessage('viewedPercentage must be a string'),
       */
+];
+exports.courseMaterialCreateValidation = [
+    (0, express_validator_1.body)('courseMaterialName')
+        .notEmpty()
+        .withMessage('courseMaterialName is required')
+        .isString()
+        .withMessage('courseMaterialName must be a string'),
+    (0, express_validator_1.body)('subCategoryId')
+        .notEmpty()
+        .withMessage('subCategoryId is required')
+        .isMongoId()
+        .withMessage('Invalid subCategoryId format'),
+    (0, express_validator_1.body)('courseMaterialUrl')
+        .notEmpty()
+        .withMessage('courseMaterialUrl is required')
+        .isString()
+        .withMessage('courseMaterialUrl must be a string'),
+    (0, express_validator_1.body)('sorting')
+        .notEmpty()
+        .withMessage('sorting is required')
+        .isNumeric()
+        .withMessage('sorting must be a number'),
+    (0, express_validator_1.body)('type')
+        .notEmpty()
+        .withMessage('type is required')
+        .isIn(['kid', 'parent'])
+        .withMessage('type must be either "kid" or "parent"'),
+];
+exports.courseMaterialUpdateValidation = [
+    (0, express_validator_1.param)('id').isMongoId().withMessage('Invalid courseMaterial ID format'),
 ];

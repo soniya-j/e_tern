@@ -107,16 +107,13 @@ paths:
                           example: "Kutty Stories"
                         packageId:
                           type: string
-                          example: "670d2fd920824883c3100257"
-                        description:
-                          type: string
-                          example: "Kutty Stories"
+                          example: "670d2fd920824883c3100257"                        
                         imageUrl:
                           type: string
                           example: "upload/category/sample.jpg"
-                        isActive:
-                          type: boolean
-                          example: true
+                        description:
+                          type: string
+                          example: "Kutty Stories"                        
         404:
           description: Categories not found for the given package
           content:
@@ -137,6 +134,153 @@ paths:
                   error:
                     type: string
                     example: An error occurred
+  /api/category/:
+    post:
+      summary: Create category
+      description: Endpoint to Create category
+      tags:
+        - Category Model
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                categoryName:
+                  type: string
+                  example: Kutty Stories
+                packageId:
+                  type: string
+                  example: "670d2fd920824883c3100257"  
+                description:
+                  type: string
+                  example: "Kutty Stories"
+                imageUrl:
+                  type: string
+                  example: "upload/category/sample.jpg"
+                isActive:
+                  type: boolean
+                  example: true                  
+                sorting:
+                  type: number
+                  example: 1
+                type:
+                  type: string
+                  enum:
+                    - kid
+                    - parent                            
+                  example: kid
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Create Data Successfully
+                  result:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 670d2fd920824883c3100257
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
+
+  /api/category/{id}:
+    put:
+      summary: Update category
+      description: Endpoint to update category
+      tags:
+        - Category Model
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the category
+          schema:
+            type: string
+            example: "670d2fd920824883c3100257"      
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                categoryName:
+                  type: string
+                  example: Kutty Stories
+                packageId:
+                  type: string
+                  example: "670d2fd920824883c3100257"  
+                description:
+                  type: string
+                  example: "Kutty Stories"
+                imageUrl:
+                  type: string
+                  example: "upload/category/sample.jpg"
+                isActive:
+                  type: boolean
+                  example: true                  
+                sorting:
+                  type: number
+                  example: 1
+                type:
+                  type: string
+                  enum:
+                    - kid
+                    - parent                            
+                  example: kid
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Update Data Successfully
+                  result:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 670d2fd920824883c3100257
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
 
 components:
   securitySchemes:

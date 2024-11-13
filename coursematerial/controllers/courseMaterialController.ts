@@ -3,13 +3,18 @@ import {
   getAllCourseMaterialUseCase,
   getCourseMaterialBySubCategoryIdUseCase,
   trackCourseMaterialUserUseCase,
+  createCourseMaterialUseCase,
+  updateCourseMaterialUseCase,
 } from '../useCases/courseMaterialUseCase';
 import asyncHandler from 'express-async-handler';
 import { responseMessages } from '../../config/localization';
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
 import { validationResult } from 'express-validator';
-import { ITrackCourseMaterialView } from '../../types/coursematerial/courseMaterialModel';
+import {
+  ITrackCourseMaterialView,
+  ICourseMaterialBody,
+} from '../../types/coursematerial/courseMaterialModel';
 
 export const getCourseMaterials = asyncHandler(async (req: Request, res: Response) => {
   const result = await getAllCourseMaterialUseCase();
@@ -70,10 +75,48 @@ export const trackCourseMaterialView = asyncHandler(async (req: Request, res: Re
     return;
   }
   const data = req.body as ITrackCourseMaterialView;
-  await trackCourseMaterialUserUseCase(data);
+  const userId = res.locals.userId as string;
+  await trackCourseMaterialUserUseCase(data, userId);
   res.status(200).json({
     success: true,
     message: responseMessages.response_success_post,
     result: '',
+  });
+});
+
+export const createCourseMaterial = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const data = req.body as ICourseMaterialBody;
+  const result = await createCourseMaterialUseCase(data);
+  res.status(200).json({
+    success: true,
+    message: responseMessages.response_success_post,
+    result: result,
+  });
+});
+
+export const updateCourseMaterial = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const id = req.params.id;
+  const data = req.body as ICourseMaterialBody;
+  const result = await updateCourseMaterialUseCase(id, data);
+  res.status(200).json({
+    success: true,
+    message: responseMessages.response_success_put,
+    result: result,
   });
 });

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserUseCase = exports.getCourseMaterialTrackUseCase = exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
+exports.verifyParentDobUseCase = exports.updateParentDobUseCase = exports.registerAdminUseCase = exports.loginUseCase = exports.getUsersUseCase = exports.updateUserUseCase = exports.getCourseMaterialTrackUseCase = exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
 const authentication_1 = require("../../authentication/authentication");
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
@@ -13,7 +13,6 @@ const imageUploader_1 = require("../../utils/imageUploader");
 const studentRepo_1 = require("../../student/repos/studentRepo");
 const registerUserUseCase = async (data) => {
     //check userAlready exist
-    //const userExist = await checkUserExist(data.mobileNumber);
     const userExist = await (0, registerUserRepo_1.checkUserExist)(data.email ?? '', data.mobileNumber);
     if (userExist)
         throw new appError_1.default('User Mobile Number/Email Already Exist', httpStatus_1.HttpStatus.BAD_REQUEST);
@@ -21,6 +20,7 @@ const registerUserUseCase = async (data) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     //await sendOtp(data.mobileNumber, otp);
     data.status = 1;
+    data.role = 'user';
     const result = await (0, registerUserRepo_1.createUser)(data, otp);
     const studentData = {
         ...data,
@@ -90,3 +90,57 @@ const updateUserUseCase = async (userId, data) => {
     return result;
 };
 exports.updateUserUseCase = updateUserUseCase;
+const getUsersUseCase = async (filters, limit, page) => {
+    const result = await (0, registerUserRepo_1.getAllUsers)(filters, limit, page);
+    if (!result || result.length === 0) {
+        throw new appError_1.default('No Users found', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    return result;
+};
+exports.getUsersUseCase = getUsersUseCase;
+const loginUseCase = async (data) => {
+    const { email, password } = data;
+    const check = await (0, registerUserRepo_1.verifyLogin)(email, password);
+    if (!check)
+        throw new appError_1.default('Invalid Email/Password', httpStatus_1.HttpStatus.BAD_REQUEST);
+    const token = (0, authentication_1.generateToken)({ role: 'admin', userId: check._id });
+    //await saveUserToken(otpCheck._id, deviceId, deviceType, token);
+    const result = await (0, registerUserRepo_1.getProfileById)(check._id);
+    if (!result)
+        throw new appError_1.default('User profile not found', httpStatus_1.HttpStatus.NOT_FOUND);
+    return { token, ...result };
+};
+exports.loginUseCase = loginUseCase;
+const registerAdminUseCase = async (data) => {
+    //check userAlready exist
+    const userExist = await (0, registerUserRepo_1.checkUserExist)(data.email ?? '', data.mobileNumber);
+    if (userExist)
+        throw new appError_1.default('User Mobile Number/Email Already Exist', httpStatus_1.HttpStatus.BAD_REQUEST);
+    data.status = 1;
+    data.role = 'admin';
+    const hashedPassword = await (0, registerUserRepo_1.hashPassword)(data.password);
+    data.password = hashedPassword;
+    const result = await (0, registerUserRepo_1.createAdmin)(data);
+    return result;
+};
+exports.registerAdminUseCase = registerAdminUseCase;
+const updateParentDobUseCase = async (userId, parentDob) => {
+    const chkUser = await (0, registerUserRepo_1.getProfile)(userId);
+    if (!chkUser || chkUser.length === 0) {
+        throw new appError_1.default('No User found for the given user ID', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    const result = await (0, registerUserRepo_1.updateParentDob)(userId, parentDob);
+    if (!result) {
+        throw new appError_1.default('Failed to update parent DOB', httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return { _id: result._id };
+};
+exports.updateParentDobUseCase = updateParentDobUseCase;
+const verifyParentDobUseCase = async (userId, parentDobYear) => {
+    const result = await (0, registerUserRepo_1.verifyParentDobYear)(userId, parentDobYear);
+    if (!result) {
+        throw new appError_1.default('Invalid Secret Key', httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return result;
+};
+exports.verifyParentDobUseCase = verifyParentDobUseCase;

@@ -4,6 +4,7 @@ import { Types } from 'mongoose';
 import { IStudent, IStudentBody } from '../../types/student/studentType';
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
+import { ObjectID } from '../../utils/objectIdParser';
 
 export const findStudentExists = async (
   studentId: string,
@@ -76,4 +77,9 @@ export const updateStudent = async (id: string, data: IStudentBody): Promise<ISt
     throw new AppError('Something went wrong', HttpStatus.BAD_REQUEST);
   }
   return updatedData;
+};
+
+export const checkStudentIdExist = async (studentId: string, userId: string): Promise<{ _id: string } | null> => {
+  const _id = ObjectID(studentId);
+  return await studentModel.findOne({ _id, userId, isDeleted: false }).select({ _id: 1 }).lean();
 };

@@ -1,8 +1,13 @@
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
-import { SubCategoryRepo } from '../repos/subCategoryRepo';
-import { ISubCategory, ISubCategoryWithTracking } from '../../types/subcategory/subCategoryModel';
+import { SubCategoryRepo, saveSubCategory, updateSubCategory } from '../repos/subCategoryRepo';
+import {
+  ISubCategory,
+  ISubCategoryWithTracking,
+  ISubCategoryBody,
+} from '../../types/subcategory/subCategoryModel';
 import { getCourseMaterialTrackBySubCategory } from '../../coursematerial/repos/courseMaterialRepo';
+import { checkCategoryExists } from '../../category/repos/categoryRepo';
 
 export const getAllSubCategoryUseCase = async (): Promise<ISubCategory[]> => {
   const subCategoryRepo = new SubCategoryRepo();
@@ -61,4 +66,27 @@ export const getSubCategoriesByCategoryIdUseCase = async (
     return subCategoriesWithTracking;
   }
   return subCategories as ISubCategoryWithTracking[];
+};
+
+export const createSubCategoryUseCase = async (
+  data: ISubCategoryBody,
+): Promise<Pick<ISubCategory, '_id'>> => {
+  const exists = await checkCategoryExists(data.categoryId);
+  if (!exists) {
+    throw new AppError('No categories found for the given categoryId', HttpStatus.NOT_FOUND);
+  }
+  const result = await saveSubCategory(data);
+  return result;
+};
+
+export const updateSubCategoryUseCase = async (
+  id: string,
+  data: ISubCategoryBody,
+): Promise<Pick<ISubCategory, '_id'>> => {
+  const exists = await checkCategoryExists(data.categoryId);
+  if (!exists) {
+    throw new AppError('No categories found for the given categoryId', HttpStatus.NOT_FOUND);
+  }
+  const result = await updateSubCategory(id, data);
+  return result;
 };

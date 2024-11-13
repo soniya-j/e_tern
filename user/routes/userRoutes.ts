@@ -7,9 +7,14 @@ import {
   getProfile,
   courseMaterialTrack,
   updateProfile,
+  getUsers,
+  login,
+  registerAdmin,
+  updateParentDob,
+  verifyParentDob,
 } from '../controllers/userController';
 import multerConfig from '../../middleware/multer';
-import { authenticateUser } from '../../middleware/authentication';
+import { authenticateUser, authenticateAdmin } from '../../middleware/authentication';
 import {
   userRegisterValidation,
   verifyOtpValidation,
@@ -17,6 +22,10 @@ import {
   getProfileValidation,
   courseMaterialTrackValidation,
   userUpdateValidation,
+  loginValidation,
+  adminRegisterValidation,
+  userDobValidation,
+  userDobVerifyValidation,
 } from '../requests/userRequest';
 
 const router = Router();
@@ -25,7 +34,21 @@ router.post('/register', userRegisterValidation, registerUser);
 router.post('/verify-otp', verifyOtpValidation, verifyOtp);
 router.post('/upload-avatar', authenticateUser, multerConfig, uploadAvatar);
 router.post('/send-otp', sendOtpValidation, sendOtp);
-router.get('/profile/:userId', getProfileValidation, getProfile);
-router.get('/courseMaterialTrack/:userId', courseMaterialTrackValidation, courseMaterialTrack);
-router.put('/profileUpdate/:userId', userUpdateValidation, updateProfile);
+router.get('/profile/:userId', authenticateUser, getProfileValidation, getProfile);
+router.get(
+  '/coursematerial-track/:userId',
+  authenticateUser,
+  courseMaterialTrackValidation,
+  courseMaterialTrack,
+);
+router.put('/profile-update/:userId', authenticateUser, userUpdateValidation, updateProfile);
+router.put('/parentdob-update/:userId', authenticateUser, userDobValidation, updateParentDob);
+router.post('/parentdob-verify', authenticateUser, userDobVerifyValidation, verifyParentDob);
+
+//Admin apis
+// GET /api/user/all?fullName=Juan&subscribed=true&status=1&limit=5&page=2 //all optional
+router.post('/login', loginValidation, login);
+router.get('/all', authenticateAdmin, getUsers);
+router.post('/register-admin', adminRegisterValidation, registerAdmin);
+
 export default router;

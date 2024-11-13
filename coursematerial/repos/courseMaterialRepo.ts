@@ -4,6 +4,7 @@ import {
   ICourseMaterial,
   ITrackCourseMaterialView,
   ICourseMaterialWithStatus,
+  ICourseMaterialBody,
 } from '../../types/coursematerial/courseMaterialModel';
 import subCategoryModel from '../../subcategory/models/subCategoryModel';
 import { objectIdToString } from '../../utils/objectIdParser';
@@ -76,7 +77,9 @@ export class CourseMaterialRepo {
     let openStatusIndex = 0;
     const viewedMaterialIds = new Set<string>();
     if (userId) {
-      const viewedMaterials = await courseMaterialViewModel.find({ userId, isActive: true }).lean();
+      const viewedMaterials = await courseMaterialViewModel
+        .find({ studentId, isActive: true })
+        .lean();
       viewedMaterials.forEach((view) => {
         viewedMaterialIds.add(view.courseMaterialId.toString());
       });
@@ -144,11 +147,11 @@ async findCourseMaterialBySubCategoryId(
 }
 
 export const checkUserCourseIdExist = async (
-  userId: string,
+  studentId: string,
   courseMaterialId: string,
 ): Promise<{ _id: string } | null> => {
   return await courseMaterialViewModel
-    .findOne({ userId, courseMaterialId })
+    .findOne({ studentId, courseMaterialId })
     .select({ _id: 1 })
     .lean();
 };
@@ -202,10 +205,12 @@ export const getCourseMaterialTrackBySubCategory = async (
 };
 
 export const getCourseMaterialTrackByCategory = async (
-  userId: string,
+  studentId: string,
   categoryId: string,
 ): Promise<{ totalMaterials: number; viewedMaterials: number; percentageViewed: number }> => {
-  const subCategories = await subCategoryModel.find({ categoryId, isActive: true }).select('_id');
+  const subCategories = await subCategoryModel
+    .find({ categoryId, isActive: true, isDeleted: false })
+    .select('_id');
   const subCategoryIds = subCategories.map((subCategory) => subCategory._id);
 
   const courseMaterials = await courseMaterialModel
@@ -218,7 +223,7 @@ export const getCourseMaterialTrackByCategory = async (
 
   const courseMaterialIds = courseMaterials.map((material) => material._id);
   const viewedMaterials = await courseMaterialViewModel.countDocuments({
-    userId,
+    studentId,
     courseMaterialId: { $in: courseMaterialIds },
   });
 
@@ -226,4 +231,20 @@ export const getCourseMaterialTrackByCategory = async (
   const percentageViewed = totalMaterials > 0 ? (viewedMaterials / totalMaterials) * 100 : 0;
 
   return { totalMaterials, viewedMaterials, percentageViewed };
+};
+
+export const saveCourseMaterial = async (data: ICourseMaterialBody): Promise<{ _id: string }> => {
+  const result = await courseMaterialModel.create(data);
+  return { _id: result._id as string };
+};
+
+export const updateCourseMaterial = async (
+  id: string,
+  data: ICourseMaterialBody,
+): Promise<{ _id: string }> => {
+  const updatedRes = await courseMaterialModel.findByIdAndUpdate(id, data, { new: true });
+  if (!updatedRes) {
+    throw new AppError('No data found', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+  return { _id: updatedRes._id as string };
 };

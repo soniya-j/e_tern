@@ -107,7 +107,7 @@ export const courseMaterialWatchHistoryValidation = [
       }
       return true;
     }),
-    body('categoryId')
+  body('categoryId')
     .notEmpty()
     .withMessage('categoryId is required')
     .isString()
@@ -133,5 +133,5 @@ export const courseMaterialWatchHistoryValidation = [
     .notEmpty()
     .withMessage('watchedDuration is required')
     .isNumeric()
-    .withMessage('watchedDuration must be a number'),  
+    .withMessage('watchedDuration must be a number'),
 ];

@@ -7,14 +7,14 @@ import {
   checkCourseMaterialExist,
   saveCourseMaterial,
   updateCourseMaterial,
-  saveCourseMaterialWatchHistory
+  saveCourseMaterialWatchHistory,
 } from '../repos/courseMaterialRepo';
 import {
   ICourseMaterial,
   ITrackCourseMaterialView,
   ICourseMaterialWithStatus,
   ICourseMaterialBody,
-  ICourseMaterialWatchHistoryBody
+  ICourseMaterialWatchHistoryBody,
 } from '../../types/coursematerial/courseMaterialModel';
 import { checkStudentIdExist } from '../../student/repos/studentRepo';
 import { checkSubCategoryExists } from '../../subcategory/repos/subCategoryRepo';
@@ -102,7 +102,10 @@ export const courseMaterialWatchHistoryUseCase = async (
 ): Promise<boolean> => {
   const studentExist = await checkStudentIdExist(data.studentId, userId);
   if (!studentExist) throw new AppError('student Not Found', HttpStatus.BAD_REQUEST);
-  const courseMaterialExist = await checkCourseMaterialExist(data.courseMaterialId, data.subCategoryId);
+  const courseMaterialExist = await checkCourseMaterialExist(
+    data.courseMaterialId,
+    data.subCategoryId,
+  );
   if (!courseMaterialExist)
     throw new AppError('courseMaterialId Not Found', HttpStatus.BAD_REQUEST);
   await saveCourseMaterialWatchHistory(data);

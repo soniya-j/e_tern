@@ -174,7 +174,7 @@ export const verifyParentDobUseCase = async (
   userId: string,
   parentDobYear: number,
 ): Promise<boolean> => {
-  const result = await verifyParentDobYear(userId, parentDobYear, );
+  const result = await verifyParentDobYear(userId, parentDobYear);
   if (!result) {
     throw new AppError('Invalid Secret Key', HttpStatus.INTERNAL_SERVER_ERROR);
   }

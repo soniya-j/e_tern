@@ -7,7 +7,7 @@ const courseMaterialWatchHistorySchema = new Schema<ICourseMaterialWatchHistoryB
     categoryId: { type: String, required: true },
     subCategoryId: { type: String, required: true },
     courseMaterialId: { type: String, required: true },
-    watchedDuration: { type: Number },    
+    watchedDuration: { type: Number },
   },
   { timestamps: true },
 );

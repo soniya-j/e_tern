@@ -186,7 +186,11 @@ export const updateParentDob = async (
   parentName: string,
 ): Promise<{ _id: string } | null> => {
   const _id = ObjectID(id);
-  return await usersModel.findOneAndUpdate({ _id }, { parentDob: parentDob, parentName }, { new: true });
+  return await usersModel.findOneAndUpdate(
+    { _id },
+    { parentDob: parentDob, parentName },
+    { new: true },
+  );
 };
 
 export const verifyParentDobYear = async (userId: string, year: number): Promise<boolean> => {

@@ -5,7 +5,7 @@ import {
   trackCourseMaterialUserUseCase,
   createCourseMaterialUseCase,
   updateCourseMaterialUseCase,
-  courseMaterialWatchHistoryUseCase
+  courseMaterialWatchHistoryUseCase,
 } from '../useCases/courseMaterialUseCase';
 import asyncHandler from 'express-async-handler';
 import { responseMessages } from '../../config/localization';
@@ -14,7 +14,8 @@ import { HttpStatus } from '../../common/httpStatus';
 import { validationResult } from 'express-validator';
 import {
   ITrackCourseMaterialView,
-  ICourseMaterialBody,ICourseMaterialWatchHistoryBody
+  ICourseMaterialBody,
+  ICourseMaterialWatchHistoryBody,
 } from '../../types/coursematerial/courseMaterialModel';
 
 export const getCourseMaterials = asyncHandler(async (req: Request, res: Response) => {
@@ -122,21 +123,23 @@ export const updateCourseMaterial = asyncHandler(async (req: Request, res: Respo
   });
 });
 
-export const createCourseMaterialWatchHistory = asyncHandler(async (req: Request, res: Response) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(HttpStatus.BAD_REQUEST).json({
-      success: false,
-      errors: errors.array(),
+export const createCourseMaterialWatchHistory = asyncHandler(
+  async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(HttpStatus.BAD_REQUEST).json({
+        success: false,
+        errors: errors.array(),
+      });
+      return;
+    }
+    const data = req.body as ICourseMaterialWatchHistoryBody;
+    const userId = res.locals.userId as string;
+    await courseMaterialWatchHistoryUseCase(data, userId);
+    res.status(200).json({
+      success: true,
+      message: responseMessages.response_success_post,
+      result: '',
     });
-    return;
-  }
-  const data = req.body as ICourseMaterialWatchHistoryBody;
-  const userId = res.locals.userId as string;
-  await courseMaterialWatchHistoryUseCase(data, userId);
-  res.status(200).json({
-    success: true,
-    message: responseMessages.response_success_post,
-    result: '',
-  });
-});
+  },
+);

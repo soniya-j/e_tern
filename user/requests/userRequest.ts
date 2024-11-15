@@ -211,7 +211,7 @@ export const userDobVerifyValidation = [
         throw new Error('Invalid userId format');
       }
       return true;
-    }), 
+    }),
   body('parentDobYear')
     .notEmpty()
     .withMessage('parentDobYear is required')

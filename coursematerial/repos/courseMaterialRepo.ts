@@ -5,7 +5,7 @@ import {
   ITrackCourseMaterialView,
   ICourseMaterialWithStatus,
   ICourseMaterialBody,
-  ICourseMaterialWatchHistoryBody
+  ICourseMaterialWatchHistoryBody,
 } from '../../types/coursematerial/courseMaterialModel';
 import subCategoryModel from '../../subcategory/models/subCategoryModel';
 import { objectIdToString } from '../../utils/objectIdParser';
@@ -256,8 +256,9 @@ export const updateCourseMaterial = async (
   return { _id: updatedRes._id as string };
 };
 
-
-export const saveCourseMaterialWatchHistory = async (data: ICourseMaterialWatchHistoryBody): Promise<boolean> => {
-  const result = await courseMaterialWatchHistoryModel.create({ ...data });
+export const saveCourseMaterialWatchHistory = async (
+  data: ICourseMaterialWatchHistoryBody,
+): Promise<boolean> => {
+  await courseMaterialWatchHistoryModel.create({ ...data });
   return true;
 };

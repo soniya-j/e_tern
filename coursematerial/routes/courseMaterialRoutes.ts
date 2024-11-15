@@ -5,7 +5,7 @@ import {
   trackCourseMaterialView,
   createCourseMaterial,
   updateCourseMaterial,
-  createCourseMaterialWatchHistory
+  createCourseMaterialWatchHistory,
 } from '../controllers/courseMaterialController';
 import { authenticateUser, authenticateAdmin } from '../../middleware/authentication';
 import {

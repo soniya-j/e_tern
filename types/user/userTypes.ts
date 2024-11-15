@@ -17,6 +17,7 @@ export interface IUsers extends Document {
   status?: number;
   password?: string;
   role?: string;
+  currentStudentId?: string;
 }
 
 export interface IUserAuth extends Document {
@@ -65,9 +66,11 @@ export interface IAdminBody {
 export interface IUserDobBody {
   userId: string;
   parentDobYear: number;
+  parentName: string;
 }
 
 export interface IDobBody {
   userId: string;
   parentDob: Date;
+  parentName: string;
 }

@@ -5,6 +5,7 @@ import {
   trackCourseMaterialView,
   createCourseMaterial,
   updateCourseMaterial,
+  createCourseMaterialWatchHistory
 } from '../controllers/courseMaterialController';
 import { authenticateUser, authenticateAdmin } from '../../middleware/authentication';
 import {
@@ -12,6 +13,7 @@ import {
   trackCourseMaterialValidation,
   courseMaterialCreateValidation,
   courseMaterialUpdateValidation,
+  courseMaterialWatchHistoryValidation,
 } from '../requests/courseMaterialRequest';
 
 const router = Router();
@@ -31,6 +33,13 @@ router.post(
   trackCourseMaterialValidation,
   trackCourseMaterialView,
 );
+router.post(
+  '/add-watch-history',
+  authenticateUser,
+  courseMaterialWatchHistoryValidation,
+  createCourseMaterialWatchHistory,
+);
+
 router.post('/', authenticateAdmin, courseMaterialCreateValidation, createCourseMaterial);
 router.put(
   '/:id',

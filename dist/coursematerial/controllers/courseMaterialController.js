@@ -62,7 +62,8 @@ exports.trackCourseMaterialView = (0, express_async_handler_1.default)(async (re
         return;
     }
     const data = req.body;
-    await (0, courseMaterialUseCase_1.trackCourseMaterialUserUseCase)(data);
+    const userId = res.locals.userId;
+    await (0, courseMaterialUseCase_1.trackCourseMaterialUserUseCase)(data, userId);
     res.status(200).json({
         success: true,
         message: localization_1.responseMessages.response_success_post,

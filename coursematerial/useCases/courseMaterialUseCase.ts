@@ -7,12 +7,14 @@ import {
   checkCourseMaterialExist,
   saveCourseMaterial,
   updateCourseMaterial,
+  saveCourseMaterialWatchHistory
 } from '../repos/courseMaterialRepo';
 import {
   ICourseMaterial,
   ITrackCourseMaterialView,
   ICourseMaterialWithStatus,
   ICourseMaterialBody,
+  ICourseMaterialWatchHistoryBody
 } from '../../types/coursematerial/courseMaterialModel';
 import { checkStudentIdExist } from '../../student/repos/studentRepo';
 import { checkSubCategoryExists } from '../../subcategory/repos/subCategoryRepo';
@@ -58,7 +60,7 @@ export const getCourseMaterialBySubCategoryIdUseCase = async (
 
 export const trackCourseMaterialUserUseCase = async (
   data: ITrackCourseMaterialView,
-  userId: string
+  userId: string,
 ): Promise<boolean> => {
   const studentExist = await checkStudentIdExist(data.studentId, userId);
   if (!studentExist) throw new AppError('student Not Found', HttpStatus.BAD_REQUEST);
@@ -92,4 +94,17 @@ export const updateCourseMaterialUseCase = async (
   }
   const result = await updateCourseMaterial(id, data);
   return result;
+};
+
+export const courseMaterialWatchHistoryUseCase = async (
+  data: ICourseMaterialWatchHistoryBody,
+  userId: string,
+): Promise<boolean> => {
+  const studentExist = await checkStudentIdExist(data.studentId, userId);
+  if (!studentExist) throw new AppError('student Not Found', HttpStatus.BAD_REQUEST);
+  const courseMaterialExist = await checkCourseMaterialExist(data.courseMaterialId, data.subCategoryId);
+  if (!courseMaterialExist)
+    throw new AppError('courseMaterialId Not Found', HttpStatus.BAD_REQUEST);
+  await saveCourseMaterialWatchHistory(data);
+  return true;
 };

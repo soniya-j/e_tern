@@ -38,8 +38,8 @@ const getCourseMaterialBySubCategoryIdUseCase = async (categoryId, userId, type,
     return courseMaterials;
 };
 exports.getCourseMaterialBySubCategoryIdUseCase = getCourseMaterialBySubCategoryIdUseCase;
-const trackCourseMaterialUserUseCase = async (data) => {
-    const studentExist = await (0, studentRepo_1.checkStudentIdExist)(data.studentId);
+const trackCourseMaterialUserUseCase = async (data, userId) => {
+    const studentExist = await (0, studentRepo_1.checkStudentIdExist)(data.studentId, userId);
     if (!studentExist)
         throw new appError_1.default('student Not Found', httpStatus_1.HttpStatus.BAD_REQUEST);
     const courseMaterialExist = await (0, courseMaterialRepo_1.checkCourseMaterialExist)(data.courseMaterialId);

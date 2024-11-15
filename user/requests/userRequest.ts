@@ -193,6 +193,11 @@ export const userDobValidation = [
     .withMessage('parentDob is required')
     .isDate()
     .withMessage('Invalid date format for parentDob'),
+  body('parentName')
+    .notEmpty()
+    .withMessage('parentName is required')
+    .isString()
+    .withMessage('parentName must be a string'),
 ];
 
 export const userDobVerifyValidation = [
@@ -206,10 +211,18 @@ export const userDobVerifyValidation = [
         throw new Error('Invalid userId format');
       }
       return true;
-    }),
+    }), 
   body('parentDobYear')
     .notEmpty()
     .withMessage('parentDobYear is required')
     .isNumeric()
     .withMessage('parentDobYear must be a number'),
+];
+
+export const switchStudentValidation = [
+  param('studentId')
+    .notEmpty()
+    .withMessage('studentId is required')
+    .isMongoId()
+    .withMessage('Invalid studentId format'),
 ];

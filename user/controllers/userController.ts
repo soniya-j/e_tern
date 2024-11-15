@@ -12,6 +12,7 @@ import {
   registerAdminUseCase,
   updateParentDobUseCase,
   verifyParentDobUseCase,
+  switchStudentUseCase,
 } from '../useCases/userUseCase';
 import asyncHandler from 'express-async-handler';
 import { responseMessages } from '../../config/localization';
@@ -275,8 +276,8 @@ export const updateParentDob = asyncHandler(async (req: Request, res: Response) 
     return;
   }
   const { userId } = req.params as { userId: string };
-  const { parentDob } = req.body as IDobBody;
-  const result = await updateParentDobUseCase(userId, parentDob);
+  const { parentDob, parentName } = req.body as IDobBody;
+  const result = await updateParentDobUseCase(userId, parentDob, parentName);
   res.status(200).json({
     success: true,
     message: responseMessages.response_success_put,
@@ -293,12 +294,30 @@ export const verifyParentDob = asyncHandler(async (req: Request, res: Response) 
     });
     return;
   }
-  //const { userId } = req.body as { userId: string };
   const { userId, parentDobYear } = req.body as IUserDobBody;
   const result = await verifyParentDobUseCase(userId, parentDobYear);
   res.status(200).json({
     success: true,
     message: responseMessages.verify_success,
+    result,
+  });
+});
+
+export const switchStudent = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const userId = res.locals.userId as string;
+  const { studentId } = req.params;
+  const result = await switchStudentUseCase(userId, studentId);
+  res.status(200).json({
+    success: true,
+    message: responseMessages.msg_success,
     result,
   });
 });

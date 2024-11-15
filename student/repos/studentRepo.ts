@@ -79,7 +79,10 @@ export const updateStudent = async (id: string, data: IStudentBody): Promise<ISt
   return updatedData;
 };
 
-export const checkStudentIdExist = async (studentId: string, userId: string): Promise<{ _id: string } | null> => {
+export const checkStudentIdExist = async (
+  studentId: string,
+  userId: string,
+): Promise<{ _id: string } | null> => {
   const _id = ObjectID(studentId);
   return await studentModel.findOne({ _id, userId, isDeleted: false }).select({ _id: 1 }).lean();
 };

@@ -22,7 +22,7 @@ export const getCourseMaterialBySubCategoryIdValidation = [
 export const trackCourseMaterialValidation = [
   body('courseMaterialId')
     .notEmpty()
-    .withMessage('mobileNumber is required')
+    .withMessage('courseMaterialId is required')
     .isString()
     .withMessage('courseMaterialId must be a number')
     .custom((value) => {
@@ -48,7 +48,7 @@ export const trackCourseMaterialValidation = [
     .notEmpty()
     .withMessage('viewedPercentage is required')
     .isNumber()
-    .withMessage('viewedPercentage must be a string'),  
+    .withMessage('viewedPercentage must be a number'),  
     */
 ];
 
@@ -82,4 +82,56 @@ export const courseMaterialCreateValidation = [
 
 export const courseMaterialUpdateValidation = [
   param('id').isMongoId().withMessage('Invalid courseMaterial ID format'),
+];
+
+export const courseMaterialWatchHistoryValidation = [
+  body('courseMaterialId')
+    .notEmpty()
+    .withMessage('courseMaterialId is required')
+    .isString()
+    .withMessage('courseMaterialId must be a string')
+    .custom((value) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid courseMaterialId format');
+      }
+      return true;
+    }),
+  body('studentId')
+    .notEmpty()
+    .withMessage('studentId is required')
+    .isString()
+    .withMessage('studentId must be a string')
+    .custom((value) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid studentId format');
+      }
+      return true;
+    }),
+    body('categoryId')
+    .notEmpty()
+    .withMessage('categoryId is required')
+    .isString()
+    .withMessage('categoryId must be string')
+    .custom((value) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid categoryId format');
+      }
+      return true;
+    }),
+  body('subCategoryId')
+    .notEmpty()
+    .withMessage('subCategoryId is required')
+    .isString()
+    .withMessage('subCategoryId must be a string')
+    .custom((value) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid subCategoryId format');
+      }
+      return true;
+    }),
+  body('watchedDuration')
+    .notEmpty()
+    .withMessage('watchedDuration is required')
+    .isNumeric()
+    .withMessage('watchedDuration must be a number'),  
 ];

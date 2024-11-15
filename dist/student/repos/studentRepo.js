@@ -74,8 +74,8 @@ const updateStudent = async (id, data) => {
     return updatedData;
 };
 exports.updateStudent = updateStudent;
-const checkStudentIdExist = async (studentId) => {
+const checkStudentIdExist = async (studentId, userId) => {
     const _id = (0, objectIdParser_1.ObjectID)(studentId);
-    return await studentModel_1.default.findOne({ _id, isDeleted: false }).select({ _id: 1 }).lean();
+    return await studentModel_1.default.findOne({ _id, userId, isDeleted: false }).select({ _id: 1 }).lean();
 };
 exports.checkStudentIdExist = checkStudentIdExist;

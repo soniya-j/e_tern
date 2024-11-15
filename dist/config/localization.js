@@ -22,4 +22,5 @@ exports.responseMessages = {
     unexpected_error: 'An unexpected error occurred',
     login_success: 'You are successfully logged in',
     verify_success: 'verified successfully',
+    msg_success: 'Successfully Done',
 };

@@ -687,8 +687,8 @@ paths:
  
 /api/user/parentdob-update/{userId}:
     put:
-      summary: update parentdob by user ID
-      description: Endpoint to update parentdob by user ID
+      summary: update parentdob, parentName by user ID
+      description: Endpoint to update parentdob, parentName by user ID
       tags:
         - Users Model
       requestBody:
@@ -701,7 +701,10 @@ paths:
                 parentDob:
                   type: date
                   format: date
-                  example: 1985-01-01                                 
+                  example: 1985-01-01  
+                parentName:
+                  type: string
+                  example: "JohnDoe"                                
       parameters:
         - name: userId
           in: path
@@ -810,6 +813,62 @@ paths:
                   error:
                     type: string
                     example: An error occurred
+
+/api/user/switch-student/{studentId}:
+    get:
+      summary: switch student profile by user ID
+      description: switch student profile by user ID
+      tags:
+        - Users Model
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          description: The ID of the student
+          schema:
+            type: string
+            example: "670d2fd920824883c3100257"
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Successfully Done
+                  result:
+                    type: array
+                    items:
+                      type: object                     
+        404:
+          description: student not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No profile found 
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred
+
 
 
 components:

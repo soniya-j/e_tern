@@ -183,9 +183,10 @@ export const createAdmin = async (data: IAdminBody): Promise<{ _id: string }> =>
 export const updateParentDob = async (
   id: string,
   parentDob: Date,
+  parentName: string,
 ): Promise<{ _id: string } | null> => {
   const _id = ObjectID(id);
-  return await usersModel.findOneAndUpdate({ _id }, { parentDob: parentDob }, { new: true });
+  return await usersModel.findOneAndUpdate({ _id }, { parentDob: parentDob, parentName }, { new: true });
 };
 
 export const verifyParentDobYear = async (userId: string, year: number): Promise<boolean> => {
@@ -196,4 +197,16 @@ export const verifyParentDobYear = async (userId: string, year: number): Promise
   }
   const parentDobYear = new Date(user.parentDob).getFullYear();
   return parentDobYear === year;
+};
+
+export const updatecurrentStudent = async (
+  userId: string,
+  studentId: string,
+): Promise<{ _id: string } | null> => {
+  const _id = ObjectID(userId);
+  return await usersModel.findOneAndUpdate(
+    { _id, isDeleted: false },
+    { currentStudentId: studentId },
+    { new: true },
+  );
 };

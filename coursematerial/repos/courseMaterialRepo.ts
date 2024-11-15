@@ -5,6 +5,7 @@ import {
   ITrackCourseMaterialView,
   ICourseMaterialWithStatus,
   ICourseMaterialBody,
+  ICourseMaterialWatchHistoryBody
 } from '../../types/coursematerial/courseMaterialModel';
 import subCategoryModel from '../../subcategory/models/subCategoryModel';
 import { objectIdToString } from '../../utils/objectIdParser';
@@ -12,6 +13,7 @@ import { ObjectId } from 'mongodb';
 import studentModel from '../../student/models/studentModel';
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
+import courseMaterialWatchHistoryModel from '../models/courseMaterialWatchHistoryModel';
 
 export class CourseMaterialRepo {
   async findAllCourseMaterials(): Promise<ICourseMaterial[]> {
@@ -163,8 +165,13 @@ export const trackCourseMaterial = async (data: ITrackCourseMaterialView): Promi
 
 export const checkCourseMaterialExist = async (
   courseMaterialId: string,
+  subCategoryId?: string,
 ): Promise<{ _id: string } | null> => {
-  return await courseMaterialModel.findOne({ _id: courseMaterialId }).select({ _id: 1 }).lean();
+  const query: Record<string, any> = { _id: courseMaterialId, isDeleted: false };
+  if (subCategoryId) {
+    query.subCategoryId = subCategoryId;
+  }
+  return await courseMaterialModel.findOne(query).select({ _id: 1 }).lean();
 };
 
 export const getCourseMaterialTrack = async (
@@ -247,4 +254,10 @@ export const updateCourseMaterial = async (
     throw new AppError('No data found', HttpStatus.INTERNAL_SERVER_ERROR);
   }
   return { _id: updatedRes._id as string };
+};
+
+
+export const saveCourseMaterialWatchHistory = async (data: ICourseMaterialWatchHistoryBody): Promise<boolean> => {
+  const result = await courseMaterialWatchHistoryModel.create({ ...data });
+  return true;
 };

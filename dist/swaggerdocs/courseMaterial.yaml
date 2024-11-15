@@ -197,6 +197,71 @@ paths:
                     type: string
                     example: Unauthorized user
 
+/api/coursematerial/add-watch-history:
+    post:
+      summary: add video watch history
+      description: add video watch history
+      tags:
+        - Course Material Model
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                studentId:
+                  type: string
+                  example: "670d2fd920824883c3100257"              
+                courseMaterialId:
+                  type: string
+                  format: string
+                  example: "670d2fd920824883c3100257"                  
+                categoryId:
+                  type: string
+                  format: string
+                  example: "670d2fd920824883c3100257"
+                subCategoryId:
+                  type: string
+                  format: string
+                  example: "670d2fd920824883c3100257"
+                watchedDuration:
+                  type: number
+                  format: number
+                  example: 120 
+
+                                               
+
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: data saved successfully
+                  result:
+                    type: string
+                    example: ''
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
+
 /api/coursematerial/:
     post:
       summary: Create Course Material

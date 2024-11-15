@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userDobVerifyValidation = exports.userDobValidation = exports.adminRegisterValidation = exports.loginValidation = exports.userUpdateValidation = exports.courseMaterialTrackValidation = exports.getProfileValidation = exports.sendOtpValidation = exports.verifyOtpValidation = exports.userRegisterValidation = void 0;
+exports.switchStudentValidation = exports.userDobVerifyValidation = exports.userDobValidation = exports.adminRegisterValidation = exports.loginValidation = exports.userUpdateValidation = exports.courseMaterialTrackValidation = exports.getProfileValidation = exports.sendOtpValidation = exports.verifyOtpValidation = exports.userRegisterValidation = void 0;
 const express_validator_1 = require("express-validator");
 const mongoose_1 = __importDefault(require("mongoose"));
 exports.userRegisterValidation = [
@@ -196,4 +196,11 @@ exports.userDobVerifyValidation = [
         .withMessage('parentDobYear is required')
         .isNumeric()
         .withMessage('parentDobYear must be a number'),
+];
+exports.switchStudentValidation = [
+    (0, express_validator_1.param)('studentId')
+        .notEmpty()
+        .withMessage('studentId is required')
+        .isMongoId()
+        .withMessage('Invalid studentId format'),
 ];

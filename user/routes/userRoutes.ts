@@ -12,6 +12,7 @@ import {
   registerAdmin,
   updateParentDob,
   verifyParentDob,
+  switchStudent,
 } from '../controllers/userController';
 import multerConfig from '../../middleware/multer';
 import { authenticateUser, authenticateAdmin } from '../../middleware/authentication';
@@ -26,6 +27,7 @@ import {
   adminRegisterValidation,
   userDobValidation,
   userDobVerifyValidation,
+  switchStudentValidation,
 } from '../requests/userRequest';
 
 const router = Router();
@@ -44,6 +46,7 @@ router.get(
 router.put('/profile-update/:userId', authenticateUser, userUpdateValidation, updateProfile);
 router.put('/parentdob-update/:userId', authenticateUser, userDobValidation, updateParentDob);
 router.post('/parentdob-verify', authenticateUser, userDobVerifyValidation, verifyParentDob);
+router.get('/switch-student/:studentId', authenticateUser, switchStudentValidation, switchStudent);
 
 //Admin apis
 // GET /api/user/all?fullName=Juan&subscribed=true&status=1&limit=5&page=2 //all optional

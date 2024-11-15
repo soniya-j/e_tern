@@ -16,8 +16,9 @@ router.post('/send-otp', userRequest_1.sendOtpValidation, userController_1.sendO
 router.get('/profile/:userId', authentication_1.authenticateUser, userRequest_1.getProfileValidation, userController_1.getProfile);
 router.get('/coursematerial-track/:userId', authentication_1.authenticateUser, userRequest_1.courseMaterialTrackValidation, userController_1.courseMaterialTrack);
 router.put('/profile-update/:userId', authentication_1.authenticateUser, userRequest_1.userUpdateValidation, userController_1.updateProfile);
-router.put('/parentdob-update/:userId', authentication_1.authenticateUser, userRequest_1.userDobValidation, userController_1.updateParentDob);
+router.post('/parentdob-update/:userId', authentication_1.authenticateUser, userRequest_1.userDobValidation, userController_1.updateParentDob);
 router.post('/parentdob-verify', authentication_1.authenticateUser, userRequest_1.userDobVerifyValidation, userController_1.verifyParentDob);
+router.get('/switch-student/:studentId', authentication_1.authenticateUser, userRequest_1.switchStudentValidation, userController_1.switchStudent);
 //Admin apis
 // GET /api/user/all?fullName=Juan&subscribed=true&status=1&limit=5&page=2 //all optional
 router.post('/login', userRequest_1.loginValidation, userController_1.login);

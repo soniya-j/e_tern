@@ -17,6 +17,7 @@ const usersSchema = new mongoose_1.Schema({
     status: { type: Number, default: 1 },
     password: { type: String, default: '' },
     role: { type: String },
+    currentStudentId: { type: String, default: '' },
 }, { timestamps: true });
 const usersModel = (0, mongoose_1.model)('Users', usersSchema);
 exports.default = usersModel;

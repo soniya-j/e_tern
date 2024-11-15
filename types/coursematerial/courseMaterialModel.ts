@@ -32,3 +32,11 @@ export interface ICourseMaterialWithStatus extends ICourseMaterialBody {
   viewedStatus: boolean;
   openStatus: boolean;
 }
+
+export interface ICourseMaterialWatchHistoryBody extends Document {
+  studentId: string;
+  categoryId: string;
+  subCategoryId: string;
+  courseMaterialId: string;
+  watchedDuration: number;
+}

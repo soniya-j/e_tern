@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyParentDobUseCase = exports.updateParentDobUseCase = exports.registerAdminUseCase = exports.loginUseCase = exports.getUsersUseCase = exports.updateUserUseCase = exports.getCourseMaterialTrackUseCase = exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
+exports.switchStudentUseCase = exports.verifyParentDobUseCase = exports.updateParentDobUseCase = exports.registerAdminUseCase = exports.loginUseCase = exports.getUsersUseCase = exports.updateUserUseCase = exports.getCourseMaterialTrackUseCase = exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
 const authentication_1 = require("../../authentication/authentication");
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
@@ -11,6 +11,7 @@ const registerUserRepo_1 = require("../repos/registerUserRepo");
 const courseMaterialRepo_1 = require("../../coursematerial/repos/courseMaterialRepo");
 const imageUploader_1 = require("../../utils/imageUploader");
 const studentRepo_1 = require("../../student/repos/studentRepo");
+const studentRepo_2 = require("../../student/repos/studentRepo");
 const registerUserUseCase = async (data) => {
     //check userAlready exist
     const userExist = await (0, registerUserRepo_1.checkUserExist)(data.email ?? '', data.mobileNumber);
@@ -27,7 +28,9 @@ const registerUserUseCase = async (data) => {
         userId: result._id,
     };
     // Add the student data to the student collection
-    await (0, studentRepo_1.createStudent)(studentData);
+    const studentResult = await (0, studentRepo_1.createStudent)(studentData);
+    // Update the student id to the user collection
+    await (0, registerUserRepo_1.updatecurrentStudent)(result._id, studentResult._id);
     return result;
 };
 exports.registerUserUseCase = registerUserUseCase;
@@ -144,3 +147,15 @@ const verifyParentDobUseCase = async (userId, parentDobYear) => {
     return result;
 };
 exports.verifyParentDobUseCase = verifyParentDobUseCase;
+const switchStudentUseCase = async (userId, studentId) => {
+    const studentExists = await (0, studentRepo_2.findStudentExists)(studentId, userId);
+    if (!studentExists) {
+        throw new appError_1.default('No profile found for the given studentId', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    const result = await (0, registerUserRepo_1.updatecurrentStudent)(userId, studentId);
+    if (!result) {
+        throw new appError_1.default('Student profile not found', httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return result;
+};
+exports.switchStudentUseCase = switchStudentUseCase;

@@ -22,13 +22,13 @@ import {
   hashPassword,
   updateParentDob,
   verifyParentDobYear,
+  updatecurrentStudent,
 } from '../repos/registerUserRepo';
-
 import { getCourseMaterialTrack } from '../../coursematerial/repos/courseMaterialRepo';
-
 import { processAndUploadImage } from '../../utils/imageUploader';
 import { createStudent } from '../../student/repos/studentRepo';
 import { IStudentBody } from '../../types/student/studentType';
+import { findStudentExists } from '../../student/repos/studentRepo';
 
 export const registerUserUseCase = async (data: IUserBody): Promise<Pick<IUsers, '_id'>> => {
   //check userAlready exist
@@ -47,7 +47,9 @@ export const registerUserUseCase = async (data: IUserBody): Promise<Pick<IUsers,
     userId: result._id,
   };
   // Add the student data to the student collection
-  await createStudent(studentData);
+  const studentResult = await createStudent(studentData);
+  // Update the student id to the user collection
+  await updatecurrentStudent(result._id, studentResult._id);
   return result;
 };
 
@@ -155,12 +157,13 @@ export const registerAdminUseCase = async (data: IAdminBody): Promise<Pick<IUser
 export const updateParentDobUseCase = async (
   userId: string,
   parentDob: Date,
+  parentName: string,
 ): Promise<Pick<IUsers, '_id'>> => {
   const chkUser = await getProfile(userId);
   if (!chkUser || chkUser.length === 0) {
     throw new AppError('No User found for the given user ID', HttpStatus.NOT_FOUND);
   }
-  const result = await updateParentDob(userId, parentDob);
+  const result = await updateParentDob(userId, parentDob, parentName);
   if (!result) {
     throw new AppError('Failed to update parent DOB', HttpStatus.INTERNAL_SERVER_ERROR);
   }
@@ -171,9 +174,25 @@ export const verifyParentDobUseCase = async (
   userId: string,
   parentDobYear: number,
 ): Promise<boolean> => {
-  const result = await verifyParentDobYear(userId, parentDobYear);
+  const result = await verifyParentDobYear(userId, parentDobYear, );
   if (!result) {
     throw new AppError('Invalid Secret Key', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+  return result;
+};
+
+export const switchStudentUseCase = async (
+  userId: string,
+  studentId: string,
+): Promise<Pick<IUsers, '_id'>> => {
+  const studentExists = await findStudentExists(studentId, userId);
+  if (!studentExists) {
+    throw new AppError('No profile found for the given studentId', HttpStatus.NOT_FOUND);
+  }
+
+  const result = await updatecurrentStudent(userId, studentId);
+  if (!result) {
+    throw new AppError('Student profile not found', HttpStatus.INTERNAL_SERVER_ERROR);
   }
   return result;
 };

@@ -53,8 +53,7 @@ export const saveUserToken = async (
 ): Promise<IUserAuth | null> => {
   const existingSession = await userAuthModel.findOne({
     userId,
-    deviceType,
-    isActive: true,
+    deviceType,    
   });
   if (!existingSession) {
     return await userAuthModel.create({ userId, deviceId, deviceType, authToken, isActive: true });
@@ -228,4 +227,18 @@ export const checkMobileEmailExist = async (
     })
     .select({ _id: 1 })
     .lean();
+};
+
+export const deleteToken = async (
+  userId: string,
+  deviceType: string,
+  ): Promise<{ _id: string } | null> => {
+  const authUserId = ObjectID(userId);
+  console.log(authUserId);
+  console.log(deviceType);
+  return await userAuthModel.findOneAndUpdate(
+    { userId: authUserId, deviceType },
+    { isActive: false, authToken:'' },
+    { new: true },
+  );
 };

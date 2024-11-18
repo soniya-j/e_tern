@@ -32,6 +32,7 @@ import {
   updatecurrentStudent,
   checkUserIdExist,
   checkMobileEmailExist,
+  deleteToken,
 } from '../repos/registerUserRepo';
 import { getCourseMaterialTrack } from '../../coursematerial/repos/courseMaterialRepo';
 import { processAndUploadImage } from '../../utils/imageUploader';
@@ -73,7 +74,15 @@ export const verifyOtpUseCase = async (
   await saveUserToken(otpCheck._id, deviceId, deviceType, token);
   const result = await getProfileById(otpCheck._id);
   if (!result) throw new AppError('User profile not found', HttpStatus.NOT_FOUND);
-  return { token, ...result };
+  const studentDetails = await getStudentById(result.currentStudentId as string);
+  if (!studentDetails) {
+    throw new AppError('No student found for the given studentId', HttpStatus.NOT_FOUND);
+  }
+  return {
+    token,
+    ...result,
+    studentDetails,
+  } as unknown as { token: string } & Omit<IUserBody, keyof Document>;
 };
 
 export const uploadAvatarUseCase = async (
@@ -100,14 +109,13 @@ export const sendOtpUseCase = async (data: IOtpBody): Promise<string> => {
 };
 
 export const getProfileUseCase = async (
-  userId: string,
-  studentId: string,
+  userId: string,  
 ): Promise<IUserProfile> => {
   const result = await getProfile(userId);
   if (!result) {
     throw new AppError('No User found for the given user ID', HttpStatus.NOT_FOUND);
   }
-  const studentDetails = await getStudentById(studentId);
+  const studentDetails = await getStudentById(result.currentStudentId as string);
   if (!studentDetails) {
     throw new AppError('No student found for the given studentId', HttpStatus.NOT_FOUND);
   }
@@ -137,7 +145,6 @@ export const updateUserUseCase = async (userId: string, data: IUserBody): Promis
     fullName: data.fullName, 
     mobileNumber: data.mobileNumber,
     dob: data.dob, 
-    userType: data.userType,
     email: data.email,
     parentDob: data.parentDob,
     parentName: data.parentDob,    
@@ -232,4 +239,15 @@ export const switchStudentUseCase = async (
     throw new AppError('Student profile not found', HttpStatus.INTERNAL_SERVER_ERROR);
   }
   return result;
+};
+
+export const logoutUseCase = async (
+  userId: string,
+  deviceType: string,
+): Promise<boolean> => {
+  const result = await deleteToken(userId, deviceType);
+  if (!result) {
+    throw new AppError('Token not found or already invalidated.', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+  return true;
 };

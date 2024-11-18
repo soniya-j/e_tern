@@ -228,7 +228,7 @@ paths:
                     type: string
                     example: Unauthorized user
 
-/api/user/profile/{userId}/{studentId}:
+/api/user/profile/{userId}:
     get:
       summary: Fetch profile by user ID
       description: Endpoint to fetch profile by user ID
@@ -241,14 +241,7 @@ paths:
           description: The ID of the user
           schema:
             type: string
-            example: "670d2fd920824883c3100257"
-        - name: studentId
-          in: path
-          required: true
-          description: The ID of the student
-          schema:
-            type: string
-            example: "670d2fd920824883c3100256"
+            example: "670d2fd920824883c3100257"        
       security:
         - JWT: []
       responses:
@@ -863,7 +856,55 @@ paths:
                   error:
                     type: string
                     example: An error occurred
-
+/api/user/logout:
+    post:
+      summary: user logout
+      description: Endpoint for user logout
+      tags:
+        - Users Model
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceType:
+                  type: string
+                  example: web
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: logged out successfully
+                  result:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized user
+  
 
 
 components:

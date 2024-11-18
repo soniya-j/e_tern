@@ -75,18 +75,7 @@ export const getProfileValidation = [
         throw new Error('Invalid userId format');
       }
       return true;
-    }),
-  param('studentId')
-    .notEmpty()
-    .withMessage('studentId is required')
-    .isMongoId()
-    .withMessage('Invalid studentId format')
-    .custom((value) => {
-      if (!mongoose.Types.ObjectId.isValid(value)) {
-        throw new Error('Invalid studentId format');
-      }
-      return true;
-    }),
+    }), 
 ];
 
 export const courseMaterialTrackValidation = [
@@ -236,4 +225,12 @@ export const switchStudentValidation = [
     .withMessage('studentId is required')
     .isMongoId()
     .withMessage('Invalid studentId format'),
+];
+
+export const logoutValidation = [
+  body('deviceType')
+    .notEmpty()
+    .withMessage('deviceType is required')
+    .isString()
+    .withMessage('deviceType must be a string'),
 ];

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.switchStudent = exports.verifyParentDob = exports.updateParentDob = exports.registerAdmin = exports.login = exports.getUsers = exports.updateProfile = exports.courseMaterialTrack = exports.getProfile = exports.sendOtp = exports.uploadAvatar = exports.verifyOtp = exports.registerUser = void 0;
+exports.logout = exports.switchStudent = exports.verifyParentDob = exports.updateParentDob = exports.registerAdmin = exports.login = exports.getUsers = exports.updateProfile = exports.courseMaterialTrack = exports.getProfile = exports.sendOtp = exports.uploadAvatar = exports.verifyOtp = exports.registerUser = void 0;
 const userUseCase_1 = require("../useCases/userUseCase");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const localization_1 = require("../../config/localization");
@@ -93,8 +93,8 @@ const getProfile = async (req, res) => {
         return;
     }
     try {
-        const { userId, studentId } = req.params;
-        const result = await (0, userUseCase_1.getProfileUseCase)(userId, studentId);
+        const { userId } = req.params;
+        const result = await (0, userUseCase_1.getProfileUseCase)(userId);
         return res.status(200).json({
             success: true,
             message: localization_1.responseMessages.response_success_get,
@@ -288,6 +288,25 @@ exports.switchStudent = (0, express_async_handler_1.default)(async (req, res) =>
     res.status(200).json({
         success: true,
         message: localization_1.responseMessages.msg_success,
+        result,
+    });
+});
+exports.logout = (0, express_async_handler_1.default)(async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({
+            success: false,
+            errors: errors.array(),
+        });
+        return;
+    }
+    const { deviceType } = req.body;
+    const userId = res.locals.userId;
+    const result = await (0, userUseCase_1.logoutUseCase)(userId, deviceType);
+    res.clearCookie('token');
+    res.status(200).json({
+        success: true,
+        message: localization_1.responseMessages.logout_success,
         result,
     });
 });

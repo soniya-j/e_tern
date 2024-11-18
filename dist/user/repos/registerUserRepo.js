@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkMobileEmailExist = exports.updatecurrentStudent = exports.verifyParentDobYear = exports.updateParentDob = exports.createAdmin = exports.hashPassword = exports.verifyLogin = exports.getAllUsers = exports.getProfileById = exports.checkMobileExist = exports.updateUser = exports.checkUserIdExist = exports.getProfile = exports.updateUserOtp = exports.checkUserNumberExist = exports.uploadAvatar = exports.saveUserToken = exports.setUserVerified = exports.verifyOtp = exports.createUser = exports.checkUserExist = void 0;
+exports.deleteToken = exports.checkMobileEmailExist = exports.updatecurrentStudent = exports.verifyParentDobYear = exports.updateParentDob = exports.createAdmin = exports.hashPassword = exports.verifyLogin = exports.getAllUsers = exports.getProfileById = exports.checkMobileExist = exports.updateUser = exports.checkUserIdExist = exports.getProfile = exports.updateUserOtp = exports.checkUserNumberExist = exports.uploadAvatar = exports.saveUserToken = exports.setUserVerified = exports.verifyOtp = exports.createUser = exports.checkUserExist = void 0;
 const objectIdParser_1 = require("../../utils/objectIdParser");
 const userModel_1 = __importDefault(require("../models/userModel"));
 const userAuthModel_1 = __importDefault(require("../models/userAuthModel"));
@@ -39,7 +39,6 @@ const saveUserToken = async (userId, deviceId, deviceType, authToken) => {
     const existingSession = await userAuthModel_1.default.findOne({
         userId,
         deviceType,
-        isActive: true,
     });
     if (!existingSession) {
         return await userAuthModel_1.default.create({ userId, deviceId, deviceType, authToken, isActive: true });
@@ -169,3 +168,10 @@ const checkMobileEmailExist = async (mobileNumber, userId, email) => {
         .lean();
 };
 exports.checkMobileEmailExist = checkMobileEmailExist;
+const deleteToken = async (userId, deviceType) => {
+    const authUserId = (0, objectIdParser_1.ObjectID)(userId);
+    console.log(authUserId);
+    console.log(deviceType);
+    return await userAuthModel_1.default.findOneAndUpdate({ userId: authUserId, deviceType }, { isActive: false, authToken: '' }, { new: true });
+};
+exports.deleteToken = deleteToken;

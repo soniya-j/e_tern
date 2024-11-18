@@ -108,9 +108,7 @@ export const sendOtpUseCase = async (data: IOtpBody): Promise<string> => {
   return otp;
 };
 
-export const getProfileUseCase = async (
-  userId: string,  
-): Promise<IUserProfile> => {
+export const getProfileUseCase = async (userId: string): Promise<IUserProfile> => {
   const result = await getProfile(userId);
   if (!result) {
     throw new AppError('No User found for the given user ID', HttpStatus.NOT_FOUND);
@@ -241,10 +239,7 @@ export const switchStudentUseCase = async (
   return result;
 };
 
-export const logoutUseCase = async (
-  userId: string,
-  deviceType: string,
-): Promise<boolean> => {
+export const logoutUseCase = async (userId: string, deviceType: string): Promise<boolean> => {
   const result = await deleteToken(userId, deviceType);
   if (!result) {
     throw new AppError('Token not found or already invalidated.', HttpStatus.INTERNAL_SERVER_ERROR);

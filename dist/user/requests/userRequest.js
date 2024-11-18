@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.switchStudentValidation = exports.userDobVerifyValidation = exports.userDobValidation = exports.adminRegisterValidation = exports.loginValidation = exports.userUpdateValidation = exports.courseMaterialTrackValidation = exports.getProfileValidation = exports.sendOtpValidation = exports.verifyOtpValidation = exports.userRegisterValidation = void 0;
+exports.logoutValidation = exports.switchStudentValidation = exports.userDobVerifyValidation = exports.userDobValidation = exports.adminRegisterValidation = exports.loginValidation = exports.userUpdateValidation = exports.courseMaterialTrackValidation = exports.getProfileValidation = exports.sendOtpValidation = exports.verifyOtpValidation = exports.userRegisterValidation = void 0;
 const express_validator_1 = require("express-validator");
 const mongoose_1 = __importDefault(require("mongoose"));
 exports.userRegisterValidation = [
@@ -71,17 +71,6 @@ exports.getProfileValidation = [
         .custom((value) => {
         if (!mongoose_1.default.Types.ObjectId.isValid(value)) {
             throw new Error('Invalid userId format');
-        }
-        return true;
-    }),
-    (0, express_validator_1.param)('studentId')
-        .notEmpty()
-        .withMessage('studentId is required')
-        .isMongoId()
-        .withMessage('Invalid studentId format')
-        .custom((value) => {
-        if (!mongoose_1.default.Types.ObjectId.isValid(value)) {
-            throw new Error('Invalid studentId format');
         }
         return true;
     }),
@@ -219,4 +208,11 @@ exports.switchStudentValidation = [
         .withMessage('studentId is required')
         .isMongoId()
         .withMessage('Invalid studentId format'),
+];
+exports.logoutValidation = [
+    (0, express_validator_1.body)('deviceType')
+        .notEmpty()
+        .withMessage('deviceType is required')
+        .isString()
+        .withMessage('deviceType must be a string'),
 ];

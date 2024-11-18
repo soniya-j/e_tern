@@ -28,7 +28,7 @@ import {
   adminRegisterValidation,
   userDobValidation,
   userDobVerifyValidation,
-  switchStudentValidation,  
+  switchStudentValidation,
   logoutValidation,
 } from '../requests/userRequest';
 

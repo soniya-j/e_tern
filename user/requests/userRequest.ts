@@ -75,7 +75,7 @@ export const getProfileValidation = [
         throw new Error('Invalid userId format');
       }
       return true;
-    }), 
+    }),
 ];
 
 export const courseMaterialTrackValidation = [

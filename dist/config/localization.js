@@ -23,4 +23,5 @@ exports.responseMessages = {
     login_success: 'You are successfully logged in',
     verify_success: 'verified successfully',
     msg_success: 'Successfully Done',
+    logout_success: 'You are successfully logged out',
 };

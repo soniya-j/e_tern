@@ -332,9 +332,11 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
     });
     return;
   }
-  const { deviceType} = req.body;
+  const { deviceType } = req.body;
   const userId = res.locals.userId as string;
   const result = await logoutUseCase(userId, deviceType);
+  res.clearCookie('token');
+  res.setHeader('Clear-Site-Data', '"cookies"');
   res.status(200).json({
     success: true,
     message: responseMessages.logout_success,

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.switchStudentUseCase = exports.verifyParentDobUseCase = exports.updateParentDobUseCase = exports.registerAdminUseCase = exports.loginUseCase = exports.getUsersUseCase = exports.updateUserUseCase = exports.getCourseMaterialTrackUseCase = exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
+exports.logoutUseCase = exports.switchStudentUseCase = exports.verifyParentDobUseCase = exports.updateParentDobUseCase = exports.registerAdminUseCase = exports.loginUseCase = exports.getUsersUseCase = exports.updateUserUseCase = exports.getCourseMaterialTrackUseCase = exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
 const authentication_1 = require("../../authentication/authentication");
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
@@ -45,7 +45,15 @@ const verifyOtpUseCase = async (data) => {
     const result = await (0, registerUserRepo_1.getProfileById)(otpCheck._id);
     if (!result)
         throw new appError_1.default('User profile not found', httpStatus_1.HttpStatus.NOT_FOUND);
-    return { token, ...result };
+    const studentDetails = await (0, studentRepo_2.getStudentById)(result.currentStudentId);
+    if (!studentDetails) {
+        throw new appError_1.default('No student found for the given studentId', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    return {
+        token,
+        ...result,
+        studentDetails,
+    };
 };
 exports.verifyOtpUseCase = verifyOtpUseCase;
 const uploadAvatarUseCase = async (file, userId) => {
@@ -68,12 +76,12 @@ const sendOtpUseCase = async (data) => {
     return otp;
 };
 exports.sendOtpUseCase = sendOtpUseCase;
-const getProfileUseCase = async (userId, studentId) => {
+const getProfileUseCase = async (userId) => {
     const result = await (0, registerUserRepo_1.getProfile)(userId);
     if (!result) {
         throw new appError_1.default('No User found for the given user ID', httpStatus_1.HttpStatus.NOT_FOUND);
     }
-    const studentDetails = await (0, studentRepo_2.getStudentById)(studentId);
+    const studentDetails = await (0, studentRepo_2.getStudentById)(result.currentStudentId);
     if (!studentDetails) {
         throw new appError_1.default('No student found for the given studentId', httpStatus_1.HttpStatus.NOT_FOUND);
     }
@@ -101,7 +109,6 @@ const updateUserUseCase = async (userId, data) => {
       fullName: data.fullName,
       mobileNumber: data.mobileNumber,
       dob: data.dob,
-      userType: data.userType,
       email: data.email,
       parentDob: data.parentDob,
       parentName: data.parentDob,
@@ -183,3 +190,11 @@ const switchStudentUseCase = async (userId, studentId) => {
     return result;
 };
 exports.switchStudentUseCase = switchStudentUseCase;
+const logoutUseCase = async (userId, deviceType) => {
+    const result = await (0, registerUserRepo_1.deleteToken)(userId, deviceType);
+    if (!result) {
+        throw new appError_1.default('Token not found or already invalidated.', httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return true;
+};
+exports.logoutUseCase = logoutUseCase;

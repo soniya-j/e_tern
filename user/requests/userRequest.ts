@@ -76,6 +76,17 @@ export const getProfileValidation = [
       }
       return true;
     }),
+  param('studentId')
+    .notEmpty()
+    .withMessage('studentId is required')
+    .isMongoId()
+    .withMessage('Invalid studentId format')
+    .custom((value) => {
+      if (!mongoose.Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid studentId format');
+      }
+      return true;
+    }),
 ];
 
 export const courseMaterialTrackValidation = [

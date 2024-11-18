@@ -1,4 +1,5 @@
 import { Document } from 'mongoose';
+import { IStudentBody } from '../student/studentType';
 
 export interface IUsers extends Document {
   fullName: string;
@@ -12,7 +13,7 @@ export interface IUsers extends Document {
   otp?: string;
   mobileNumberVerified?: boolean;
   isDeleted?: boolean;
-  gender: string;
+  gender?: string;
   interest?: string;
   status?: number;
   password?: string;
@@ -36,7 +37,7 @@ export interface IUserBody {
   email?: string;
   parentName?: string;
   parentDob?: Date;
-  gender: string;
+  gender?: string;
   status?: number;
   role?: string;
 }
@@ -57,7 +58,7 @@ export interface IAdminBody {
   fullName: string;
   mobileNumber: number;
   email?: string;
-  gender: string;
+  gender?: string;
   status?: number;
   role?: string;
   password?: string;
@@ -73,4 +74,8 @@ export interface IDobBody {
   userId: string;
   parentDob: Date;
   parentName: string;
+}
+
+export interface IUserProfile extends IUserBody {
+  studentDetails?: IStudentBody;
 }

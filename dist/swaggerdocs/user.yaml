@@ -28,13 +28,7 @@ paths:
                 dob:
                   type: string
                   format: date
-                  example: 2000-01-01
-                gender:
-                  type: string
-                  enum:
-                    - male
-                    - female
-                  example: male
+                  example: 2000-01-01                
                 userType:
                   type: string
                   enum:
@@ -234,7 +228,7 @@ paths:
                     type: string
                     example: Unauthorized user
 
-/api/user/profile/{userId}:
+/api/user/profile/{userId}/{studentId}:
     get:
       summary: Fetch profile by user ID
       description: Endpoint to fetch profile by user ID
@@ -248,6 +242,13 @@ paths:
           schema:
             type: string
             example: "670d2fd920824883c3100257"
+        - name: studentId
+          in: path
+          required: true
+          description: The ID of the student
+          schema:
+            type: string
+            example: "670d2fd920824883c3100256"
       security:
         - JWT: []
       responses:
@@ -362,7 +363,7 @@ paths:
                   example: JohnDoe
                 mobileNumber:
                   type: integer
-                  example: 1234567890,
+                  example: 1234567890
                 gender:
                   type: string
                   enum:
@@ -585,12 +586,6 @@ paths:
                   type: string
                   format: date
                   example: 2000-01-01
-                gender:
-                  type: string
-                  enum:
-                    - male
-                    - female
-                  example: male
                 userType:
                   type: string
                   enum:

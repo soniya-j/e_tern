@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateCourseMaterial = exports.saveCourseMaterial = exports.getCourseMaterialTrackByCategory = exports.getCourseMaterialTrackBySubCategory = exports.getCourseMaterialTrack = exports.checkCourseMaterialExist = exports.trackCourseMaterial = exports.checkUserCourseIdExist = exports.CourseMaterialRepo = void 0;
+exports.saveCourseMaterialWatchHistory = exports.updateCourseMaterial = exports.saveCourseMaterial = exports.getCourseMaterialTrackByCategory = exports.getCourseMaterialTrackBySubCategory = exports.getCourseMaterialTrack = exports.checkCourseMaterialExist = exports.trackCourseMaterial = exports.checkUserCourseIdExist = exports.CourseMaterialRepo = void 0;
 const courseMaterialModel_1 = __importDefault(require("../models/courseMaterialModel"));
 const courseMaterialViewModel_1 = __importDefault(require("../models/courseMaterialViewModel"));
 const subCategoryModel_1 = __importDefault(require("../../subcategory/models/subCategoryModel"));
@@ -11,6 +11,7 @@ const objectIdParser_1 = require("../../utils/objectIdParser");
 const studentModel_1 = __importDefault(require("../../student/models/studentModel"));
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
+const courseMaterialWatchHistoryModel_1 = __importDefault(require("../models/courseMaterialWatchHistoryModel"));
 class CourseMaterialRepo {
     async findAllCourseMaterials() {
         return await courseMaterialModel_1.default
@@ -109,8 +110,12 @@ const trackCourseMaterial = async (data) => {
     return true;
 };
 exports.trackCourseMaterial = trackCourseMaterial;
-const checkCourseMaterialExist = async (courseMaterialId) => {
-    return await courseMaterialModel_1.default.findOne({ _id: courseMaterialId }).select({ _id: 1 }).lean();
+const checkCourseMaterialExist = async (courseMaterialId, subCategoryId) => {
+    const query = { _id: courseMaterialId, isDeleted: false };
+    if (subCategoryId) {
+        query.subCategoryId = subCategoryId;
+    }
+    return await courseMaterialModel_1.default.findOne(query).select({ _id: 1 }).lean();
 };
 exports.checkCourseMaterialExist = checkCourseMaterialExist;
 const getCourseMaterialTrack = async (userId) => {
@@ -179,3 +184,8 @@ const updateCourseMaterial = async (id, data) => {
     return { _id: updatedRes._id };
 };
 exports.updateCourseMaterial = updateCourseMaterial;
+const saveCourseMaterialWatchHistory = async (data) => {
+    await courseMaterialWatchHistoryModel_1.default.create({ ...data });
+    return true;
+};
+exports.saveCourseMaterialWatchHistory = saveCourseMaterialWatchHistory;

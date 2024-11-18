@@ -2,7 +2,14 @@ import { generateToken } from '../../authentication/authentication';
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
 //import { sendOtp } from '../../services/twilioService';
-import { IOtpBody, IUserBody, IUsers, ILoginBody, IAdminBody } from '../../types/user/userTypes';
+import {
+  IOtpBody,
+  IUserBody,
+  IUsers,
+  ILoginBody,
+  IAdminBody,
+  IUserProfile,
+} from '../../types/user/userTypes';
 import {
   checkUserExist,
   createUser,
@@ -14,7 +21,7 @@ import {
   updateUserOtp,
   getProfile,
   updateUser,
-  checkMobileExist,
+  //checkMobileExist,
   getProfileById,
   getAllUsers,
   verifyLogin,
@@ -23,12 +30,14 @@ import {
   updateParentDob,
   verifyParentDobYear,
   updatecurrentStudent,
+  checkUserIdExist,
+  checkMobileEmailExist,
 } from '../repos/registerUserRepo';
 import { getCourseMaterialTrack } from '../../coursematerial/repos/courseMaterialRepo';
 import { processAndUploadImage } from '../../utils/imageUploader';
 import { createStudent } from '../../student/repos/studentRepo';
 import { IStudentBody } from '../../types/student/studentType';
-import { findStudentExists } from '../../student/repos/studentRepo';
+import { findStudentExists, getStudentById } from '../../student/repos/studentRepo';
 
 export const registerUserUseCase = async (data: IUserBody): Promise<Pick<IUsers, '_id'>> => {
   //check userAlready exist
@@ -90,12 +99,22 @@ export const sendOtpUseCase = async (data: IOtpBody): Promise<string> => {
   return otp;
 };
 
-export const getProfileUseCase = async (userId: string): Promise<IUserBody[]> => {
+export const getProfileUseCase = async (
+  userId: string,
+  studentId: string,
+): Promise<IUserProfile> => {
   const result = await getProfile(userId);
-  if (!result || result.length === 0) {
+  if (!result) {
     throw new AppError('No User found for the given user ID', HttpStatus.NOT_FOUND);
   }
-  return result;
+  const studentDetails = await getStudentById(studentId);
+  if (!studentDetails) {
+    throw new AppError('No student found for the given studentId', HttpStatus.NOT_FOUND);
+  }
+  return {
+    ...result,
+    studentDetails,
+  } as IUserProfile;
 };
 
 export const getCourseMaterialTrackUseCase = async (
@@ -107,11 +126,29 @@ export const getCourseMaterialTrackUseCase = async (
 
 export const updateUserUseCase = async (userId: string, data: IUserBody): Promise<IUserBody> => {
   const chkUser = await getProfile(userId);
-  if (!chkUser || chkUser.length === 0) {
+  if (!chkUser) {
     throw new AppError('No User found for the given user ID', HttpStatus.NOT_FOUND);
   }
-  const mobileExist = await checkMobileExist(data.mobileNumber, userId);
-  if (mobileExist) throw new AppError('User Already Exist', HttpStatus.BAD_REQUEST);
+
+  const chkDataExist = await checkMobileEmailExist(data.mobileNumber, userId, data.email as string);
+  if (chkDataExist) throw new AppError('User Mobile Number/Email Exist', HttpStatus.BAD_REQUEST);
+  /*
+  const userData = {
+    fullName: data.fullName, 
+    mobileNumber: data.mobileNumber,
+    dob: data.dob, 
+    userType: data.userType,
+    email: data.email,
+    parentDob: data.parentDob,
+    parentName: data.parentDob,    
+  };
+  const result = await updateUser(userId, userData);
+  const studentData = {
+    fullName: data.fullName, 
+    dob: data.dob, 
+  };
+  const studentDetails = await updateUser(studentId, studentData);
+*/
   const result = await updateUser(userId, data);
   return result;
 };
@@ -159,8 +196,8 @@ export const updateParentDobUseCase = async (
   parentDob: Date,
   parentName: string,
 ): Promise<Pick<IUsers, '_id'>> => {
-  const chkUser = await getProfile(userId);
-  if (!chkUser || chkUser.length === 0) {
+  const chkUser = await checkUserIdExist(userId);
+  if (!chkUser) {
     throw new AppError('No User found for the given user ID', HttpStatus.NOT_FOUND);
   }
   const result = await updateParentDob(userId, parentDob, parentName);

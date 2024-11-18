@@ -116,8 +116,8 @@ export const getProfile = async (req: Request, res: Response) => {
   }
 
   try {
-    const { userId } = req.params;
-    const result = await getProfileUseCase(userId);
+    const { userId, studentId } = req.params;
+    const result = await getProfileUseCase(userId, studentId);
     return res.status(200).json({
       success: true,
       message: responseMessages.response_success_get,

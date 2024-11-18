@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.courseMaterialUpdateValidation = exports.courseMaterialCreateValidation = exports.trackCourseMaterialValidation = exports.getCourseMaterialBySubCategoryIdValidation = void 0;
+exports.courseMaterialWatchHistoryValidation = exports.courseMaterialUpdateValidation = exports.courseMaterialCreateValidation = exports.trackCourseMaterialValidation = exports.getCourseMaterialBySubCategoryIdValidation = void 0;
 const express_validator_1 = require("express-validator");
 const mongoose_1 = __importDefault(require("mongoose"));
 exports.getCourseMaterialBySubCategoryIdValidation = [
@@ -26,7 +26,7 @@ exports.getCourseMaterialBySubCategoryIdValidation = [
 exports.trackCourseMaterialValidation = [
     (0, express_validator_1.body)('courseMaterialId')
         .notEmpty()
-        .withMessage('mobileNumber is required')
+        .withMessage('courseMaterialId is required')
         .isString()
         .withMessage('courseMaterialId must be a number')
         .custom((value) => {
@@ -51,7 +51,7 @@ exports.trackCourseMaterialValidation = [
       .notEmpty()
       .withMessage('viewedPercentage is required')
       .isNumber()
-      .withMessage('viewedPercentage must be a string'),
+      .withMessage('viewedPercentage must be a number'),
       */
 ];
 exports.courseMaterialCreateValidation = [
@@ -83,4 +83,55 @@ exports.courseMaterialCreateValidation = [
 ];
 exports.courseMaterialUpdateValidation = [
     (0, express_validator_1.param)('id').isMongoId().withMessage('Invalid courseMaterial ID format'),
+];
+exports.courseMaterialWatchHistoryValidation = [
+    (0, express_validator_1.body)('courseMaterialId')
+        .notEmpty()
+        .withMessage('courseMaterialId is required')
+        .isString()
+        .withMessage('courseMaterialId must be a string')
+        .custom((value) => {
+        if (!mongoose_1.default.Types.ObjectId.isValid(value)) {
+            throw new Error('Invalid courseMaterialId format');
+        }
+        return true;
+    }),
+    (0, express_validator_1.body)('studentId')
+        .notEmpty()
+        .withMessage('studentId is required')
+        .isString()
+        .withMessage('studentId must be a string')
+        .custom((value) => {
+        if (!mongoose_1.default.Types.ObjectId.isValid(value)) {
+            throw new Error('Invalid studentId format');
+        }
+        return true;
+    }),
+    (0, express_validator_1.body)('categoryId')
+        .notEmpty()
+        .withMessage('categoryId is required')
+        .isString()
+        .withMessage('categoryId must be string')
+        .custom((value) => {
+        if (!mongoose_1.default.Types.ObjectId.isValid(value)) {
+            throw new Error('Invalid categoryId format');
+        }
+        return true;
+    }),
+    (0, express_validator_1.body)('subCategoryId')
+        .notEmpty()
+        .withMessage('subCategoryId is required')
+        .isString()
+        .withMessage('subCategoryId must be a string')
+        .custom((value) => {
+        if (!mongoose_1.default.Types.ObjectId.isValid(value)) {
+            throw new Error('Invalid subCategoryId format');
+        }
+        return true;
+    }),
+    (0, express_validator_1.body)('watchedDuration')
+        .notEmpty()
+        .withMessage('watchedDuration is required')
+        .isNumeric()
+        .withMessage('watchedDuration must be a number'),
 ];

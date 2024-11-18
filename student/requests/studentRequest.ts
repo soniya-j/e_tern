@@ -20,11 +20,13 @@ export const studentAddValidation = [
     .withMessage('Date of birth is required')
     .isDate()
     .withMessage('Invalid date format'),
+  /*
   body('gender')
     .notEmpty()
     .withMessage('gender is required')
     .isIn(['male', 'female'])
     .withMessage('Invalid gender'),
+    */
   body('userId')
     .notEmpty()
     .withMessage('userId is required')
@@ -54,9 +56,11 @@ export const studentUpdateValidation = [
     .withMessage('Date of birth is required')
     .isDate()
     .withMessage('Invalid date format'),
+  /*
   body('gender')
     .notEmpty()
     .withMessage('gender is required')
     .isIn(['male', 'female'])
     .withMessage('Invalid gender'),
+    */
 ];

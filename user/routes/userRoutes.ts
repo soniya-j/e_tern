@@ -36,7 +36,7 @@ router.post('/register', userRegisterValidation, registerUser);
 router.post('/verify-otp', verifyOtpValidation, verifyOtp);
 router.post('/upload-avatar', authenticateUser, multerConfig, uploadAvatar);
 router.post('/send-otp', sendOtpValidation, sendOtp);
-router.get('/profile/:userId', authenticateUser, getProfileValidation, getProfile);
+router.get('/profile/:userId/:studentId', authenticateUser, getProfileValidation, getProfile);
 router.get(
   '/coursematerial-track/:userId',
   authenticateUser,

@@ -98,7 +98,7 @@ export const updateUserOtp = async (
   );
 };
 
-export const getProfile = async (userId: string): Promise<IUsers[] | null> => {
+export const getProfile = async (userId: string): Promise<IUsers | null> => {
   return await usersModel.findOne({ _id: userId, isDeleted: false }).lean();
 };
 
@@ -132,7 +132,7 @@ export const checkMobileExist = async (
     .lean();
 };
 
-export const getProfileById = async (userId: string): Promise<IUserBody | null> => {
+export const getProfileById = async (userId: string): Promise<IUsers | null> => {
   return await usersModel.findOne({ _id: userId, isDeleted: false }).lean();
 };
 
@@ -213,4 +213,19 @@ export const updatecurrentStudent = async (
     { currentStudentId: studentId },
     { new: true },
   );
+};
+
+export const checkMobileEmailExist = async (
+  mobileNumber: number,
+  userId: string,
+  email: string,
+): Promise<{ _id: string } | null> => {
+  return await usersModel
+    .findOne({
+      mobileNumber,
+      email,
+      _id: { $ne: userId },
+    })
+    .select({ _id: 1 })
+    .lean();
 };

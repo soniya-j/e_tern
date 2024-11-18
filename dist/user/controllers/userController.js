@@ -93,8 +93,8 @@ const getProfile = async (req, res) => {
         return;
     }
     try {
-        const { userId } = req.params;
-        const result = await (0, userUseCase_1.getProfileUseCase)(userId);
+        const { userId, studentId } = req.params;
+        const result = await (0, userUseCase_1.getProfileUseCase)(userId, studentId);
         return res.status(200).json({
             success: true,
             message: localization_1.responseMessages.response_success_get,
@@ -248,8 +248,8 @@ exports.updateParentDob = (0, express_async_handler_1.default)(async (req, res) 
         return;
     }
     const { userId } = req.params;
-    const { parentDob } = req.body;
-    const result = await (0, userUseCase_1.updateParentDobUseCase)(userId, parentDob);
+    const { parentDob, parentName } = req.body;
+    const result = await (0, userUseCase_1.updateParentDobUseCase)(userId, parentDob, parentName);
     res.status(200).json({
         success: true,
         message: localization_1.responseMessages.response_success_put,

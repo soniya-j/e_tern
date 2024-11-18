@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatecurrentStudent = exports.verifyParentDobYear = exports.updateParentDob = exports.createAdmin = exports.hashPassword = exports.verifyLogin = exports.getAllUsers = exports.getProfileById = exports.checkMobileExist = exports.updateUser = exports.checkUserIdExist = exports.getProfile = exports.updateUserOtp = exports.checkUserNumberExist = exports.uploadAvatar = exports.saveUserToken = exports.setUserVerified = exports.verifyOtp = exports.createUser = exports.checkUserExist = void 0;
+exports.checkMobileEmailExist = exports.updatecurrentStudent = exports.verifyParentDobYear = exports.updateParentDob = exports.createAdmin = exports.hashPassword = exports.verifyLogin = exports.getAllUsers = exports.getProfileById = exports.checkMobileExist = exports.updateUser = exports.checkUserIdExist = exports.getProfile = exports.updateUserOtp = exports.checkUserNumberExist = exports.uploadAvatar = exports.saveUserToken = exports.setUserVerified = exports.verifyOtp = exports.createUser = exports.checkUserExist = void 0;
 const objectIdParser_1 = require("../../utils/objectIdParser");
 const userModel_1 = __importDefault(require("../models/userModel"));
 const userAuthModel_1 = __importDefault(require("../models/userAuthModel"));
@@ -138,9 +138,9 @@ const createAdmin = async (data) => {
     return { _id: user._id };
 };
 exports.createAdmin = createAdmin;
-const updateParentDob = async (id, parentDob) => {
+const updateParentDob = async (id, parentDob, parentName) => {
     const _id = (0, objectIdParser_1.ObjectID)(id);
-    return await userModel_1.default.findOneAndUpdate({ _id }, { parentDob: parentDob }, { new: true });
+    return await userModel_1.default.findOneAndUpdate({ _id }, { parentDob: parentDob, parentName }, { new: true });
 };
 exports.updateParentDob = updateParentDob;
 const verifyParentDobYear = async (userId, year) => {
@@ -158,3 +158,14 @@ const updatecurrentStudent = async (userId, studentId) => {
     return await userModel_1.default.findOneAndUpdate({ _id, isDeleted: false }, { currentStudentId: studentId }, { new: true });
 };
 exports.updatecurrentStudent = updatecurrentStudent;
+const checkMobileEmailExist = async (mobileNumber, userId, email) => {
+    return await userModel_1.default
+        .findOne({
+        mobileNumber,
+        email,
+        _id: { $ne: userId },
+    })
+        .select({ _id: 1 })
+        .lean();
+};
+exports.checkMobileEmailExist = checkMobileEmailExist;

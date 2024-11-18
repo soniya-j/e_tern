@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateCourseMaterial = exports.createCourseMaterial = exports.trackCourseMaterialView = exports.getCourseMaterialsBySubCategoryId = exports.getCourseMaterials = void 0;
+exports.createCourseMaterialWatchHistory = exports.updateCourseMaterial = exports.createCourseMaterial = exports.trackCourseMaterialView = exports.getCourseMaterialsBySubCategoryId = exports.getCourseMaterials = void 0;
 const courseMaterialUseCase_1 = require("../useCases/courseMaterialUseCase");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const localization_1 = require("../../config/localization");
@@ -103,5 +103,23 @@ exports.updateCourseMaterial = (0, express_async_handler_1.default)(async (req, 
         success: true,
         message: localization_1.responseMessages.response_success_put,
         result: result,
+    });
+});
+exports.createCourseMaterialWatchHistory = (0, express_async_handler_1.default)(async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({
+            success: false,
+            errors: errors.array(),
+        });
+        return;
+    }
+    const data = req.body;
+    const userId = res.locals.userId;
+    await (0, courseMaterialUseCase_1.courseMaterialWatchHistoryUseCase)(data, userId);
+    res.status(200).json({
+        success: true,
+        message: localization_1.responseMessages.response_success_post,
+        result: '',
     });
 });

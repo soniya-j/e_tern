@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateCourseMaterialUseCase = exports.createCourseMaterialUseCase = exports.trackCourseMaterialUserUseCase = exports.getCourseMaterialBySubCategoryIdUseCase = exports.getAllCourseMaterialUseCase = void 0;
+exports.courseMaterialWatchHistoryUseCase = exports.updateCourseMaterialUseCase = exports.createCourseMaterialUseCase = exports.trackCourseMaterialUserUseCase = exports.getCourseMaterialBySubCategoryIdUseCase = exports.getAllCourseMaterialUseCase = void 0;
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
 const courseMaterialRepo_1 = require("../repos/courseMaterialRepo");
@@ -70,3 +70,14 @@ const updateCourseMaterialUseCase = async (id, data) => {
     return result;
 };
 exports.updateCourseMaterialUseCase = updateCourseMaterialUseCase;
+const courseMaterialWatchHistoryUseCase = async (data, userId) => {
+    const studentExist = await (0, studentRepo_1.checkStudentIdExist)(data.studentId, userId);
+    if (!studentExist)
+        throw new appError_1.default('student Not Found', httpStatus_1.HttpStatus.BAD_REQUEST);
+    const courseMaterialExist = await (0, courseMaterialRepo_1.checkCourseMaterialExist)(data.courseMaterialId, data.subCategoryId);
+    if (!courseMaterialExist)
+        throw new appError_1.default('courseMaterialId Not Found', httpStatus_1.HttpStatus.BAD_REQUEST);
+    await (0, courseMaterialRepo_1.saveCourseMaterialWatchHistory)(data);
+    return true;
+};
+exports.courseMaterialWatchHistoryUseCase = courseMaterialWatchHistoryUseCase;

@@ -86,3 +86,8 @@ export const checkStudentIdExist = async (
   const _id = ObjectID(studentId);
   return await studentModel.findOne({ _id, userId, isDeleted: false }).select({ _id: 1 }).lean();
 };
+
+export const getStudentById = async (studentId: string): Promise<IStudent | null> => {
+  const _id = ObjectID(studentId);
+  return await studentModel.findOne({ _id, isDeleted: false }).lean();
+};

@@ -68,12 +68,19 @@ const sendOtpUseCase = async (data) => {
     return otp;
 };
 exports.sendOtpUseCase = sendOtpUseCase;
-const getProfileUseCase = async (userId) => {
+const getProfileUseCase = async (userId, studentId) => {
     const result = await (0, registerUserRepo_1.getProfile)(userId);
-    if (!result || result.length === 0) {
+    if (!result) {
         throw new appError_1.default('No User found for the given user ID', httpStatus_1.HttpStatus.NOT_FOUND);
     }
-    return result;
+    const studentDetails = await (0, studentRepo_2.getStudentById)(studentId);
+    if (!studentDetails) {
+        throw new appError_1.default('No student found for the given studentId', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    return {
+        ...result,
+        studentDetails,
+    };
 };
 exports.getProfileUseCase = getProfileUseCase;
 const getCourseMaterialTrackUseCase = async (userId) => {
@@ -83,12 +90,29 @@ const getCourseMaterialTrackUseCase = async (userId) => {
 exports.getCourseMaterialTrackUseCase = getCourseMaterialTrackUseCase;
 const updateUserUseCase = async (userId, data) => {
     const chkUser = await (0, registerUserRepo_1.getProfile)(userId);
-    if (!chkUser || chkUser.length === 0) {
+    if (!chkUser) {
         throw new appError_1.default('No User found for the given user ID', httpStatus_1.HttpStatus.NOT_FOUND);
     }
-    const mobileExist = await (0, registerUserRepo_1.checkMobileExist)(data.mobileNumber, userId);
-    if (mobileExist)
-        throw new appError_1.default('User Already Exist', httpStatus_1.HttpStatus.BAD_REQUEST);
+    const chkDataExist = await (0, registerUserRepo_1.checkMobileEmailExist)(data.mobileNumber, userId, data.email);
+    if (chkDataExist)
+        throw new appError_1.default('User Mobile Number/Email Exist', httpStatus_1.HttpStatus.BAD_REQUEST);
+    /*
+    const userData = {
+      fullName: data.fullName,
+      mobileNumber: data.mobileNumber,
+      dob: data.dob,
+      userType: data.userType,
+      email: data.email,
+      parentDob: data.parentDob,
+      parentName: data.parentDob,
+    };
+    const result = await updateUser(userId, userData);
+    const studentData = {
+      fullName: data.fullName,
+      dob: data.dob,
+    };
+    const studentDetails = await updateUser(studentId, studentData);
+  */
     const result = await (0, registerUserRepo_1.updateUser)(userId, data);
     return result;
 };
@@ -127,12 +151,12 @@ const registerAdminUseCase = async (data) => {
     return result;
 };
 exports.registerAdminUseCase = registerAdminUseCase;
-const updateParentDobUseCase = async (userId, parentDob) => {
-    const chkUser = await (0, registerUserRepo_1.getProfile)(userId);
-    if (!chkUser || chkUser.length === 0) {
+const updateParentDobUseCase = async (userId, parentDob, parentName) => {
+    const chkUser = await (0, registerUserRepo_1.checkUserIdExist)(userId);
+    if (!chkUser) {
         throw new appError_1.default('No User found for the given user ID', httpStatus_1.HttpStatus.NOT_FOUND);
     }
-    const result = await (0, registerUserRepo_1.updateParentDob)(userId, parentDob);
+    const result = await (0, registerUserRepo_1.updateParentDob)(userId, parentDob, parentName);
     if (!result) {
         throw new appError_1.default('Failed to update parent DOB', httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR);
     }

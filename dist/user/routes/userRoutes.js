@@ -13,10 +13,10 @@ router.post('/register', userRequest_1.userRegisterValidation, userController_1.
 router.post('/verify-otp', userRequest_1.verifyOtpValidation, userController_1.verifyOtp);
 router.post('/upload-avatar', authentication_1.authenticateUser, multer_1.default, userController_1.uploadAvatar);
 router.post('/send-otp', userRequest_1.sendOtpValidation, userController_1.sendOtp);
-router.get('/profile/:userId', authentication_1.authenticateUser, userRequest_1.getProfileValidation, userController_1.getProfile);
+router.get('/profile/:userId/:studentId', authentication_1.authenticateUser, userRequest_1.getProfileValidation, userController_1.getProfile);
 router.get('/coursematerial-track/:userId', authentication_1.authenticateUser, userRequest_1.courseMaterialTrackValidation, userController_1.courseMaterialTrack);
 router.put('/profile-update/:userId', authentication_1.authenticateUser, userRequest_1.userUpdateValidation, userController_1.updateProfile);
-router.post('/parentdob-update/:userId', authentication_1.authenticateUser, userRequest_1.userDobValidation, userController_1.updateParentDob);
+router.put('/parentdob-update/:userId', authentication_1.authenticateUser, userRequest_1.userDobValidation, userController_1.updateParentDob);
 router.post('/parentdob-verify', authentication_1.authenticateUser, userRequest_1.userDobVerifyValidation, userController_1.verifyParentDob);
 router.get('/switch-student/:studentId', authentication_1.authenticateUser, userRequest_1.switchStudentValidation, userController_1.switchStudent);
 //Admin apis

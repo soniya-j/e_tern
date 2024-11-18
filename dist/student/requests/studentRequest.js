@@ -24,11 +24,13 @@ exports.studentAddValidation = [
         .withMessage('Date of birth is required')
         .isDate()
         .withMessage('Invalid date format'),
-    (0, express_validator_1.body)('gender')
-        .notEmpty()
-        .withMessage('gender is required')
-        .isIn(['male', 'female'])
-        .withMessage('Invalid gender'),
+    /*
+    body('gender')
+      .notEmpty()
+      .withMessage('gender is required')
+      .isIn(['male', 'female'])
+      .withMessage('Invalid gender'),
+      */
     (0, express_validator_1.body)('userId')
         .notEmpty()
         .withMessage('userId is required')
@@ -57,9 +59,11 @@ exports.studentUpdateValidation = [
         .withMessage('Date of birth is required')
         .isDate()
         .withMessage('Invalid date format'),
-    (0, express_validator_1.body)('gender')
-        .notEmpty()
-        .withMessage('gender is required')
-        .isIn(['male', 'female'])
-        .withMessage('Invalid gender'),
+    /*
+    body('gender')
+      .notEmpty()
+      .withMessage('gender is required')
+      .isIn(['male', 'female'])
+      .withMessage('Invalid gender'),
+      */
 ];

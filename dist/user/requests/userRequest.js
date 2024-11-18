@@ -74,6 +74,17 @@ exports.getProfileValidation = [
         }
         return true;
     }),
+    (0, express_validator_1.param)('studentId')
+        .notEmpty()
+        .withMessage('studentId is required')
+        .isMongoId()
+        .withMessage('Invalid studentId format')
+        .custom((value) => {
+        if (!mongoose_1.default.Types.ObjectId.isValid(value)) {
+            throw new Error('Invalid studentId format');
+        }
+        return true;
+    }),
 ];
 exports.courseMaterialTrackValidation = [
     (0, express_validator_1.param)('userId')
@@ -178,6 +189,11 @@ exports.userDobValidation = [
         .withMessage('parentDob is required')
         .isDate()
         .withMessage('Invalid date format for parentDob'),
+    (0, express_validator_1.body)('parentName')
+        .notEmpty()
+        .withMessage('parentName is required')
+        .isString()
+        .withMessage('parentName must be a string'),
 ];
 exports.userDobVerifyValidation = [
     (0, express_validator_1.body)('userId')

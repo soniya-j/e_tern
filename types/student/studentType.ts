@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 export interface IStudent extends Document {
   fullName: string;
   dob: Date;
-  gender: string;
+  gender?: string;
   avatar?: string;
   packageId?: string;
   userId: string;
@@ -18,7 +18,7 @@ export interface IStudent extends Document {
 export interface IStudentBody {
   fullName: string;
   dob: Date;
-  gender: string;
+  gender?: string;
   avatar?: string;
   packageId?: string;
   userId: string;

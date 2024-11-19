@@ -65,7 +65,7 @@ const createStudent = async (data) => {
 };
 exports.createStudent = createStudent;
 const updateStudent = async (id, data) => {
-    const _id = new mongoose_1.Types.ObjectId(id);
+    const _id = (0, objectIdParser_1.ObjectID)(id);
     const obj = { modifiedOn: new Date().toISOString(), ...data };
     const updatedData = await studentModel_1.default.findOneAndUpdate({ _id }, obj, { new: true }).lean();
     if (!updatedData) {

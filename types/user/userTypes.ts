@@ -5,7 +5,7 @@ export interface IUsers extends Document {
   fullName: string;
   mobileNumber: number;
   dob: Date;
-  userType: 'child' | 'teenager' | 'adult';
+  userType?: 'child' | 'teenager' | 'adult';
   email?: string;
   parentName?: string;
   parentDob?: Date;
@@ -30,16 +30,18 @@ export interface IUserAuth extends Document {
 }
 
 export interface IUserBody {
-  fullName: string;
+  fullName?: string;
   mobileNumber: number;
   dob: Date;
-  userType: 'child' | 'teenager' | 'adult';
+  userType?: 'child' | 'teenager' | 'adult';
   email?: string;
   parentName?: string;
   parentDob?: Date;
   gender?: string;
   status?: number;
   role?: string;
+  interest?: string;
+  currentStudentId?: string;
 }
 
 export interface IOtpBody {
@@ -55,7 +57,7 @@ export interface ILoginBody {
 }
 
 export interface IAdminBody {
-  fullName: string;
+  fullName?: string;
   mobileNumber: number;
   email?: string;
   gender?: string;

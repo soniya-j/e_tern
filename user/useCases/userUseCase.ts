@@ -36,7 +36,7 @@ import {
 } from '../repos/registerUserRepo';
 import { getCourseMaterialTrack } from '../../coursematerial/repos/courseMaterialRepo';
 import { processAndUploadImage } from '../../utils/imageUploader';
-import { createStudent } from '../../student/repos/studentRepo';
+import { createStudent, updateStudent } from '../../student/repos/studentRepo';
 import { IStudentBody } from '../../types/student/studentType';
 import { findStudentExists, getStudentById } from '../../student/repos/studentRepo';
 
@@ -130,32 +130,32 @@ export const getCourseMaterialTrackUseCase = async (
   return result;
 };
 
-export const updateUserUseCase = async (userId: string, data: IUserBody): Promise<IUserBody> => {
+export const updateUserUseCase = async (userId: string, data: IUserBody): Promise<IUserProfile> => {
   const chkUser = await getProfile(userId);
   if (!chkUser) {
     throw new AppError('No User found for the given user ID', HttpStatus.NOT_FOUND);
   }
-
   const chkDataExist = await checkMobileEmailExist(data.mobileNumber, userId, data.email as string);
   if (chkDataExist) throw new AppError('User Mobile Number/Email Exist', HttpStatus.BAD_REQUEST);
-  /*
   const userData = {
-    fullName: data.fullName, 
     mobileNumber: data.mobileNumber,
-    dob: data.dob, 
+    dob: data.dob,
     email: data.email,
     parentDob: data.parentDob,
-    parentName: data.parentDob,    
+    parentName: data.parentName,
+    interest: data.interest,
   };
   const result = await updateUser(userId, userData);
   const studentData = {
-    fullName: data.fullName, 
-    dob: data.dob, 
+    fullName: data.fullName,
+    dob: data.dob,
+    gender: data.gender,
   };
-  const studentDetails = await updateUser(studentId, studentData);
-*/
-  const result = await updateUser(userId, data);
-  return result;
+  const studentDetails = await updateStudent(result.currentStudentId as string, studentData);
+  return {
+    ...result,
+    studentDetails,
+  } as IUserProfile;
 };
 
 export const getUsersUseCase = async (

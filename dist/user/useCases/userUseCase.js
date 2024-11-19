@@ -104,24 +104,25 @@ const updateUserUseCase = async (userId, data) => {
     const chkDataExist = await (0, registerUserRepo_1.checkMobileEmailExist)(data.mobileNumber, userId, data.email);
     if (chkDataExist)
         throw new appError_1.default('User Mobile Number/Email Exist', httpStatus_1.HttpStatus.BAD_REQUEST);
-    /*
     const userData = {
-      fullName: data.fullName,
-      mobileNumber: data.mobileNumber,
-      dob: data.dob,
-      email: data.email,
-      parentDob: data.parentDob,
-      parentName: data.parentDob,
+        mobileNumber: data.mobileNumber,
+        dob: data.dob,
+        email: data.email,
+        parentDob: data.parentDob,
+        parentName: data.parentName,
+        interest: data.interest,
     };
-    const result = await updateUser(userId, userData);
+    const result = await (0, registerUserRepo_1.updateUser)(userId, userData);
     const studentData = {
-      fullName: data.fullName,
-      dob: data.dob,
+        fullName: data.fullName,
+        dob: data.dob,
+        gender: data.gender,
     };
-    const studentDetails = await updateUser(studentId, studentData);
-  */
-    const result = await (0, registerUserRepo_1.updateUser)(userId, data);
-    return result;
+    const studentDetails = await (0, studentRepo_1.updateStudent)(result.currentStudentId, studentData);
+    return {
+        ...result,
+        studentDetails,
+    };
 };
 exports.updateUserUseCase = updateUserUseCase;
 const getUsersUseCase = async (filters, limit, page) => {

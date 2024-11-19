@@ -103,11 +103,11 @@ exports.userUpdateValidation = [
     (0, express_validator_1.body)('fullName').optional().isString().withMessage('fullName must be a string'),
     (0, express_validator_1.body)('mobileNumber').optional().isNumeric().withMessage('mobileNumber must be a number'),
     (0, express_validator_1.body)('dob').optional().isDate().withMessage('Invalid date format'),
-    (0, express_validator_1.body)('userType').optional().isIn(['child', 'teenager', 'adult']).withMessage('Invalid userType'),
     (0, express_validator_1.body)('email').optional().isEmail().withMessage('Invalid email format'),
     (0, express_validator_1.body)('parentName').optional().isString().withMessage('parentName must be a string'),
     (0, express_validator_1.body)('parentDob').optional().isDate().withMessage('Invalid date format for parentDob'),
     (0, express_validator_1.body)('interest').optional().isString().withMessage('interest must be a string'),
+    (0, express_validator_1.body)('gender').optional().isString().withMessage('interest must be a string'),
 ];
 exports.loginValidation = [
     (0, express_validator_1.body)('email')

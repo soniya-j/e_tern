@@ -109,9 +109,7 @@ export const checkUserIdExist = async (userId: string): Promise<{ _id: string } 
 export const updateUser = async (id: string, data: IUserBody): Promise<IUserBody> => {
   const _id = ObjectID(id);
   const obj = { modifiedOn: new Date().toISOString(), ...data };
-  const updatedData = await usersModel.findOneAndUpdate({ _id }, obj, {
-    new: true,
-  });
+  const updatedData = await usersModel.findOneAndUpdate({ _id }, obj, { new: true }).lean();
   if (!updatedData) {
     throw new AppError('Something went wrong', HttpStatus.BAD_REQUEST);
   }

@@ -70,7 +70,7 @@ export const createStudent = async (data: IStudentBody): Promise<{ _id: string }
 };
 
 export const updateStudent = async (id: string, data: IStudentBody): Promise<IStudentBody> => {
-  const _id = new Types.ObjectId(id);
+  const _id = ObjectID(id);
   const obj = { modifiedOn: new Date().toISOString(), ...data };
   const updatedData = await studentModel.findOneAndUpdate({ _id }, obj, { new: true }).lean();
   if (!updatedData) {

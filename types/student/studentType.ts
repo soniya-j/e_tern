@@ -16,12 +16,12 @@ export interface IStudent extends Document {
 }
 
 export interface IStudentBody {
-  fullName: string;
+  fullName?: string;
   dob: Date;
   gender?: string;
   avatar?: string;
   packageId?: string;
-  userId: string;
+  userId?: string;
   subscriptionStartDate?: Date;
   subscriptionEndDate?: Date;
   subscribed?: boolean;

@@ -111,8 +111,6 @@ export const userUpdateValidation = [
 
   body('dob').optional().isDate().withMessage('Invalid date format'),
 
-  body('userType').optional().isIn(['child', 'teenager', 'adult']).withMessage('Invalid userType'),
-
   body('email').optional().isEmail().withMessage('Invalid email format'),
 
   body('parentName').optional().isString().withMessage('parentName must be a string'),
@@ -120,6 +118,8 @@ export const userUpdateValidation = [
   body('parentDob').optional().isDate().withMessage('Invalid date format for parentDob'),
 
   body('interest').optional().isString().withMessage('interest must be a string'),
+
+  body('gender').optional().isString().withMessage('interest must be a string'),
 ];
 
 export const loginValidation = [

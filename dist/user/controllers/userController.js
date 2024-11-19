@@ -304,6 +304,7 @@ exports.logout = (0, express_async_handler_1.default)(async (req, res) => {
     const userId = res.locals.userId;
     const result = await (0, userUseCase_1.logoutUseCase)(userId, deviceType);
     res.clearCookie('token');
+    res.setHeader('Clear-Site-Data', '"cookies"');
     res.status(200).json({
         success: true,
         message: localization_1.responseMessages.logout_success,

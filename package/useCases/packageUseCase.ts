@@ -2,7 +2,7 @@ import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
 import { IPackageBody } from '../../types/package/packageModel';
 import { IPackage } from '../../types/package/packageModel';
-import { PackageRepo, savePackage, updatePackage } from '../repos/packageRepo';
+import { PackageRepo, savePackage, updatePackage, deletePackage } from '../repos/packageRepo';
 
 export const getAllPackagesUseCase = async (): Promise<IPackage[]> => {
   const packageRepo = new PackageRepo();
@@ -22,4 +22,12 @@ export const updatePackageUseCase = async (
 ): Promise<Pick<IPackage, '_id'>> => {
   const result = await updatePackage(packageId, data);
   return result;
+};
+
+export const deletePackageUseCase = async (packageId: string): Promise<boolean> => {
+  const result = await deletePackage(packageId);
+  if (!result) {
+    throw new AppError('Failed to delete package', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+  return true;
 };

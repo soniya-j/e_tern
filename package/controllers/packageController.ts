@@ -3,6 +3,7 @@ import {
   getAllPackagesUseCase,
   createPackageUseCase,
   updatePackageUseCase,
+  deletePackageUseCase,
 } from '../useCases/packageUseCase';
 import asyncHandler from 'express-async-handler';
 import { responseMessages } from '../../config/localization';
@@ -53,6 +54,24 @@ export const updatePackage = asyncHandler(async (req: Request, res: Response) =>
   res.status(200).json({
     success: true,
     message: responseMessages.response_success_put,
+    result: result,
+  });
+});
+
+export const deletePackage = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const id = req.params.id;
+  const result = await deletePackageUseCase(id);
+  res.status(200).json({
+    success: true,
+    message: responseMessages.response_success_delete,
     result: result,
   });
 });

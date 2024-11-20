@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { getAllPackages, createPackage, updatePackage } from '../controllers/packageController';
+import {
+  getAllPackages,
+  createPackage,
+  updatePackage,
+  deletePackage,
+} from '../controllers/packageController';
 import { authenticateUser, authenticateAdmin } from '../../middleware/authentication';
 import { packageCreateValidation, packageUpdateValidation } from '../requests/packageRequest';
 
@@ -15,5 +20,5 @@ router.put(
   packageCreateValidation,
   updatePackage,
 );
-
+router.delete('/:id', authenticateAdmin, packageUpdateValidation, deletePackage);
 export default router;

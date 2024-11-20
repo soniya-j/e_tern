@@ -9,4 +9,5 @@ router.get('/all', authentication_1.authenticateUser, packageController_1.getAll
 router.get('/allAdmin', authentication_1.authenticateAdmin, packageController_1.getAllPackages);
 router.post('/', authentication_1.authenticateAdmin, packageRequest_1.packageCreateValidation, packageController_1.createPackage);
 router.put('/:id', authentication_1.authenticateAdmin, packageRequest_1.packageUpdateValidation, packageRequest_1.packageCreateValidation, packageController_1.updatePackage);
+router.delete('/:id', authentication_1.authenticateAdmin, packageRequest_1.packageUpdateValidation, packageController_1.deletePackage);
 exports.default = router;

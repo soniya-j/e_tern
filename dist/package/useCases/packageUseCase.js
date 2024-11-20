@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePackageUseCase = exports.createPackageUseCase = exports.getAllPackagesUseCase = void 0;
+exports.deletePackageUseCase = exports.updatePackageUseCase = exports.createPackageUseCase = exports.getAllPackagesUseCase = void 0;
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
 const packageRepo_1 = require("../repos/packageRepo");
@@ -25,3 +25,11 @@ const updatePackageUseCase = async (packageId, data) => {
     return result;
 };
 exports.updatePackageUseCase = updatePackageUseCase;
+const deletePackageUseCase = async (packageId) => {
+    const result = await (0, packageRepo_1.deletePackage)(packageId);
+    if (!result) {
+        throw new appError_1.default('Failed to delete package', httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return true;
+};
+exports.deletePackageUseCase = deletePackageUseCase;

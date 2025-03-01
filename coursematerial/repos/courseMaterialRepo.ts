@@ -6,6 +6,7 @@ import {
   ICourseMaterialWithStatus,
   ICourseMaterialBody,
   ICourseMaterialWatchHistoryBody,
+  IWatchHistory,
 } from '../../types/coursematerial/courseMaterialModel';
 import subCategoryModel from '../../subcategory/models/subCategoryModel';
 import { objectIdToString } from '../../utils/objectIdParser';
@@ -14,39 +15,52 @@ import studentModel from '../../student/models/studentModel';
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
 import courseMaterialWatchHistoryModel from '../models/courseMaterialWatchHistoryModel';
+import { ObjectID } from '../../utils/objectIdParser';
 
 export class CourseMaterialRepo {
+  /*
   async findAllCourseMaterials(): Promise<ICourseMaterial[]> {
     return await courseMaterialModel
       .find({ isActive: true, isDeleted: false })
       .sort({ sorting: 1 });
   }
-
-  /*
-  async findCourseMaterialBySubCategoryId(
-    subCategoryId: string,
-    userId: string,
-    type: string,
-  ): Promise<ICourseMaterial[]> {
-    const courseMaterials = await courseMaterialModel
-      .find({ subCategoryId, type, isActive: true, isDeleted: false })
-      .sort({ sorting: 1 })
-      .lean();
-    if (userId) {
-      // Fetch viewed materials for the user
-      const viewedMaterials = await courseMaterialViewModel.find({ userId, isActive: true }).lean();
-      const viewedMaterialIds = new Set(
-        viewedMaterials.map((view) => view.courseMaterialId.toString()),
-      );
-      return courseMaterials.map((material) => ({
-        ...material,
-        viewedStatus: viewedMaterialIds.has(material._id.toString()),
-      }));
-    } else {
-      return courseMaterials;
+ */
+  async findAllCourseMaterials(
+    filters: Partial<ICourseMaterial>,
+    limit = 10,
+    page = 1,
+  ): Promise<{ data: ICourseMaterial[]; totalCount: number }> {
+    const query: any = {};
+    if (filters.courseMaterialName) {
+      query.subCategoryName = { $regex: filters.courseMaterialName, $options: 'i' };
     }
+    if (filters.isActive !== undefined) {
+      query.isActive = filters.isActive;
+    }
+    query.isDeleted = false;
+    const skip = (page - 1) * limit;
+    const data = await courseMaterialModel
+      .find(query)
+      .populate({
+        path: 'subCategoryId',
+        match: { isDeleted: false },
+        select: 'subCategoryName categoryId',
+        populate: {
+          path: 'categoryId',
+          match: { isDeleted: false },
+          select: 'categoryName',
+        },
+      })
+      .limit(limit)
+      .skip(skip)
+      .sort({ createdAt: -1 })
+      .lean();
+    const totalCount = await courseMaterialModel.countDocuments(query);
+    return {
+      data,
+      totalCount,
+    };
   }
-*/
 
   async findCourseMaterialBySubCategoryId(
     subCategoryId: string,
@@ -111,41 +125,26 @@ export class CourseMaterialRepo {
 
     return courseMaterialsWithStatus;
   }
-  /*
-async findCourseMaterialBySubCategoryId(
-  subCategoryId: string,
-  userId: string,
-  type: string,
-): Promise<ICourseMaterial[]> {
-  const courseMaterials = await courseMaterialModel
-    .find({ subCategoryId, type, isActive: true, isDeleted: false })
-    .sort({ sorting: 1 })
-    .lean();
 
-  let openStatusIndex = 0; // Default to the first item
-
-  if (userId) {
-    // Fetch viewed materials for the user
-    const viewedMaterials = await courseMaterialViewModel.find({ userId, isActive: true }).lean();
-    const viewedMaterialIds = new Set(
-      viewedMaterials.map((view) => view.courseMaterialId.toString()),
-    );
-
-    // Update `viewedStatus` and determine the `openStatus` index
-    courseMaterials.forEach((material, index) => {
-      material.viewedStatus = viewedMaterialIds.has(material._id.toString());
-      if (material.viewedStatus) openStatusIndex = index + 1;
-    });
+  async findCourseMaterialsById(id: string): Promise<ICourseMaterial[] | null> {
+    return await courseMaterialModel
+      .findOne({ _id: id, isDeleted: false })
+      /*
+      .populate({
+        path: 'subCategoryId',
+        select: 'categoryId',
+        model: 'subcategory',
+      })*/
+      .populate({
+        path: 'subCategoryId',
+        select: 'categoryId subCategoryName',
+        populate: {
+          path: 'categoryId',
+          select: 'categoryName',
+        },
+      })
+      .lean();
   }
-
-  // Set openStatus only for the next course material after the last viewed one
-  return courseMaterials.map((material, index) => ({
-    ...material,
-    viewedStatus: viewedMaterialIds.has(material._id.toString()),
-    openStatus: index === openStatusIndex,
-  }));
-}
-*/
 }
 
 export const checkUserCourseIdExist = async (
@@ -261,4 +260,89 @@ export const saveCourseMaterialWatchHistory = async (
 ): Promise<boolean> => {
   await courseMaterialWatchHistoryModel.create({ ...data });
   return true;
+};
+
+export const deleteCourseMaterial = async (id: string): Promise<{ _id: string }> => {
+  const result: any = await courseMaterialModel.findOneAndUpdate(
+    { _id: ObjectID(id) },
+    { isDeleted: true, modifiedOn: new Date().toISOString() },
+    { new: true },
+  );
+  if (!result) {
+    throw new AppError('No document found with the Id', HttpStatus.NOT_FOUND);
+  }
+  return result;
+};
+
+export const checkSubCategoryIsChoosed = async (
+  subCategoryId: string,
+): Promise<{ _id: string } | null> => {
+  return await courseMaterialModel
+    .findOne({ subCategoryId, isDeleted: false })
+    .select({ _id: 1 })
+    .lean();
+};
+
+export const getCourseMaterialsBySubCategories = async (
+  subCategoryIds: string[],
+): Promise<ICourseMaterial[]> => {
+  return await courseMaterialModel
+    .find({ subCategoryId: { $in: subCategoryIds }, isActive: true, isDeleted: false })
+    .lean();
+};
+
+export const getWatchHistoriesBySubCategories = async (
+  subCategoryIds: string[],
+): Promise<IWatchHistory[]> => {
+  return await courseMaterialWatchHistoryModel
+    .find({ subCategoryId: { $in: subCategoryIds } })
+    .lean();
+};
+
+export const getTrendingVideos = async () => {
+  return await courseMaterialWatchHistoryModel.aggregate([
+    {
+      $addFields: {
+        courseMaterialId: { $toObjectId: '$courseMaterialId' },
+        subCategoryId: { $toObjectId: '$subCategoryId' },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          courseMaterialId: '$courseMaterialId',
+          subCategoryId: '$subCategoryId',
+        },
+        repeatedViews: { $sum: 1 },
+        distinctStudents: { $addToSet: '$studentId' },
+      },
+    },
+    {
+      $lookup: {
+        from: 'coursematerials',
+        localField: '_id.courseMaterialId',
+        foreignField: '_id',
+        as: 'courseMaterial',
+      },
+    },
+    { $unwind: '$courseMaterial' },
+    {
+      $lookup: {
+        from: 'subcategories',
+        localField: '_id.subCategoryId',
+        foreignField: '_id',
+        as: 'subCategory',
+      },
+    },
+    { $unwind: '$subCategory' },
+    {
+      $project: {
+        courseMaterialName: '$courseMaterial.courseMaterialName',
+        subCategoryName: '$subCategory.subCategoryName',
+        repeatedViews: 1,
+        distinctStudents: { $size: '$distinctStudents' },
+      },
+    },
+    { $sort: { repeatedViews: -1 } },
+  ]);
 };

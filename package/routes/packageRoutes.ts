@@ -4,6 +4,8 @@ import {
   createPackage,
   updatePackage,
   deletePackage,
+  getAllPackagesAdmin,
+  getPackagesById,
 } from '../controllers/packageController';
 import { authenticateUser, authenticateAdmin } from '../../middleware/authentication';
 import { packageCreateValidation, packageUpdateValidation } from '../requests/packageRequest';
@@ -11,7 +13,7 @@ import { packageCreateValidation, packageUpdateValidation } from '../requests/pa
 const router = Router();
 
 router.get('/all', authenticateUser, getAllPackages);
-router.get('/allAdmin', authenticateAdmin, getAllPackages);
+router.get('/allAdmin', authenticateAdmin, getAllPackagesAdmin);
 router.post('/', authenticateAdmin, packageCreateValidation, createPackage);
 router.put(
   '/:id',
@@ -21,4 +23,6 @@ router.put(
   updatePackage,
 );
 router.delete('/:id', authenticateAdmin, packageUpdateValidation, deletePackage);
+router.get('/:id', authenticateAdmin, packageUpdateValidation, getPackagesById);
+
 export default router;

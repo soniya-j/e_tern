@@ -1,34 +1,35 @@
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
 import { ICategoryBody } from '../../types/category/categoryModel';
-import { CategoryRepo, saveCategory, updateCategory } from '../repos/categoryRepo';
+import { CategoryRepo, saveCategory, updateCategory, deleteCategory } from '../repos/categoryRepo';
 import { ICategory, ICategoryWithTracking } from '../../types/category/categoryModel';
 import { getCourseMaterialTrackByCategory } from '../../coursematerial/repos/courseMaterialRepo';
 import { objectIdToString } from '../../utils/objectIdParser';
 import { ObjectId } from 'mongodb';
 import { findPackage, findStudentExists } from '../../student/repos/studentRepo';
 import { checkPackageExists } from '../../package/repos/packageRepo';
+import { checkCategoryIsChoosed } from '../../subcategory/repos/subCategoryRepo';
+import { processAndUploadImage } from '../../utils/imageUploader';
 
-export const getAllCategoryUseCase = async (): Promise<ICategory[]> => {
+export const getAllCategoryUseCase = async (
+  filters: Partial<ICategory>,
+  limit?: number,
+  page?: number,
+): Promise<{ data: ICategory[]; totalCount: number }> => {
   const categoryRepo = new CategoryRepo();
-  const result = await categoryRepo.findAllCategories();
+  const result = await categoryRepo.findAllCategories(filters, limit, page);
   if (!result) throw new AppError('No data found', HttpStatus.NOT_FOUND);
   return result;
 };
 
-/*
-export const getCategoriesByPackageIdUseCase = async (
-  packageId: string,
-  type: string,
-): Promise<ICategory[]> => {
+export const getCategoriesByIdUseCase = async (id: string): Promise<ICategory[]> => {
   const categoryRepo = new CategoryRepo();
-  const result = await categoryRepo.findCategoriesByPackageId(packageId, type);
+  const result = await categoryRepo.findCategoriesById(id);
   if (!result || result.length === 0) {
-    throw new AppError('No categories found for the given package', HttpStatus.NOT_FOUND);
+    throw new AppError('No categories found for the given id', HttpStatus.NOT_FOUND);
   }
   return result;
 };
-*/
 
 export const getCategoriesByPackageIdUseCase = async (
   studentId: string,
@@ -78,6 +79,7 @@ export const getCategoriesByPackageIdUseCase = async (
   return categories as ICategoryWithTracking[];
 };
 
+/*
 export const createCategoryUseCase = async (
   data: ICategoryBody,
 ): Promise<Pick<ICategory, '_id'>> => {
@@ -88,15 +90,54 @@ export const createCategoryUseCase = async (
   const result = await saveCategory(data);
   return result;
 };
+*/
 
-export const updateCategoryUseCase = async (
-  id: string,
+export const createCategoryUseCase = async (
   data: ICategoryBody,
+  file?: Express.Multer.File,
 ): Promise<Pick<ICategory, '_id'>> => {
   const exists = await checkPackageExists(data.packageId);
   if (!exists) {
     throw new AppError('No packages found for the given packageId', HttpStatus.NOT_FOUND);
   }
+  // Process the uploaded image
+  if (file) {
+    const uploadedFilePath = await processAndUploadImage(file, 'category');
+    data.imageUrl = uploadedFilePath;
+  }
+  const result = await saveCategory(data);
+  return result;
+};
+
+export const updateCategoryUseCase = async (
+  id: string,
+  data: ICategoryBody,
+  file?: Express.Multer.File,
+): Promise<Pick<ICategory, '_id'>> => {
+  const exists = await checkPackageExists(data.packageId);
+  if (!exists) {
+    throw new AppError('No packages found for the given packageId', HttpStatus.NOT_FOUND);
+  }
+  // Process the uploaded image
+  if (file) {
+    const uploadedFilePath = await processAndUploadImage(file, 'category');
+    data.imageUrl = uploadedFilePath;
+  }
   const result = await updateCategory(id, data);
   return result;
+};
+
+export const deleteCategoryUseCase = async (id: string): Promise<boolean> => {
+  const checkCategoryIsChoosedRes = await checkCategoryIsChoosed(id);
+  if (checkCategoryIsChoosedRes) {
+    throw new AppError(
+      'Deletion not allowed as this category is already in use.',
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+  const deleteCategoryResult = await deleteCategory(id);
+  if (!deleteCategoryResult) {
+    throw new AppError('Failed to delete category', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+  return true;
 };

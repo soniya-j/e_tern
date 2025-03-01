@@ -137,7 +137,7 @@ export const getAllUsers = async (
   filters: Partial<IUserBody>,
   limit: number,
   page: number,
-): Promise<IUsers[] | null> => {
+): Promise<{ data: IUsers[]; totalCount: number }> => {
   const query: any = {};
   if (filters.fullName) {
     query.fullName = { $regex: filters.fullName, $options: 'i' }; // Case-insensitive search
@@ -148,9 +148,14 @@ export const getAllUsers = async (
   if (filters.status !== undefined) {
     query.status = filters.status;
   }
-  // query.subscribed = true; // Example of a subscription filter if needed
   const skip = (page - 1) * limit;
-  return await usersModel.find(query).limit(limit).skip(skip).lean();
+  const data: IUsers[] = (await usersModel.find(query).limit(limit).skip(skip).lean()) || [];
+  const totalCount: number = await usersModel.countDocuments(query);
+
+  return {
+    data,
+    totalCount,
+  };
 };
 
 export const verifyLogin = async (
@@ -237,4 +242,14 @@ export const deleteToken = async (
     { isActive: false, authToken: '' },
     { new: true },
   );
+};
+
+export const getUserCount = async (): Promise<number> => {
+  try {
+    const result = await usersModel.countDocuments({ isDeleted: false, role: 'user' });
+    return result;
+  } catch (error) {
+    console.error('Error fetching user count:', error);
+    throw new Error('Failed to fetch user count');
+  }
 };

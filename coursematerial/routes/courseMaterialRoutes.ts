@@ -6,6 +6,10 @@ import {
   createCourseMaterial,
   updateCourseMaterial,
   createCourseMaterialWatchHistory,
+  deleteCourseMaterial,
+  getCourseMaterialsById,
+  getVideoDetails,
+  getTrendingVideoDetails,
 } from '../controllers/courseMaterialController';
 import { authenticateUser, authenticateAdmin } from '../../middleware/authentication';
 import {
@@ -18,8 +22,7 @@ import {
 
 const router = Router();
 
-//router.get('/all', authenticateUser, getCategories);
-router.get('/all', getCourseMaterials);
+router.get('/all', authenticateAdmin, getCourseMaterials);
 router.get(
   '/by-subcategory/:subCategoryId/:type/:studentId',
   authenticateUser,
@@ -41,6 +44,7 @@ router.post(
 );
 
 router.post('/', authenticateAdmin, courseMaterialCreateValidation, createCourseMaterial);
+
 router.put(
   '/:id',
   authenticateAdmin,
@@ -48,5 +52,10 @@ router.put(
   courseMaterialCreateValidation,
   updateCourseMaterial,
 );
+router.delete('/:id', authenticateAdmin, courseMaterialUpdateValidation, deleteCourseMaterial);
+router.get('/videoDetails', authenticateAdmin, getVideoDetails);
+router.get('/dashboard/trendingVideoDetails', authenticateAdmin, getTrendingVideoDetails);
+
+router.get('/:id', authenticateAdmin, courseMaterialUpdateValidation, getCourseMaterialsById);
 
 export default router;

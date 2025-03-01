@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logoutUseCase = exports.switchStudentUseCase = exports.verifyParentDobUseCase = exports.updateParentDobUseCase = exports.registerAdminUseCase = exports.loginUseCase = exports.getUsersUseCase = exports.updateUserUseCase = exports.getCourseMaterialTrackUseCase = exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
+exports.getUserCountUseCase = exports.logoutUseCase = exports.switchStudentUseCase = exports.verifyParentDobUseCase = exports.updateParentDobUseCase = exports.registerAdminUseCase = exports.loginUseCase = exports.getUsersUseCase = exports.updateUserUseCase = exports.getCourseMaterialTrackUseCase = exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
 const authentication_1 = require("../../authentication/authentication");
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
@@ -57,7 +57,7 @@ const verifyOtpUseCase = async (data) => {
 };
 exports.verifyOtpUseCase = verifyOtpUseCase;
 const uploadAvatarUseCase = async (file, userId) => {
-    const imageUrl = await (0, imageUploader_1.processAndUploadImage)(file);
+    const imageUrl = await (0, imageUploader_1.processAndUploadImage)(file, 'avatar');
     // upload the avatar url to db using id from the token
     const upload = await (0, registerUserRepo_1.uploadAvatar)(userId, imageUrl);
     if (!upload)
@@ -72,6 +72,11 @@ const sendOtpUseCase = async (data) => {
         throw new appError_1.default('User Not Found', httpStatus_1.HttpStatus.BAD_REQUEST);
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     //await sendOtp(data.mobileNumber, otp);
+    /* OTP Email
+    const emailId = 'soniyaej@gmail.com';
+    const brevoService = new BrevoService();
+    await brevoService.sendEmail(emailId, 'Your OTP Code', `Your OTP is: ${otp}`);
+    */
     await (0, registerUserRepo_1.updateUserOtp)(data.mobileNumber, otp);
     return otp;
 };
@@ -127,7 +132,7 @@ const updateUserUseCase = async (userId, data) => {
 exports.updateUserUseCase = updateUserUseCase;
 const getUsersUseCase = async (filters, limit, page) => {
     const result = await (0, registerUserRepo_1.getAllUsers)(filters, limit, page);
-    if (!result || result.length === 0) {
+    if (!result.data || result.data.length === 0) {
         throw new appError_1.default('No Users found', httpStatus_1.HttpStatus.NOT_FOUND);
     }
     return result;
@@ -199,3 +204,16 @@ const logoutUseCase = async (userId, deviceType) => {
     return true;
 };
 exports.logoutUseCase = logoutUseCase;
+const getUserCountUseCase = async () => {
+    const totalUsers = await (0, studentRepo_2.getStudentCount)();
+    const totalStudents = await (0, studentRepo_2.getSubscribedStudentCount)();
+    const { registeredThisMonth, subscribedThisMonth, freeUsersThisMonth } = await (0, studentRepo_2.getCurrentMonthActivities)();
+    return {
+        totalUsers,
+        totalStudents,
+        registeredThisMonth,
+        subscribedThisMonth,
+        freeUsersThisMonth,
+    };
+};
+exports.getUserCountUseCase = getUserCountUseCase;

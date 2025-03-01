@@ -21,8 +21,9 @@ router.post('/parentdob-verify', authentication_1.authenticateUser, userRequest_
 router.get('/switch-student/:studentId', authentication_1.authenticateUser, userRequest_1.switchStudentValidation, userController_1.switchStudent);
 router.post('/logout', authentication_1.authenticateUser, userRequest_1.logoutValidation, userController_1.logout);
 //Admin apis
-// GET /api/user/all?fullName=Juan&subscribed=true&status=1&limit=5&page=2 //all optional
 router.post('/login', userRequest_1.loginValidation, userController_1.login);
 router.get('/all', authentication_1.authenticateAdmin, userController_1.getUsers);
 router.post('/register-admin', userRequest_1.adminRegisterValidation, userController_1.registerAdmin);
+router.get('/userCount', authentication_1.authenticateAdmin, userController_1.getUserCount);
+router.get('/export-users', authentication_1.authenticateAdmin, userController_1.exportUsers);
 exports.default = router;

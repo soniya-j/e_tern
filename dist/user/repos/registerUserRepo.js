@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteToken = exports.checkMobileEmailExist = exports.updatecurrentStudent = exports.verifyParentDobYear = exports.updateParentDob = exports.createAdmin = exports.hashPassword = exports.verifyLogin = exports.getAllUsers = exports.getProfileById = exports.checkMobileExist = exports.updateUser = exports.checkUserIdExist = exports.getProfile = exports.updateUserOtp = exports.checkUserNumberExist = exports.uploadAvatar = exports.saveUserToken = exports.setUserVerified = exports.verifyOtp = exports.createUser = exports.checkUserExist = void 0;
+exports.getUserCount = exports.deleteToken = exports.checkMobileEmailExist = exports.updatecurrentStudent = exports.verifyParentDobYear = exports.updateParentDob = exports.createAdmin = exports.hashPassword = exports.verifyLogin = exports.getAllUsers = exports.getProfileById = exports.checkMobileExist = exports.updateUser = exports.checkUserIdExist = exports.getProfile = exports.updateUserOtp = exports.checkUserNumberExist = exports.uploadAvatar = exports.saveUserToken = exports.setUserVerified = exports.verifyOtp = exports.createUser = exports.checkUserExist = void 0;
 const objectIdParser_1 = require("../../utils/objectIdParser");
 const userModel_1 = __importDefault(require("../models/userModel"));
 const userAuthModel_1 = __importDefault(require("../models/userAuthModel"));
@@ -108,9 +108,13 @@ const getAllUsers = async (filters, limit, page) => {
     if (filters.status !== undefined) {
         query.status = filters.status;
     }
-    // query.subscribed = true; // Example of a subscription filter if needed
     const skip = (page - 1) * limit;
-    return await userModel_1.default.find(query).limit(limit).skip(skip).lean();
+    const data = (await userModel_1.default.find(query).limit(limit).skip(skip).lean()) || [];
+    const totalCount = await userModel_1.default.countDocuments(query);
+    return {
+        data,
+        totalCount,
+    };
 };
 exports.getAllUsers = getAllUsers;
 const verifyLogin = async (email, password) => {
@@ -171,3 +175,14 @@ const deleteToken = async (userId, deviceType) => {
     return await userAuthModel_1.default.findOneAndUpdate({ userId: authUserId, deviceType }, { isActive: false, authToken: '' }, { new: true });
 };
 exports.deleteToken = deleteToken;
+const getUserCount = async () => {
+    try {
+        const result = await userModel_1.default.countDocuments({ isDeleted: false, role: 'user' });
+        return result;
+    }
+    catch (error) {
+        console.error('Error fetching user count:', error);
+        throw new Error('Failed to fetch user count');
+    }
+};
+exports.getUserCount = getUserCount;

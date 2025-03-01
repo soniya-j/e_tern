@@ -26,3 +26,10 @@ export interface IStudentBody {
   subscriptionEndDate?: Date;
   subscribed?: boolean;
 }
+
+export interface IStudentSubscription {
+  packageId: string;
+  subscriptionStartDate: Date;
+  subscriptionEndDate: Date;
+  subscribed: boolean;
+}

@@ -2,6 +2,8 @@ import { generateToken } from '../../authentication/authentication';
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
 //import { sendOtp } from '../../services/twilioService';
+//import { BrevoService } from '../../services/brevoService';
+
 import {
   IOtpBody,
   IUserBody,
@@ -9,6 +11,7 @@ import {
   ILoginBody,
   IAdminBody,
   IUserProfile,
+  IUserCount,
 } from '../../types/user/userTypes';
 import {
   checkUserExist,
@@ -38,7 +41,13 @@ import { getCourseMaterialTrack } from '../../coursematerial/repos/courseMateria
 import { processAndUploadImage } from '../../utils/imageUploader';
 import { createStudent, updateStudent } from '../../student/repos/studentRepo';
 import { IStudentBody } from '../../types/student/studentType';
-import { findStudentExists, getStudentById } from '../../student/repos/studentRepo';
+import {
+  findStudentExists,
+  getStudentById,
+  getStudentCount,
+  getSubscribedStudentCount,
+  getCurrentMonthActivities,
+} from '../../student/repos/studentRepo';
 
 export const registerUserUseCase = async (data: IUserBody): Promise<Pick<IUsers, '_id'>> => {
   //check userAlready exist
@@ -48,6 +57,7 @@ export const registerUserUseCase = async (data: IUserBody): Promise<Pick<IUsers,
   //send an otp to the mobileNumber provided
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   //await sendOtp(data.mobileNumber, otp);
+
   data.status = 1;
   data.role = 'user';
   const result = await createUser(data, otp);
@@ -89,7 +99,7 @@ export const uploadAvatarUseCase = async (
   file: Express.Multer.File,
   userId: string,
 ): Promise<string> => {
-  const imageUrl = await processAndUploadImage(file);
+  const imageUrl = await processAndUploadImage(file, 'avatar');
   // upload the avatar url to db using id from the token
   const upload = await uploadAvatar(userId, imageUrl);
   if (!upload) throw new AppError('Image upload failed', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -104,6 +114,11 @@ export const sendOtpUseCase = async (data: IOtpBody): Promise<string> => {
 
   //await sendOtp(data.mobileNumber, otp);
 
+  /* OTP Email
+  const emailId = 'soniyaej@gmail.com';
+  const brevoService = new BrevoService();
+  await brevoService.sendEmail(emailId, 'Your OTP Code', `Your OTP is: ${otp}`);
+  */
   await updateUserOtp(data.mobileNumber, otp);
   return otp;
 };
@@ -162,9 +177,9 @@ export const getUsersUseCase = async (
   filters: Partial<IUserBody>,
   limit: number,
   page: number,
-): Promise<IUserBody[]> => {
+): Promise<{ data: IUsers[]; totalCount: number }> => {
   const result = await getAllUsers(filters, limit, page);
-  if (!result || result.length === 0) {
+  if (!result.data || result.data.length === 0) {
     throw new AppError('No Users found', HttpStatus.NOT_FOUND);
   }
   return result;
@@ -245,4 +260,18 @@ export const logoutUseCase = async (userId: string, deviceType: string): Promise
     throw new AppError('Token not found or already invalidated.', HttpStatus.INTERNAL_SERVER_ERROR);
   }
   return true;
+};
+
+export const getUserCountUseCase = async (): Promise<IUserCount> => {
+  const totalUsers = await getStudentCount();
+  const totalStudents = await getSubscribedStudentCount();
+  const { registeredThisMonth, subscribedThisMonth, freeUsersThisMonth } =
+    await getCurrentMonthActivities();
+  return {
+    totalUsers,
+    totalStudents,
+    registeredThisMonth,
+    subscribedThisMonth,
+    freeUsersThisMonth,
+  };
 };

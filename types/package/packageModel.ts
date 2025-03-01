@@ -1,4 +1,5 @@
 import { Document } from 'mongoose';
+import { IPackageCost } from '../packagecost/packageCostModel';
 
 export interface IPackage extends Document {
   packageName: string;
@@ -14,4 +15,5 @@ export interface IPackageBody {
   ageFrom: number;
   ageTo: number;
   description?: string;
+  packageCosts?: IPackageCost[];
 }

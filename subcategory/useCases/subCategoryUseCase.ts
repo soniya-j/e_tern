@@ -1,17 +1,30 @@
 import AppError from '../../common/appError';
 import { HttpStatus } from '../../common/httpStatus';
-import { SubCategoryRepo, saveSubCategory, updateSubCategory } from '../repos/subCategoryRepo';
+import {
+  SubCategoryRepo,
+  saveSubCategory,
+  updateSubCategory,
+  deleteSubCategory,
+} from '../repos/subCategoryRepo';
 import {
   ISubCategory,
   ISubCategoryWithTracking,
   ISubCategoryBody,
 } from '../../types/subcategory/subCategoryModel';
-import { getCourseMaterialTrackBySubCategory } from '../../coursematerial/repos/courseMaterialRepo';
+import {
+  getCourseMaterialTrackBySubCategory,
+  checkSubCategoryIsChoosed,
+} from '../../coursematerial/repos/courseMaterialRepo';
 import { checkCategoryExists } from '../../category/repos/categoryRepo';
+import { processAndUploadImage } from '../../utils/imageUploader';
 
-export const getAllSubCategoryUseCase = async (): Promise<ISubCategory[]> => {
+export const getAllSubCategoryUseCase = async (
+  filters: Partial<ISubCategory>,
+  limit: number,
+  page: number,
+): Promise<{ data: ISubCategory[]; totalCount: number }> => {
   const subCategoryRepo = new SubCategoryRepo();
-  const result = await subCategoryRepo.findAllSubCategories();
+  const result = await subCategoryRepo.findAllSubCategories(filters, limit, page);
   if (!result) throw new AppError('No data found', HttpStatus.NOT_FOUND);
   return result;
 };
@@ -70,10 +83,16 @@ export const getSubCategoriesByCategoryIdUseCase = async (
 
 export const createSubCategoryUseCase = async (
   data: ISubCategoryBody,
+  file?: Express.Multer.File,
 ): Promise<Pick<ISubCategory, '_id'>> => {
   const exists = await checkCategoryExists(data.categoryId);
   if (!exists) {
     throw new AppError('No categories found for the given categoryId', HttpStatus.NOT_FOUND);
+  }
+  // Process the uploaded image
+  if (file) {
+    const uploadedFilePath = await processAndUploadImage(file, 'subcategory');
+    data.imageUrl = uploadedFilePath;
   }
   const result = await saveSubCategory(data);
   return result;
@@ -82,11 +101,41 @@ export const createSubCategoryUseCase = async (
 export const updateSubCategoryUseCase = async (
   id: string,
   data: ISubCategoryBody,
+  file?: Express.Multer.File,
 ): Promise<Pick<ISubCategory, '_id'>> => {
   const exists = await checkCategoryExists(data.categoryId);
   if (!exists) {
     throw new AppError('No categories found for the given categoryId', HttpStatus.NOT_FOUND);
   }
+  // Process the uploaded image
+  if (file) {
+    const uploadedFilePath = await processAndUploadImage(file, 'subcategory');
+    data.imageUrl = uploadedFilePath;
+  }
   const result = await updateSubCategory(id, data);
+  return result;
+};
+
+export const deleteSubCategoryUseCase = async (id: string): Promise<boolean> => {
+  const checkSubCategoryIsChoosedRes = await checkSubCategoryIsChoosed(id);
+  if (checkSubCategoryIsChoosedRes) {
+    throw new AppError(
+      'Deletion not allowed as this sub category is already in use.',
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+  const deleteSubCategoryResult = await deleteSubCategory(id);
+  if (!deleteSubCategoryResult) {
+    throw new AppError('Failed to delete sub category', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+  return true;
+};
+
+export const getSubCategoriesByIdUseCase = async (id: string): Promise<ISubCategory[]> => {
+  const subCategoryRepo = new SubCategoryRepo();
+  const result = await subCategoryRepo.findSubCategoriesById(id);
+  if (!result || result.length === 0) {
+    throw new AppError('No sub categories found for the given id', HttpStatus.NOT_FOUND);
+  }
   return result;
 };

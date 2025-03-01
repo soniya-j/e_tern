@@ -25,16 +25,6 @@ exports.categoryCreateValidation = [
         .withMessage('packageId is required')
         .isMongoId()
         .withMessage('Invalid packageId format'),
-    (0, express_validator_1.body)('imageUrl')
-        .notEmpty()
-        .withMessage('imageUrl is required')
-        .isString()
-        .withMessage('imageUrl must be a string'),
-    (0, express_validator_1.body)('categoryName')
-        .notEmpty()
-        .withMessage('categoryName is required')
-        .isString()
-        .withMessage('categoryName must be a string'),
     (0, express_validator_1.body)('sorting')
         .notEmpty()
         .withMessage('sorting is required')
@@ -47,5 +37,5 @@ exports.categoryCreateValidation = [
         .withMessage('type must be either "kid" or "parent"'),
 ];
 exports.categoryUpdateValidation = [
-    (0, express_validator_1.param)('id').isMongoId().withMessage('Invalid category ID format'),
+    (0, express_validator_1.param)('id').notEmpty().isMongoId().withMessage('Invalid category ID format'),
 ];

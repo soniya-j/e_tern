@@ -25,11 +25,6 @@ exports.subCategoryCreateValidation = [
         .withMessage('categoryId is required')
         .isMongoId()
         .withMessage('Invalid categoryId format'),
-    (0, express_validator_1.body)('imageUrl')
-        .notEmpty()
-        .withMessage('imageUrl is required')
-        .isString()
-        .withMessage('imageUrl must be a string'),
     (0, express_validator_1.body)('sorting')
         .notEmpty()
         .withMessage('sorting is required')

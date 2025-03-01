@@ -24,11 +24,6 @@ export const subCategoryCreateValidation = [
     .withMessage('categoryId is required')
     .isMongoId()
     .withMessage('Invalid categoryId format'),
-  body('imageUrl')
-    .notEmpty()
-    .withMessage('imageUrl is required')
-    .isString()
-    .withMessage('imageUrl must be a string'),
   body('sorting')
     .notEmpty()
     .withMessage('sorting is required')

@@ -1,0 +1,93 @@
+swagger: '3.0.0'
+info:
+  title: Subscription Model API
+  description: API related to Subscription models
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local server
+  - url: https://e-learn-k6lb.onrender.com
+    description: Live server
+paths:
+  /api/subscription/:
+    post:
+      summary: activate subscription
+      description: Endpoint to activate subscription
+      tags:
+        - Subscription Model
+      security:
+        - JWT: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:                
+                studentId:
+                  type: string
+                  example: "670d2fd920824883c3100257"  
+                packageId:
+                  type: string
+                  example: "670d2fd920824883c3100257"  
+                packageCostId:
+                  type: string
+                  example: "670d2fd920824883c3100257"  
+                paymentRef:
+                  type: string
+                  example: "Ref3100257"  
+                paymentGateway:
+                  type: string
+                  example: "razorpay"  
+                comment:
+                  type: string
+                  example: "670d2fd920824883c3100257"               
+                status:
+                  type: string
+                  example: "paid"  
+                deviceId:
+                  type: string
+                  example: "8765"  
+                userIP:
+                  type: string
+                  example: "192.168.1.1"    
+
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Subscribed Successfully
+                  result:
+                    type: string
+                    example: []
+        401:
+          description: Unauthorized response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: JWT token is required.
+
+components:
+  securitySchemes:
+    JWT:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: JWT Bearer token

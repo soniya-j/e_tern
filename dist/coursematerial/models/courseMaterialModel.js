@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const courseMaterialSchema = new mongoose_1.Schema({
     courseMaterialName: { type: String, required: true },
-    subCategoryId: { type: String, required: true },
+    subCategoryId: { type: String, required: true, ref: 'subcategory' },
     courseMaterialUrl: { type: String, default: '' },
     description: { type: String, default: '' },
     sorting: { type: Number, default: 1 },

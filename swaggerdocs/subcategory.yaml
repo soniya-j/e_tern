@@ -208,7 +208,7 @@ paths:
                     type: string
                     example: Unauthorized user
 
-/api/subcategory/{id}:
+/api/subcategorys/{id}:
     put:
       summary: Update sub category
       description: Endpoint to update sub category
@@ -218,7 +218,7 @@ paths:
         - name: id
           in: path
           required: true
-          description: The ID of the package
+          description: The ID of the sub category
           schema:
             type: string
             example: "670d2fd920824883c3100257"      
@@ -242,7 +242,7 @@ paths:
                   example: "Desc Stories"
                 imageUrl:
                   type: string
-                  example: "upload/category/sample.jpg"
+                  example: "upload/subcategory/sample.jpg"
                 isActive:
                   type: boolean
                   example: true                  
@@ -285,6 +285,132 @@ paths:
                   error:
                     type: string
                     example: Unauthorized user
+/api/subcategory/{id}:
+  delete:
+    summary: Delete sub category
+    description: Endpoint to delete a sub category
+    tags:
+      - Sub Category Model
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the sub category
+        schema:
+          type: string
+          example: "670d2fd920824883c3100257"
+    security:
+      - JWT: []
+    responses:
+      200:
+        description: Success response
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Deleted data successfully
+                result:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      example: "670d2fd920824883c3100257"
+      401:
+        description: Unauthorized response
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Unauthorized user
+
+/api/subcategory/by-categoryAdmin/{categoryId}/{type}:
+    get:
+      summary: Fetch Sub Categories by category ID for admin panel
+      description: Endpoint to fetch sub categories by a given category ID
+      tags:
+        - Sub Category Model
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          description: The ID of the category
+          schema:
+            type: string
+            example: "670d2fd920824883c3100257"
+        - name: type
+          in: path
+          required: true
+          description: Type of the category
+          schema:
+            type: string
+            enum: ["kid", "parent"]
+            example: "kid"
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Fetch Sub Categories by category ID successfully
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        subCategoryName:
+                          type: string
+                          example: "Self Help"
+                        categoryId:
+                          type: string
+                          example: "670d2fd920824883c3100257"
+                        description:
+                          type: string
+                          example: "Self Help"
+                        imageUrl:
+                          type: string
+                          example: "upload/category/sample.jpg"
+                        isActive:
+                          type: boolean
+                          example: true
+        404:
+          description: Sub Categories not found for the given category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No sub categories found for this category
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred
+
 
 components:
   securitySchemes:

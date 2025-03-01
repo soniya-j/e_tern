@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const categorySchema = new mongoose_1.Schema({
     categoryName: { type: String, required: true },
-    packageId: { type: String, required: true },
+    packageId: { type: String, required: true, ref: 'package' },
     imageUrl: { type: String, default: '' },
     description: { type: String, default: '' },
     sorting: { type: Number, default: 1 },

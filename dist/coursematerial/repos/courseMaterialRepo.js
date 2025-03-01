@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.saveCourseMaterialWatchHistory = exports.updateCourseMaterial = exports.saveCourseMaterial = exports.getCourseMaterialTrackByCategory = exports.getCourseMaterialTrackBySubCategory = exports.getCourseMaterialTrack = exports.checkCourseMaterialExist = exports.trackCourseMaterial = exports.checkUserCourseIdExist = exports.CourseMaterialRepo = void 0;
+exports.getTrendingVideos = exports.getWatchHistoriesBySubCategories = exports.getCourseMaterialsBySubCategories = exports.checkSubCategoryIsChoosed = exports.deleteCourseMaterial = exports.saveCourseMaterialWatchHistory = exports.updateCourseMaterial = exports.saveCourseMaterial = exports.getCourseMaterialTrackByCategory = exports.getCourseMaterialTrackBySubCategory = exports.getCourseMaterialTrack = exports.checkCourseMaterialExist = exports.trackCourseMaterial = exports.checkUserCourseIdExist = exports.CourseMaterialRepo = void 0;
 const courseMaterialModel_1 = __importDefault(require("../models/courseMaterialModel"));
 const courseMaterialViewModel_1 = __importDefault(require("../models/courseMaterialViewModel"));
 const subCategoryModel_1 = __importDefault(require("../../subcategory/models/subCategoryModel"));
@@ -12,37 +12,47 @@ const studentModel_1 = __importDefault(require("../../student/models/studentMode
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
 const courseMaterialWatchHistoryModel_1 = __importDefault(require("../models/courseMaterialWatchHistoryModel"));
+const objectIdParser_2 = require("../../utils/objectIdParser");
 class CourseMaterialRepo {
-    async findAllCourseMaterials() {
-        return await courseMaterialModel_1.default
-            .find({ isActive: true, isDeleted: false })
-            .sort({ sorting: 1 });
-    }
     /*
-    async findCourseMaterialBySubCategoryId(
-      subCategoryId: string,
-      userId: string,
-      type: string,
-    ): Promise<ICourseMaterial[]> {
-      const courseMaterials = await courseMaterialModel
-        .find({ subCategoryId, type, isActive: true, isDeleted: false })
-        .sort({ sorting: 1 })
-        .lean();
-      if (userId) {
-        // Fetch viewed materials for the user
-        const viewedMaterials = await courseMaterialViewModel.find({ userId, isActive: true }).lean();
-        const viewedMaterialIds = new Set(
-          viewedMaterials.map((view) => view.courseMaterialId.toString()),
-        );
-        return courseMaterials.map((material) => ({
-          ...material,
-          viewedStatus: viewedMaterialIds.has(material._id.toString()),
-        }));
-      } else {
-        return courseMaterials;
-      }
+    async findAllCourseMaterials(): Promise<ICourseMaterial[]> {
+      return await courseMaterialModel
+        .find({ isActive: true, isDeleted: false })
+        .sort({ sorting: 1 });
     }
-  */
+   */
+    async findAllCourseMaterials(filters, limit = 10, page = 1) {
+        const query = {};
+        if (filters.courseMaterialName) {
+            query.subCategoryName = { $regex: filters.courseMaterialName, $options: 'i' };
+        }
+        if (filters.isActive !== undefined) {
+            query.isActive = filters.isActive;
+        }
+        query.isDeleted = false;
+        const skip = (page - 1) * limit;
+        const data = await courseMaterialModel_1.default
+            .find(query)
+            .populate({
+            path: 'subCategoryId',
+            match: { isDeleted: false },
+            select: 'subCategoryName categoryId',
+            populate: {
+                path: 'categoryId',
+                match: { isDeleted: false },
+                select: 'categoryName',
+            },
+        })
+            .limit(limit)
+            .skip(skip)
+            .sort({ createdAt: -1 })
+            .lean();
+        const totalCount = await courseMaterialModel_1.default.countDocuments(query);
+        return {
+            data,
+            totalCount,
+        };
+    }
     async findCourseMaterialBySubCategoryId(subCategoryId, userId, type, studentId) {
         const student = await studentModel_1.default.findOne({ _id: studentId, isDeleted: false }).lean();
         if (!student)
@@ -95,6 +105,25 @@ class CourseMaterialRepo {
             openStatus: index === openStatusIndex,
         }));
         return courseMaterialsWithStatus;
+    }
+    async findCourseMaterialsById(id) {
+        return await courseMaterialModel_1.default
+            .findOne({ _id: id, isDeleted: false })
+            /*
+            .populate({
+              path: 'subCategoryId',
+              select: 'categoryId',
+              model: 'subcategory',
+            })*/
+            .populate({
+            path: 'subCategoryId',
+            select: 'categoryId subCategoryName',
+            populate: {
+                path: 'categoryId',
+                select: 'categoryName',
+            },
+        })
+            .lean();
     }
 }
 exports.CourseMaterialRepo = CourseMaterialRepo;
@@ -189,3 +218,78 @@ const saveCourseMaterialWatchHistory = async (data) => {
     return true;
 };
 exports.saveCourseMaterialWatchHistory = saveCourseMaterialWatchHistory;
+const deleteCourseMaterial = async (id) => {
+    const result = await courseMaterialModel_1.default.findOneAndUpdate({ _id: (0, objectIdParser_2.ObjectID)(id) }, { isDeleted: true, modifiedOn: new Date().toISOString() }, { new: true });
+    if (!result) {
+        throw new appError_1.default('No document found with the Id', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    return result;
+};
+exports.deleteCourseMaterial = deleteCourseMaterial;
+const checkSubCategoryIsChoosed = async (subCategoryId) => {
+    return await courseMaterialModel_1.default
+        .findOne({ subCategoryId, isDeleted: false })
+        .select({ _id: 1 })
+        .lean();
+};
+exports.checkSubCategoryIsChoosed = checkSubCategoryIsChoosed;
+const getCourseMaterialsBySubCategories = async (subCategoryIds) => {
+    return await courseMaterialModel_1.default
+        .find({ subCategoryId: { $in: subCategoryIds }, isActive: true, isDeleted: false })
+        .lean();
+};
+exports.getCourseMaterialsBySubCategories = getCourseMaterialsBySubCategories;
+const getWatchHistoriesBySubCategories = async (subCategoryIds) => {
+    return await courseMaterialWatchHistoryModel_1.default
+        .find({ subCategoryId: { $in: subCategoryIds } })
+        .lean();
+};
+exports.getWatchHistoriesBySubCategories = getWatchHistoriesBySubCategories;
+const getTrendingVideos = async () => {
+    return await courseMaterialWatchHistoryModel_1.default.aggregate([
+        {
+            $addFields: {
+                courseMaterialId: { $toObjectId: '$courseMaterialId' },
+                subCategoryId: { $toObjectId: '$subCategoryId' },
+            },
+        },
+        {
+            $group: {
+                _id: {
+                    courseMaterialId: '$courseMaterialId',
+                    subCategoryId: '$subCategoryId',
+                },
+                repeatedViews: { $sum: 1 },
+                distinctStudents: { $addToSet: '$studentId' },
+            },
+        },
+        {
+            $lookup: {
+                from: 'coursematerials',
+                localField: '_id.courseMaterialId',
+                foreignField: '_id',
+                as: 'courseMaterial',
+            },
+        },
+        { $unwind: '$courseMaterial' },
+        {
+            $lookup: {
+                from: 'subcategories',
+                localField: '_id.subCategoryId',
+                foreignField: '_id',
+                as: 'subCategory',
+            },
+        },
+        { $unwind: '$subCategory' },
+        {
+            $project: {
+                courseMaterialName: '$courseMaterial.courseMaterialName',
+                subCategoryName: '$subCategory.subCategoryName',
+                repeatedViews: 1,
+                distinctStudents: { $size: '$distinctStudents' },
+            },
+        },
+        { $sort: { repeatedViews: -1 } },
+    ]);
+};
+exports.getTrendingVideos = getTrendingVideos;

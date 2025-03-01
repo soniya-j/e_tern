@@ -905,6 +905,54 @@ paths:
                     type: string
                     example: Unauthorized user
   
+/api/user/userCount:
+    get:
+      summary: Fetch profile userCount
+      description: Endpoint to fetch userCount
+      tags:
+        - Users Model
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Fetched successfully
+                  result:
+                    type: array
+                    items:
+                      type: object                     
+        404:
+          description: User not found for the given UserId
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No profile found for this userId
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An error occurred
+
+
 
 
 components:

@@ -14,9 +14,12 @@ import {
   verifyParentDob,
   switchStudent,
   logout,
+  getUserCount,
+  exportUsers,
 } from '../controllers/userController';
 import multerConfig from '../../middleware/multer';
 import { authenticateUser, authenticateAdmin } from '../../middleware/authentication';
+
 import {
   userRegisterValidation,
   verifyOtpValidation,
@@ -52,9 +55,10 @@ router.get('/switch-student/:studentId', authenticateUser, switchStudentValidati
 router.post('/logout', authenticateUser, logoutValidation, logout);
 
 //Admin apis
-// GET /api/user/all?fullName=Juan&subscribed=true&status=1&limit=5&page=2 //all optional
 router.post('/login', loginValidation, login);
 router.get('/all', authenticateAdmin, getUsers);
 router.post('/register-admin', adminRegisterValidation, registerAdmin);
+router.get('/userCount', authenticateAdmin, getUserCount);
+router.get('/export-users', authenticateAdmin, exportUsers);
 
 export default router;

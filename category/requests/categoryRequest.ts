@@ -24,16 +24,6 @@ export const categoryCreateValidation = [
     .withMessage('packageId is required')
     .isMongoId()
     .withMessage('Invalid packageId format'),
-  body('imageUrl')
-    .notEmpty()
-    .withMessage('imageUrl is required')
-    .isString()
-    .withMessage('imageUrl must be a string'),
-  body('categoryName')
-    .notEmpty()
-    .withMessage('categoryName is required')
-    .isString()
-    .withMessage('categoryName must be a string'),
   body('sorting')
     .notEmpty()
     .withMessage('sorting is required')
@@ -47,5 +37,5 @@ export const categoryCreateValidation = [
 ];
 
 export const categoryUpdateValidation = [
-  param('id').isMongoId().withMessage('Invalid category ID format'),
+  param('id').notEmpty().isMongoId().withMessage('Invalid category ID format'),
 ];

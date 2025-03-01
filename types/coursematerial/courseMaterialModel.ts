@@ -9,6 +9,7 @@ export interface ICourseMaterial extends Document {
   isActive?: boolean;
   isDeleted?: boolean;
   type: string;
+  duration?: number;
 }
 
 export interface ICourseMaterialBody {
@@ -18,6 +19,7 @@ export interface ICourseMaterialBody {
   description?: string;
   sorting: number;
   type: string;
+  duration?: number;
 }
 
 export interface ITrackCourseMaterialView extends Document {
@@ -34,6 +36,15 @@ export interface ICourseMaterialWithStatus extends ICourseMaterialBody {
 }
 
 export interface ICourseMaterialWatchHistoryBody extends Document {
+  studentId: string;
+  categoryId: string;
+  subCategoryId: string;
+  courseMaterialId: string;
+  watchedDuration: number;
+}
+
+export interface IWatchHistory {
+  _id: string;
   studentId: string;
   categoryId: string;
   subCategoryId: string;

@@ -81,3 +81,11 @@ export interface IDobBody {
 export interface IUserProfile extends IUserBody {
   studentDetails?: IStudentBody;
 }
+
+export interface IUserCount {
+  totalUsers: number;
+  totalStudents: number;
+  registeredThisMonth: number;
+  subscribedThisMonth: number;
+  freeUsersThisMonth: number;
+}

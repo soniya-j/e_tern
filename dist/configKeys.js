@@ -13,5 +13,6 @@ const configKeys = {
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
     TWILIO_PHONE_NUMBER: process.env.TWILIO_PHONE_NUMBER,
     BASE_DIR_PATH: path_1.default.join(__dirname),
+    BREVO_API_KEY: process.env.BREVO_API_KEY,
 };
 exports.default = configKeys;

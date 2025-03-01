@@ -6,6 +6,10 @@ import {
   createCourseMaterialUseCase,
   updateCourseMaterialUseCase,
   courseMaterialWatchHistoryUseCase,
+  deleteCourseMaterialUseCase,
+  getCourseMaterialsByIdUseCase,
+  getVideoDetailsUseCase,
+  getTrendingVideoDetailsUseCase,
 } from '../useCases/courseMaterialUseCase';
 import asyncHandler from 'express-async-handler';
 import { responseMessages } from '../../config/localization';
@@ -19,7 +23,16 @@ import {
 } from '../../types/coursematerial/courseMaterialModel';
 
 export const getCourseMaterials = asyncHandler(async (req: Request, res: Response) => {
-  const result = await getAllCourseMaterialUseCase();
+  const filters = {
+    courseMaterialName: req.query.courseMaterialName as string,
+    type: req.query.type as string,
+    isActive:
+      req.query.isActive === 'true' ? true : req.query.isActive === 'false' ? false : undefined,
+  };
+  const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+  const page = limit ? parseInt(req.query.page as string) || 1 : 0;
+
+  const result = await getAllCourseMaterialUseCase(filters, limit, page);
   res.status(200).json({
     success: true,
     message: responseMessages.response_success_get,
@@ -143,3 +156,73 @@ export const createCourseMaterialWatchHistory = asyncHandler(
     });
   },
 );
+
+export const deleteCourseMaterial = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const id = req.params.id;
+  const result = await deleteCourseMaterialUseCase(id);
+  res.status(200).json({
+    success: true,
+    message: responseMessages.response_success_delete,
+    result: result,
+  });
+});
+
+export const getCourseMaterialsById = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const id = req.params.id;
+  const result = await getCourseMaterialsByIdUseCase(id);
+  res.status(200).json({
+    success: true,
+    message: responseMessages.response_success_get,
+    result: result,
+  });
+});
+
+export const getVideoDetails = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const result = await getVideoDetailsUseCase();
+  res.status(200).json({
+    success: true,
+    message: responseMessages.response_success_get,
+    result: result,
+  });
+});
+
+export const getTrendingVideoDetails = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const result = await getTrendingVideoDetailsUseCase();
+  res.status(200).json({
+    success: true,
+    message: responseMessages.response_success_get,
+    result: result,
+  });
+});

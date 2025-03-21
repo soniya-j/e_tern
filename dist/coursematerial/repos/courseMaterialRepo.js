@@ -14,13 +14,6 @@ const httpStatus_1 = require("../../common/httpStatus");
 const courseMaterialWatchHistoryModel_1 = __importDefault(require("../models/courseMaterialWatchHistoryModel"));
 const objectIdParser_2 = require("../../utils/objectIdParser");
 class CourseMaterialRepo {
-    /*
-    async findAllCourseMaterials(): Promise<ICourseMaterial[]> {
-      return await courseMaterialModel
-        .find({ isActive: true, isDeleted: false })
-        .sort({ sorting: 1 });
-    }
-   */
     async findAllCourseMaterials(filters, limit = 10, page = 1) {
         const query = {};
         if (filters.courseMaterialName) {
@@ -71,8 +64,9 @@ class CourseMaterialRepo {
         }
         else {
             courseMaterials = (await courseMaterialModel_1.default
-                .find({ subCategoryId, type, isActive: true, isDeleted: false, sorting: 1 })
-                .limit(1)
+                .find({ subCategoryId, type, isActive: true, isDeleted: false })
+                .sort({ sorting: 1 })
+                //.limit(1)
                 .lean());
         }
         let openStatusIndex = 0;

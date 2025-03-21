@@ -26,11 +26,7 @@ export const userRegisterValidation = [
     .isIn(['child', 'teenager', 'adult'])
     .withMessage('Invalid userType'),
 
-  body('email')
-    .notEmpty()
-    .withMessage('email is required')
-    .isEmail()
-    .withMessage('Invalid email format'),
+  body('email').isEmail().withMessage('Invalid email format'),
 ];
 
 export const verifyOtpValidation = [

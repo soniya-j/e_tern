@@ -219,23 +219,32 @@ export const checkStudentExist = async (studentId: string): Promise<{ _id: strin
   return await studentModel.findOne({ _id, isDeleted: false }).select({ _id: 1 }).lean();
 };
 
-export const getStudentSubscriptions = async (): Promise<{ subscription_date: string; total_subscriptions: number }[]> => {
+export const getStudentSubscriptions = async (): Promise<
+  { subscription_date: string; total_subscriptions: number }[]
+> => {
   try {
     const formatDate = (date: Date): string => {
       const day = date.getDate();
       const suffix =
-        day === 1 || day === 21 || day === 31 ? 'st' :
-        day === 2 || day === 22 ? 'nd' :
-        day === 3 || day === 23 ? 'rd' : 'th';
+        day === 1 || day === 21 || day === 31
+          ? 'st'
+          : day === 2 || day === 22
+            ? 'nd'
+            : day === 3 || day === 23
+              ? 'rd'
+              : 'th';
       return `${day}${suffix}`;
     };
 
     // Generate last 10 days
-    const last10Days: { subscription_date: string; total_subscriptions: number }[] = Array.from({ length: 10 }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - 9 + i); 
-      return { subscription_date: formatDate(date), total_subscriptions: 0 };
-    });
+    const last10Days: { subscription_date: string; total_subscriptions: number }[] = Array.from(
+      { length: 10 },
+      (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - 9 + i);
+        return { subscription_date: formatDate(date), total_subscriptions: 0 };
+      },
+    );
 
     const result: { _id: string; total_subscriptions: number }[] = await studentModel.aggregate([
       {
@@ -252,16 +261,19 @@ export const getStudentSubscriptions = async (): Promise<{ subscription_date: st
         },
       },
       {
-        $sort: { _id: 1 }, 
+        $sort: { _id: 1 },
       },
     ]);
 
     // Convert database result into a lookup object
-    const subscriptionData: Record<string, number> = result.reduce((acc, item) => {
-      const date = new Date(item._id);
-      acc[formatDate(date)] = item.total_subscriptions;
-      return acc;
-    }, {} as Record<string, number>);
+    const subscriptionData: Record<string, number> = result.reduce(
+      (acc, item) => {
+        const date = new Date(item._id);
+        acc[formatDate(date)] = item.total_subscriptions;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     // Merge database result with last 10 days data
     return last10Days.map((day) => ({

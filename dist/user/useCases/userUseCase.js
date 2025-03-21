@@ -56,10 +56,10 @@ const verifyOtpUseCase = async (data) => {
     };
 };
 exports.verifyOtpUseCase = verifyOtpUseCase;
-const uploadAvatarUseCase = async (file, userId) => {
+const uploadAvatarUseCase = async (file, studentId) => {
     const imageUrl = await (0, imageUploader_1.processAndUploadImage)(file, 'avatar');
     // upload the avatar url to db using id from the token
-    const upload = await (0, registerUserRepo_1.uploadAvatar)(userId, imageUrl);
+    const upload = await (0, registerUserRepo_1.uploadAvatar)(studentId, imageUrl);
     if (!upload)
         throw new appError_1.default('Image upload failed', httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR);
     return imageUrl;

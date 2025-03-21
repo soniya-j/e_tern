@@ -97,11 +97,11 @@ export const verifyOtpUseCase = async (
 
 export const uploadAvatarUseCase = async (
   file: Express.Multer.File,
-  userId: string,
+  studentId: string,
 ): Promise<string> => {
   const imageUrl = await processAndUploadImage(file, 'avatar');
   // upload the avatar url to db using id from the token
-  const upload = await uploadAvatar(userId, imageUrl);
+  const upload = await uploadAvatar(studentId, imageUrl);
   if (!upload) throw new AppError('Image upload failed', HttpStatus.INTERNAL_SERVER_ERROR);
   return imageUrl;
 };

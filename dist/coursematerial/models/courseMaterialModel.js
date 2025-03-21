@@ -6,6 +6,7 @@ const courseMaterialSchema = new mongoose_1.Schema({
     subCategoryId: { type: String, required: true, ref: 'subcategory' },
     courseMaterialUrl: { type: String, default: '' },
     description: { type: String, default: '' },
+    duration: { type: Number, default: '' },
     sorting: { type: Number, default: 1 },
     type: { type: String, required: true },
     isActive: { type: Boolean, default: true },

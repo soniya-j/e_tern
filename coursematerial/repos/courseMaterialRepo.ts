@@ -18,13 +18,6 @@ import courseMaterialWatchHistoryModel from '../models/courseMaterialWatchHistor
 import { ObjectID } from '../../utils/objectIdParser';
 
 export class CourseMaterialRepo {
-  /*
-  async findAllCourseMaterials(): Promise<ICourseMaterial[]> {
-    return await courseMaterialModel
-      .find({ isActive: true, isDeleted: false })
-      .sort({ sorting: 1 });
-  }
- */
   async findAllCourseMaterials(
     filters: Partial<ICourseMaterial>,
     limit = 10,
@@ -86,8 +79,9 @@ export class CourseMaterialRepo {
         .lean()) as unknown as ICourseMaterial[];
     } else {
       courseMaterials = (await courseMaterialModel
-        .find({ subCategoryId, type, isActive: true, isDeleted: false, sorting: 1 })
-        .limit(1)
+        .find({ subCategoryId, type, isActive: true, isDeleted: false })
+        .sort({ sorting: 1 })
+        //.limit(1)
         .lean()) as unknown as ICourseMaterial[];
     }
     let openStatusIndex = 0;

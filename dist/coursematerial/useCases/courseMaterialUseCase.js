@@ -115,14 +115,14 @@ const getVideoDetailsUseCase = async () => {
         const result = subCategories.map((subCategory) => {
             const materialsForSubCategory = courseMaterials.filter((mat) => String(mat.subCategoryId) === String(subCategory._id));
             const totalCourseMaterials = materialsForSubCategory.length;
-            const totalDuration = materialsForSubCategory.reduce((sum, mat) => sum + (mat.sorting || 0), 0);
+            const totalDuration = materialsForSubCategory.reduce((sum, mat) => sum + Number(mat.duration || 0), 0);
             const historiesForSubCategory = watchHistories.filter((hist) => String(hist.subCategoryId) === String(subCategory._id));
             let studentsCompleted = 0;
             const totalStudents = new Set();
             historiesForSubCategory.forEach((history) => {
                 totalStudents.add(history.studentId);
                 const courseMaterial = materialsForSubCategory.find((mat) => String(mat._id) === String(history.courseMaterialId));
-                if (courseMaterial && history.watchedDuration >= courseMaterial.sorting) {
+                if (courseMaterial && history.watchedDuration >= (courseMaterial.duration ?? 0)) {
                     studentsCompleted++;
                 }
             });

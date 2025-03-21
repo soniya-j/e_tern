@@ -167,8 +167,8 @@ export const getVideoDetailsUseCase = async () => {
 
       const totalDuration = materialsForSubCategory.reduce(
         (sum, mat) => sum + Number(mat.duration || 0),
-        0
-      );      
+        0,
+      );
 
       const historiesForSubCategory = watchHistories.filter(
         (hist) => String(hist.subCategoryId) === String(subCategory._id),
@@ -181,15 +181,15 @@ export const getVideoDetailsUseCase = async () => {
         const courseMaterial = materialsForSubCategory.find(
           (mat) => String(mat._id) === String(history.courseMaterialId),
         );
-        
+
         if (courseMaterial && history.watchedDuration >= (courseMaterial.duration ?? 0)) {
           studentsCompleted++;
-        }        
+        }
       });
 
       const totalUniqueStudents = totalStudents.size;
       const completedPercentage =
-      totalUniqueStudents > 0 ? (studentsCompleted / totalUniqueStudents) * 100 : 0;
+        totalUniqueStudents > 0 ? (studentsCompleted / totalUniqueStudents) * 100 : 0;
 
       return {
         subCategoryName: subCategory.subCategoryName,

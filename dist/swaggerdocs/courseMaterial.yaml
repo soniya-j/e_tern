@@ -332,7 +332,7 @@ paths:
                     type: string
                     example: Unauthorized user   
 
-/api/coursematerial/{id}:
+/api/coursematerials/{id}:
     put:
       summary: Update Course Material
       description: Endpoint to Update Course Material
@@ -410,6 +410,54 @@ paths:
                   error:
                     type: string
                     example: Unauthorized user   
+
+/api/coursematerial/{id}:
+  delete:
+    summary: Delete course material
+    description: Endpoint to delete a Course Material
+    tags:
+      - Course Material Model
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the Course Material 
+        schema:
+          type: string
+          example: "670d2fd920824883c3100257"
+    security:
+      - JWT: []
+    responses:
+      200:
+        description: Success response
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: Deleted data successfully
+                result:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      example: "670d2fd920824883c3100257"
+      401:
+        description: Unauthorized response
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: Unauthorized user
+
   
 components:
   securitySchemes:

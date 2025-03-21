@@ -11,6 +11,7 @@ const httpStatus_1 = require("../../common/httpStatus");
 const appError_1 = __importDefault(require("../../common/appError"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const objectIdParser_2 = require("../../utils/objectIdParser");
+const studentModel_1 = __importDefault(require("../../student/models/studentModel"));
 const checkUserExist = async (email, mobileNumber) => {
     return await userModel_1.default
         .findOne({ $or: [{ email }, { mobileNumber }] })
@@ -50,7 +51,7 @@ const saveUserToken = async (userId, deviceId, deviceType, authToken) => {
 exports.saveUserToken = saveUserToken;
 const uploadAvatar = async (id, imageUrl) => {
     const _id = (0, objectIdParser_1.ObjectID)(id);
-    return await userModel_1.default.findOneAndUpdate({ _id, isDeleted: false }, { avatar: imageUrl }, { new: true });
+    return await studentModel_1.default.findOneAndUpdate({ _id, isDeleted: false }, { avatar: imageUrl }, { new: true });
 };
 exports.uploadAvatar = uploadAvatar;
 const checkUserNumberExist = async (mobileNumber) => {

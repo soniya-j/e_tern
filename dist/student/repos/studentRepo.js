@@ -194,25 +194,51 @@ const checkStudentExist = async (studentId) => {
 exports.checkStudentExist = checkStudentExist;
 const getStudentSubscriptions = async () => {
     try {
+        const formatDate = (date) => {
+            const day = date.getDate();
+            const suffix = day === 1 || day === 21 || day === 31
+                ? 'st'
+                : day === 2 || day === 22
+                    ? 'nd'
+                    : day === 3 || day === 23
+                        ? 'rd'
+                        : 'th';
+            return `${day}${suffix}`;
+        };
+        // Generate last 10 days
+        const last10Days = Array.from({ length: 10 }, (_, i) => {
+            const date = new Date();
+            date.setDate(date.getDate() - 9 + i);
+            return { subscription_date: formatDate(date), total_subscriptions: 0 };
+        });
         const result = await studentModel_1.default.aggregate([
             {
                 $match: {
-                    createdAt: { $gte: new Date(new Date().setDate(new Date().getDate() - 9)) }, // Last 10 days
+                    subscriptionStartDate: {
+                        $gte: new Date(new Date().setDate(new Date().getDate() - 10)), // Last 10 days
+                    },
                 },
             },
             {
                 $group: {
-                    _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+                    _id: { $dateToString: { format: '%Y-%m-%d', date: '$subscriptionStartDate' } },
                     total_subscriptions: { $sum: 1 },
                 },
             },
             {
-                $sort: { _id: 1 }, // Sorting in ascending order by date
+                $sort: { _id: 1 },
             },
         ]);
-        return result.map((item) => ({
-            subscription_date: item._id,
-            total_subscriptions: item.total_subscriptions,
+        // Convert database result into a lookup object
+        const subscriptionData = result.reduce((acc, item) => {
+            const date = new Date(item._id);
+            acc[formatDate(date)] = item.total_subscriptions;
+            return acc;
+        }, {});
+        // Merge database result with last 10 days data
+        return last10Days.map((day) => ({
+            subscription_date: day.subscription_date,
+            total_subscriptions: subscriptionData[day.subscription_date] || 0,
         }));
     }
     catch (error) {

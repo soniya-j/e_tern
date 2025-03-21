@@ -27,11 +27,7 @@ exports.userRegisterValidation = [
         .withMessage('userType is required')
         .isIn(['child', 'teenager', 'adult'])
         .withMessage('Invalid userType'),
-    (0, express_validator_1.body)('email')
-        .notEmpty()
-        .withMessage('email is required')
-        .isEmail()
-        .withMessage('Invalid email format'),
+    (0, express_validator_1.body)('email').isEmail().withMessage('Invalid email format'),
 ];
 exports.verifyOtpValidation = [
     (0, express_validator_1.body)('mobileNumber')

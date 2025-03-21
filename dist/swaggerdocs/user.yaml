@@ -124,12 +124,20 @@ paths:
                   error:
                     type: string
                     example: Unauthorized user
-  /api/user/upload-avatar:
+  /api/user/upload-avatar/{studentId}:
     post:
       summary: Upload Avatar
-      description: Endpoint to upload user avatar
+      description: Endpoint to upload student avatar
       tags:
         - Users Model
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          description: The ID of the student
+          schema:
+            type: string
+            example: "670d2fd920824883c3100257" 
       security:
         - JWT: []
       requestBody:

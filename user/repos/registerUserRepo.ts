@@ -7,6 +7,7 @@ import AppError from '../../common/appError';
 import bcrypt from 'bcryptjs';
 import { objectIdToString } from '../../utils/objectIdParser';
 import { ObjectId } from 'mongodb';
+import studentModel from '../../student/models/studentModel';
 
 export const checkUserExist = async (
   email: string,
@@ -71,7 +72,7 @@ export const uploadAvatar = async (
   imageUrl: string,
 ): Promise<{ _id: string } | null> => {
   const _id = ObjectID(id);
-  return await usersModel.findOneAndUpdate(
+  return await studentModel.findOneAndUpdate(
     { _id, isDeleted: false },
     { avatar: imageUrl },
     { new: true },

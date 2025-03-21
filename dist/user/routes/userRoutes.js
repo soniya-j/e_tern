@@ -11,7 +11,7 @@ const userRequest_1 = require("../requests/userRequest");
 const router = (0, express_1.Router)();
 router.post('/register', userRequest_1.userRegisterValidation, userController_1.registerUser);
 router.post('/verify-otp', userRequest_1.verifyOtpValidation, userController_1.verifyOtp);
-router.post('/upload-avatar', authentication_1.authenticateUser, multer_1.default, userController_1.uploadAvatar);
+router.post('/upload-avatar/:studentId', authentication_1.authenticateUser, multer_1.default, userController_1.uploadAvatar);
 router.post('/send-otp', userRequest_1.sendOtpValidation, userController_1.sendOtp);
 router.get('/profile/:userId', authentication_1.authenticateUser, userRequest_1.getProfileValidation, userController_1.getProfile);
 router.get('/coursematerial-track/:userId', authentication_1.authenticateUser, userRequest_1.courseMaterialTrackValidation, userController_1.courseMaterialTrack);

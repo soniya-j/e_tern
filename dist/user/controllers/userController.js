@@ -55,11 +55,17 @@ const uploadAvatar = async (req, res) => {
     if (req.file.size > 2 * 1024 * 1024) {
         return res.status(400).json({ status: 'fail', error: 'file size exceeded' });
     }
-    const userId = res.locals.userId; // get userId from locals ( using JWT middleware )
+    /*
+    const userId = res.locals.userId as string;
     if (!userId || userId === '') {
+      return res.status(401).send('Unauthorized');
+    }
+    */
+    const { studentId } = req.params;
+    if (!studentId || studentId === '') {
         return res.status(401).send('Unauthorized');
     }
-    const imageUrl = await (0, userUseCase_1.uploadAvatarUseCase)(req.file, userId);
+    const imageUrl = await (0, userUseCase_1.uploadAvatarUseCase)(req.file, studentId);
     res.status(200).json({
         status: 'success',
         message: 'image uploaded successfully',

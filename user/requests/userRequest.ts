@@ -19,14 +19,16 @@ export const userRegisterValidation = [
     .withMessage('Date of birth is required')
     .isDate()
     .withMessage('Invalid date format'),
-
   body('userType')
     .notEmpty()
     .withMessage('userType is required')
     .isIn(['child', 'teenager', 'adult'])
     .withMessage('Invalid userType'),
-
-  body('email').isEmail().withMessage('Invalid email format'),
+  /*
+  body('email')
+    .optional()
+    .isEmail().withMessage('Invalid email format'),
+    */
 ];
 
 export const verifyOtpValidation = [

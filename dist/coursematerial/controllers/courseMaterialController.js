@@ -87,7 +87,8 @@ exports.createCourseMaterial = (0, express_async_handler_1.default)(async (req, 
         return;
     }
     const data = req.body;
-    const result = await (0, courseMaterialUseCase_1.createCourseMaterialUseCase)(data);
+    const file = req.file;
+    const result = await (0, courseMaterialUseCase_1.createCourseMaterialUseCase)(data, file || undefined);
     res.status(200).json({
         success: true,
         message: localization_1.responseMessages.response_success_post,
@@ -104,8 +105,9 @@ exports.updateCourseMaterial = (0, express_async_handler_1.default)(async (req, 
         return;
     }
     const id = req.params.id;
+    const file = req.file;
     const data = req.body;
-    const result = await (0, courseMaterialUseCase_1.updateCourseMaterialUseCase)(id, data);
+    const result = await (0, courseMaterialUseCase_1.updateCourseMaterialUseCase)(id, data, file || undefined);
     res.status(200).json({
         success: true,
         message: localization_1.responseMessages.response_success_put,

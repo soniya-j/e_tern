@@ -109,7 +109,8 @@ export const createCourseMaterial = asyncHandler(async (req: Request, res: Respo
     return;
   }
   const data = req.body as ICourseMaterialBody;
-  const result = await createCourseMaterialUseCase(data);
+  const file = req.file;
+  const result = await createCourseMaterialUseCase(data, file || undefined);
   res.status(200).json({
     success: true,
     message: responseMessages.response_success_post,
@@ -127,8 +128,9 @@ export const updateCourseMaterial = asyncHandler(async (req: Request, res: Respo
     return;
   }
   const id = req.params.id;
+  const file = req.file;
   const data = req.body as ICourseMaterialBody;
-  const result = await updateCourseMaterialUseCase(id, data);
+  const result = await updateCourseMaterialUseCase(id, data, file || undefined);
   res.status(200).json({
     success: true,
     message: responseMessages.response_success_put,

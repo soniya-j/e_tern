@@ -6,6 +6,7 @@ const courseMaterialSchema = new Schema<ICourseMaterial>(
     courseMaterialName: { type: String, required: true },
     subCategoryId: { type: String, required: true, ref: 'subcategory' },
     courseMaterialUrl: { type: String, default: '' },
+    imageUrl: { type: String, default: '' },
     description: { type: String, default: '' },
     duration: { type: Number, default: '' },
     sorting: { type: Number, default: 1 },

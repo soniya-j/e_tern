@@ -19,6 +19,7 @@ import {
   courseMaterialUpdateValidation,
   courseMaterialWatchHistoryValidation,
 } from '../requests/courseMaterialRequest';
+import multerConfig from '../../middleware/multer';
 
 const router = Router();
 
@@ -43,11 +44,18 @@ router.post(
   createCourseMaterialWatchHistory,
 );
 
-router.post('/', authenticateAdmin, courseMaterialCreateValidation, createCourseMaterial);
+router.post(
+  '/',
+  authenticateAdmin,
+  multerConfig,
+  courseMaterialCreateValidation,
+  createCourseMaterial,
+);
 
 router.put(
   '/:id',
   authenticateAdmin,
+  multerConfig,
   courseMaterialUpdateValidation,
   courseMaterialCreateValidation,
   updateCourseMaterial,

@@ -6,6 +6,7 @@ export interface ICourseMaterial extends Document {
   courseMaterialUrl: string;
   sorting: number;
   description?: string;
+  imageUrl?: string;
   isActive?: boolean;
   isDeleted?: boolean;
   type: string;
@@ -17,6 +18,7 @@ export interface ICourseMaterialBody {
   subCategoryId: string;
   courseMaterialUrl: string;
   description?: string;
+  imageUrl?: string;
   sorting: number;
   type: string;
   duration?: number;

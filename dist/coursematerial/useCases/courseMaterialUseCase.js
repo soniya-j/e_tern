@@ -9,6 +9,7 @@ const httpStatus_1 = require("../../common/httpStatus");
 const courseMaterialRepo_1 = require("../repos/courseMaterialRepo");
 const studentRepo_1 = require("../../student/repos/studentRepo");
 const subCategoryRepo_1 = require("../../subcategory/repos/subCategoryRepo");
+const imageUploader_1 = require("../../utils/imageUploader");
 const getAllCourseMaterialUseCase = async (filters, limit, page) => {
     const courseMaterialRepo = new courseMaterialRepo_1.CourseMaterialRepo();
     const result = await courseMaterialRepo.findAllCourseMaterials(filters, limit, page);
@@ -52,19 +53,29 @@ const trackCourseMaterialUserUseCase = async (data, userId) => {
     return true;
 };
 exports.trackCourseMaterialUserUseCase = trackCourseMaterialUserUseCase;
-const createCourseMaterialUseCase = async (data) => {
+const createCourseMaterialUseCase = async (data, file) => {
     const exists = await (0, subCategoryRepo_1.checkSubCategoryExists)(data.subCategoryId);
     if (!exists) {
         throw new appError_1.default('No sub categories found for the given subCategoryId', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    // Process the uploaded image
+    if (file) {
+        const uploadedFilePath = await (0, imageUploader_1.processAndUploadImage)(file, 'coursematerial');
+        data.imageUrl = uploadedFilePath;
     }
     const result = await (0, courseMaterialRepo_1.saveCourseMaterial)(data);
     return result;
 };
 exports.createCourseMaterialUseCase = createCourseMaterialUseCase;
-const updateCourseMaterialUseCase = async (id, data) => {
+const updateCourseMaterialUseCase = async (id, data, file) => {
     const exists = await (0, subCategoryRepo_1.checkSubCategoryExists)(data.subCategoryId);
     if (!exists) {
         throw new appError_1.default('No sub categories found for the given subCategoryId', httpStatus_1.HttpStatus.NOT_FOUND);
+    }
+    // Process the uploaded image
+    if (file) {
+        const uploadedFilePath = await (0, imageUploader_1.processAndUploadImage)(file, 'category');
+        data.imageUrl = uploadedFilePath;
     }
     const result = await (0, courseMaterialRepo_1.updateCourseMaterial)(id, data);
     return result;

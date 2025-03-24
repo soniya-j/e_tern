@@ -24,6 +24,7 @@ import {
 import { checkStudentIdExist } from '../../student/repos/studentRepo';
 import { checkSubCategoryExists, SubCategoryRepo } from '../../subcategory/repos/subCategoryRepo';
 import { ISubCategory } from '../../types/subcategory/subCategoryModel';
+import { processAndUploadImage } from '../../utils/imageUploader';
 
 export const getAllCourseMaterialUseCase = async (
   filters: Partial<ICourseMaterial>,
@@ -85,10 +86,16 @@ export const trackCourseMaterialUserUseCase = async (
 
 export const createCourseMaterialUseCase = async (
   data: ICourseMaterialBody,
+  file?: Express.Multer.File,
 ): Promise<Pick<ICourseMaterial, '_id'>> => {
   const exists = await checkSubCategoryExists(data.subCategoryId);
   if (!exists) {
     throw new AppError('No sub categories found for the given subCategoryId', HttpStatus.NOT_FOUND);
+  }
+  // Process the uploaded image
+  if (file) {
+    const uploadedFilePath = await processAndUploadImage(file, 'coursematerial');
+    data.imageUrl = uploadedFilePath;
   }
   const result = await saveCourseMaterial(data);
   return result;
@@ -97,11 +104,18 @@ export const createCourseMaterialUseCase = async (
 export const updateCourseMaterialUseCase = async (
   id: string,
   data: ICourseMaterialBody,
+  file?: Express.Multer.File,
 ): Promise<Pick<ICourseMaterial, '_id'>> => {
   const exists = await checkSubCategoryExists(data.subCategoryId);
   if (!exists) {
     throw new AppError('No sub categories found for the given subCategoryId', HttpStatus.NOT_FOUND);
   }
+  // Process the uploaded image
+  if (file) {
+    const uploadedFilePath = await processAndUploadImage(file, 'category');
+    data.imageUrl = uploadedFilePath;
+  }
+
   const result = await updateCourseMaterial(id, data);
   return result;
 };

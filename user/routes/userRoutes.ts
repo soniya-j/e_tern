@@ -16,6 +16,7 @@ import {
   logout,
   getUserCount,
   exportUsers,
+  deleteAccount,
 } from '../controllers/userController';
 import multerConfig from '../../middleware/multer';
 import { authenticateUser, authenticateAdmin } from '../../middleware/authentication';
@@ -53,6 +54,7 @@ router.put('/parentdob-update/:userId', authenticateUser, userDobValidation, upd
 router.post('/parentdob-verify', authenticateUser, userDobVerifyValidation, verifyParentDob);
 router.get('/switch-student/:studentId', authenticateUser, switchStudentValidation, switchStudent);
 router.post('/logout', authenticateUser, logoutValidation, logout);
+router.post('/delete-account', authenticateUser, deleteAccount);
 
 //Admin apis
 router.post('/login', loginValidation, login);

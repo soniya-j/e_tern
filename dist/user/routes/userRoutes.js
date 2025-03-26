@@ -20,6 +20,7 @@ router.put('/parentdob-update/:userId', authentication_1.authenticateUser, userR
 router.post('/parentdob-verify', authentication_1.authenticateUser, userRequest_1.userDobVerifyValidation, userController_1.verifyParentDob);
 router.get('/switch-student/:studentId', authentication_1.authenticateUser, userRequest_1.switchStudentValidation, userController_1.switchStudent);
 router.post('/logout', authentication_1.authenticateUser, userRequest_1.logoutValidation, userController_1.logout);
+router.post('/delete-account', authentication_1.authenticateUser, userController_1.deleteAccount);
 //Admin apis
 router.post('/login', userRequest_1.loginValidation, userController_1.login);
 router.get('/all', authentication_1.authenticateAdmin, userController_1.getUsers);

@@ -15,6 +15,7 @@ import {
   switchStudentUseCase,
   logoutUseCase,
   getUserCountUseCase,
+  deleteAccountUseCase,
 } from '../useCases/userUseCase';
 import asyncHandler from 'express-async-handler';
 import { responseMessages } from '../../config/localization';
@@ -438,3 +439,21 @@ export const exportUsers = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteAccount = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(HttpStatus.BAD_REQUEST).json({
+      success: false,
+      errors: errors.array(),
+    });
+    return;
+  }
+  const userId = res.locals.userId as string;
+  const result = await deleteAccountUseCase(userId);
+  res.status(200).json({
+    success: true,
+    message: responseMessages.msg_success,
+    result,
+  });
+});

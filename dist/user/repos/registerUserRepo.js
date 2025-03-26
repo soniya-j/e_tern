@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserCount = exports.deleteToken = exports.checkMobileEmailExist = exports.updatecurrentStudent = exports.verifyParentDobYear = exports.updateParentDob = exports.createAdmin = exports.hashPassword = exports.verifyLogin = exports.getAllUsers = exports.getProfileById = exports.checkMobileExist = exports.updateUser = exports.checkUserIdExist = exports.getProfile = exports.updateUserOtp = exports.checkUserNumberExist = exports.uploadAvatar = exports.saveUserToken = exports.setUserVerified = exports.verifyOtp = exports.createUser = exports.checkUserExist = void 0;
+exports.deleteAccountByUser = exports.getUserCount = exports.deleteToken = exports.checkMobileEmailExist = exports.updatecurrentStudent = exports.verifyParentDobYear = exports.updateParentDob = exports.createAdmin = exports.hashPassword = exports.verifyLogin = exports.getAllUsers = exports.getProfileById = exports.checkMobileExist = exports.updateUser = exports.checkUserIdExist = exports.getProfile = exports.updateUserOtp = exports.checkUserNumberExist = exports.uploadAvatar = exports.saveUserToken = exports.setUserVerified = exports.verifyOtp = exports.createUser = exports.checkUserExist = void 0;
 const objectIdParser_1 = require("../../utils/objectIdParser");
 const userModel_1 = __importDefault(require("../models/userModel"));
 const userAuthModel_1 = __importDefault(require("../models/userAuthModel"));
@@ -187,3 +187,15 @@ const getUserCount = async () => {
     }
 };
 exports.getUserCount = getUserCount;
+const deleteAccountByUser = async (userId) => {
+    const authUserId = (0, objectIdParser_1.ObjectID)(userId);
+    const user = await userModel_1.default
+        .findOneAndUpdate({ _id: authUserId, isDeleted: false }, { isActive: false, isDeleted: true }, { new: true })
+        .lean();
+    if (!user)
+        return null;
+    // Update related students
+    await studentModel_1.default.updateMany({ userId: authUserId }, { $set: { isDeleted: true, isActive: false } });
+    return { _id: user._id.toString() };
+};
+exports.deleteAccountByUser = deleteAccountByUser;

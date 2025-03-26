@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.exportUsers = exports.getUserCount = exports.logout = exports.switchStudent = exports.verifyParentDob = exports.updateParentDob = exports.registerAdmin = exports.login = exports.getUsers = exports.updateProfile = exports.courseMaterialTrack = exports.getProfile = exports.sendOtp = exports.uploadAvatar = exports.verifyOtp = exports.registerUser = void 0;
+exports.deleteAccount = exports.exportUsers = exports.getUserCount = exports.logout = exports.switchStudent = exports.verifyParentDob = exports.updateParentDob = exports.registerAdmin = exports.login = exports.getUsers = exports.updateProfile = exports.courseMaterialTrack = exports.getProfile = exports.sendOtp = exports.uploadAvatar = exports.verifyOtp = exports.registerUser = void 0;
 const userUseCase_1 = require("../useCases/userUseCase");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const localization_1 = require("../../config/localization");
@@ -397,3 +397,20 @@ const exportUsers = async (req, res) => {
     }
 };
 exports.exportUsers = exportUsers;
+exports.deleteAccount = (0, express_async_handler_1.default)(async (req, res) => {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({
+            success: false,
+            errors: errors.array(),
+        });
+        return;
+    }
+    const userId = res.locals.userId;
+    const result = await (0, userUseCase_1.deleteAccountUseCase)(userId);
+    res.status(200).json({
+        success: true,
+        message: localization_1.responseMessages.msg_success,
+        result,
+    });
+});

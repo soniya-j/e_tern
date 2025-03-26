@@ -3,10 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserCountUseCase = exports.logoutUseCase = exports.switchStudentUseCase = exports.verifyParentDobUseCase = exports.updateParentDobUseCase = exports.registerAdminUseCase = exports.loginUseCase = exports.getUsersUseCase = exports.updateUserUseCase = exports.getCourseMaterialTrackUseCase = exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
+exports.deleteAccountUseCase = exports.getUserCountUseCase = exports.logoutUseCase = exports.switchStudentUseCase = exports.verifyParentDobUseCase = exports.updateParentDobUseCase = exports.registerAdminUseCase = exports.loginUseCase = exports.getUsersUseCase = exports.updateUserUseCase = exports.getCourseMaterialTrackUseCase = exports.getProfileUseCase = exports.sendOtpUseCase = exports.uploadAvatarUseCase = exports.verifyOtpUseCase = exports.registerUserUseCase = void 0;
 const authentication_1 = require("../../authentication/authentication");
 const appError_1 = __importDefault(require("../../common/appError"));
 const httpStatus_1 = require("../../common/httpStatus");
+const twilioService_1 = require("../../services/twilioService");
 const registerUserRepo_1 = require("../repos/registerUserRepo");
 const courseMaterialRepo_1 = require("../../coursematerial/repos/courseMaterialRepo");
 const imageUploader_1 = require("../../utils/imageUploader");
@@ -19,7 +20,7 @@ const registerUserUseCase = async (data) => {
         throw new appError_1.default('User Mobile Number/Email Already Exist', httpStatus_1.HttpStatus.BAD_REQUEST);
     //send an otp to the mobileNumber provided
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    //await sendOtp(data.mobileNumber, otp);
+    await (0, twilioService_1.sendOtp)(data.mobileNumber, otp);
     data.status = 1;
     data.role = 'user';
     const result = await (0, registerUserRepo_1.createUser)(data, otp);
@@ -71,7 +72,7 @@ const sendOtpUseCase = async (data) => {
     if (!userExist)
         throw new appError_1.default('User Not Found', httpStatus_1.HttpStatus.BAD_REQUEST);
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    //await sendOtp(data.mobileNumber, otp);
+    await (0, twilioService_1.sendOtp)(data.mobileNumber, otp);
     /* OTP Email
     const emailId = 'soniyaej@gmail.com';
     const brevoService = new BrevoService();
@@ -217,3 +218,11 @@ const getUserCountUseCase = async () => {
     };
 };
 exports.getUserCountUseCase = getUserCountUseCase;
+const deleteAccountUseCase = async (userId) => {
+    const result = await (0, registerUserRepo_1.deleteAccountByUser)(userId);
+    if (!result) {
+        throw new appError_1.default('Unable to delete account.', httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return true;
+};
+exports.deleteAccountUseCase = deleteAccountUseCase;

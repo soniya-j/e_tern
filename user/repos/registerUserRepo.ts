@@ -9,12 +9,28 @@ import { objectIdToString } from '../../utils/objectIdParser';
 import { ObjectId } from 'mongodb';
 import studentModel from '../../student/models/studentModel';
 
+/*
 export const checkUserExist = async (
   email: string,
   mobileNumber: number,
 ): Promise<{ _id: string } | null> => {
   return await usersModel
     .findOne({ $or: [{ email }, { mobileNumber }] })
+    .select({ _id: 1 })
+    .lean();
+};
+*/
+
+export const checkUserExist = async (
+  email: string | null,  
+  mobileNumber: number
+): Promise<{ _id: string } | null> => {
+  const query: any = { mobileNumber }; 
+  if (email && email.trim() !== '') {
+    query.$or = [{ email }, { mobileNumber }];
+  }
+  return await usersModel
+    .findOne(query)
     .select({ _id: 1 })
     .lean();
 };
@@ -253,4 +269,23 @@ export const getUserCount = async (): Promise<number> => {
     console.error('Error fetching user count:', error);
     throw new Error('Failed to fetch user count');
   }
+};
+
+export const deleteAccountByUser = async (userId: string): Promise<{ _id: string } | null> => {
+  const authUserId = ObjectID(userId);
+  const user = await usersModel
+    .findOneAndUpdate(
+      { _id: authUserId, isDeleted: false },
+      { isActive: false, isDeleted: true },
+      { new: true },
+    )
+    .lean();
+  if (!user) return null;
+  // Update related students
+  await studentModel.updateMany(
+    { userId: authUserId },
+    { $set: { isDeleted: true, isActive: false } },
+  );
+
+  return { _id: user._id.toString() };
 };
